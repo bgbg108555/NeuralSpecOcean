@@ -1,0 +1,27 @@
+# OS & Editor metadata
+.DS_Store
+Thumbs.db
+Desktop.ini
+.vscode/
+.idea/
+
+# Python cache
+__pycache__/
+*.py[cod]
+.pytest_cache/
+
+# Node & local automation outputs
+node_modules/
+tools/captures/
+*.log
+*.tmp
+
+# Local development archives, snapshots & internal notes
+_archives/
+M1-polish-20261106/
+packages/
+*討論筆記.md
+
+# Duplicate local build mirrors (index.html is the canonical tracked bundle)
+source/Underwater_Water.html
+完整海景.html
