@@ -26,7 +26,7 @@ NeuralSpecOcean maintains modular ES source files under [`source/src/`](./source
 
 1. **Zero Per-Frame Heap Allocations**: Avoid instantiating objects (`THREE.Vector3`, `Array`, closures) inside per-frame simulation or rendering loops. Pre-allocate typed arrays and scratch vectors at module initialization.
 2. **Parallel Shader Compilation Alignment**: Offscreen and post-processing passes must implement `getCompileSpecs()` with accurate `'hdr' | 'canvasNoTone' | 'canvasTone'` target descriptors so that Three.js `programCacheKey` hashes match runtime render states during `KHR_parallel_shader_compile` pre-compilation.
-3. **Physical and Mathematical Consistency**: Modifications to hydrodynamics, optics, or neural surrogates must preserve physical conservation bounds (e.g., dielectric Fresnel reflectance within $[0, 1]$, non-negative Clausius–Duhem dissipation $\mathcal{D} \ge 0$, and strictly positive mesh Jacobians $J > 0$).
+3. **Physical and Mathematical Consistency**: Modifications to hydrodynamics, optics, or neural surrogates must preserve physical conservation bounds (e.g., dielectric Fresnel reflectance within $`[0, 1]`$, non-negative Clausius–Duhem dissipation $`\mathcal{D} \ge 0`$, and strictly positive mesh Jacobians $`J \gt 0`$).
 
 ---
 

@@ -17,5 +17,5 @@
 - **Dataset**: NASA Deep Star Maps 2020 (SVS ID: 4851)
 - **Source URL**: https://svs.gsfc.nasa.gov/4851
 - **Attribution**: NASA / Goddard Space Flight Center Scientific Visualization Studio (Ernie Wright)
-- **Underlying Catalogs**: ESA *Gaia* Data Release 2 (DR2) Galactic All-Sky Map and *Hipparcos* / *Tycho-2* Star Catalogs, processed via $5 \times 5$ local-maxima non-maximum suppression (NMS) for single-texel astrometric point reconstruction
+- **Underlying Catalogs**: ESA *Gaia* Data Release 2 (DR2) Galactic All-Sky Map and *Hipparcos* / *Tycho-2* Star Catalogs, processed via $`5 \times 5`$ local-maxima non-maximum suppression (NMS) for single-texel astrometric point reconstruction
 - **License**: Public Domain (per NASA Media Usage Guidelines)
