@@ -18,6 +18,10 @@
 
 </div>
 
+> [!IMPORTANT]
+> **開源研發贊助支持（Research & Development Sponsorship）** — **NeuralSpecOcean** 以 [MIT License](./LICENSE) 免費開放完整原始碼與技術白皮書。若本系統之物理導向神經算子、多頻譜海浪水動力學或海洋光學管線對您的研究、教學或工程開發有所助益，歡迎贊助支持後續研發工作（包含下一階段 WebGPU Compute 色散波浪求解器與真實全球海岸地形串流）：  
+> **[前往 Portaly 贊助 NeuralSpecOcean 專案研發（支援國內外信用卡）→](https://portaly.cc/AlphaCore/support)**
+
 ---
 
 ## 摘要

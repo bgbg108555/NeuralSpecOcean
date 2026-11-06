@@ -18,6 +18,10 @@
 
 </div>
 
+> [!IMPORTANT]
+> **Open-Source Research & Development Sponsorship** — **NeuralSpecOcean** is released free of charge under the permissive [MIT License](./LICENSE). If this simulation engine, its physics-informed neural operators, or its technical whitepaper supports your research, teaching, or engineering work, please consider sponsoring ongoing R&D (including the upcoming WebGPU compute-shader Boussinesq wave solver and real-world bathymetric streaming):  
+> **[Sponsor NeuralSpecOcean via Portaly (International Credit Cards Supported) →](https://portaly.cc/AlphaCore/support)**
+
 ---
 
 ## Abstract
