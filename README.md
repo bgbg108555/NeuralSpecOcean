@@ -8,9 +8,10 @@
 [![Release](https://img.shields.io/github/v/release/bgbg108555/NeuralSpecOcean?style=flat-square&label=Release&color=1f6f78)](https://github.com/bgbg108555/NeuralSpecOcean/releases)
 [![License: MIT](https://img.shields.io/badge/License-MIT-2d6a4f?style=flat-square)](./LICENSE)
 [![WebGL2](https://img.shields.io/badge/Graphics-WebGL2-1d3557?style=flat-square)](https://bgbg108555.github.io/NeuralSpecOcean/)
+[![X Devlog](https://img.shields.io/badge/X_Devlog-@ShengChoi-14171a?style=flat-square&logo=x)](https://x.com/ShengChoi)
 [![Sponsor](https://img.shields.io/badge/Sponsor-Portaly-8c2f39?style=flat-square)](https://portaly.cc/AlphaCore/support)
 
-[**English**](./README.md) | [**繁體中文 (Traditional Chinese)**](./README.zh-TW.md) | [**Technical Whitepaper**](./TECHNICAL_WHITEPAPER.md) | [**Live Demo**](https://bgbg108555.github.io/NeuralSpecOcean/) | [**Sponsorship**](#sponsorship-and-research-support)
+[**English**](./README.md) | [**繁體中文 (Traditional Chinese)**](./README.zh-TW.md) | [**Technical Whitepaper**](./TECHNICAL_WHITEPAPER.md) | [**Live Demo**](https://bgbg108555.github.io/NeuralSpecOcean/) | [**X Devlog (@ShengChoi)**](https://x.com/ShengChoi) | [**Sponsorship**](#sponsorship-and-research-support)
 
 ---
 
@@ -19,8 +20,9 @@
 </div>
 
 > [!IMPORTANT]
-> **Open-Source Research & Development Sponsorship** — **NeuralSpecOcean** is released free of charge under the permissive [MIT License](./LICENSE). If this simulation engine, its physics-informed neural operators, or its technical whitepaper supports your research, teaching, or engineering work, please consider sponsoring ongoing R&D (including the upcoming WebGPU compute-shader Boussinesq wave solver and real-world bathymetric streaming):  
-> **[Sponsor NeuralSpecOcean via Portaly (International Credit Cards Supported) →](https://portaly.cc/AlphaCore/support)**
+> **C++ MMORPG Engine R&D & Open-Source Sponsorship** — **NeuralSpecOcean** originated as an R&D coastal hydrodynamics, neural-operator, and marine-optics prototype for an **upcoming native C++ MMORPG** currently in active development. As this simulation pipeline is being ported and implemented natively in C++ for the game engine, we are releasing the complete WebGL2 prototype and mathematical whitepaper under the permissive [MIT License](./LICENSE) as a contribution to the graphics and game development community.  
+> - **Follow C++ MMORPG & Engine Devlogs on X**: [**@ShengChoi (https://x.com/ShengChoi) →**](https://x.com/ShengChoi)  
+> - **Sponsor Ongoing Open-Source R&D (International Credit Cards Supported)**: [**Support via Portaly →**](https://portaly.cc/AlphaCore/support)
 
 ---
 
@@ -159,6 +161,7 @@ node tools/verify_gpu_render.mjs
 
 Financial contributions help sustain ongoing development, including a WebGPU compute-shader Boussinesq wave solver, real-world bathymetric tile integration, and open technical documentation:
 
+- **C++ MMORPG & Graphics Devlog (X / Twitter)**: https://x.com/ShengChoi (`@ShengChoi`)
 - **Sponsorship Portal (International Credit Cards Supported)**: https://portaly.cc/AlphaCore/support (also accessible via the repository **Sponsor** button configured in [`.github/FUNDING.yml`](./.github/FUNDING.yml))
 
 ---
@@ -169,7 +172,7 @@ If you reference or build upon **NeuralSpecOcean** in academic or technical work
 
 ```bibtex
 @software{neuralspecocean2026,
-  author       = {bgbg108555},
+  author       = {Choi, Sheng},
   title        = {{NeuralSpecOcean}: Physics-Informed Neural and Multi-Spectral Coastal Ocean Simulation in WebGL2},
   year         = {2026},
   url          = {https://github.com/bgbg108555/NeuralSpecOcean},

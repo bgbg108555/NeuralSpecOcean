@@ -8,9 +8,10 @@
 [![版本發佈](https://img.shields.io/github/v/release/bgbg108555/NeuralSpecOcean?style=flat-square&label=Release&color=1f6f78)](https://github.com/bgbg108555/NeuralSpecOcean/releases)
 [![授權條款: MIT](https://img.shields.io/badge/License-MIT-2d6a4f?style=flat-square)](./LICENSE)
 [![圖學管線: WebGL2](https://img.shields.io/badge/Graphics-WebGL2-1d3557?style=flat-square)](https://bgbg108555.github.io/NeuralSpecOcean/)
+[![X 開發日誌](https://img.shields.io/badge/X_Devlog-@ShengChoi-14171a?style=flat-square&logo=x)](https://x.com/ShengChoi)
 [![專案贊助](https://img.shields.io/badge/Sponsor-Portaly-8c2f39?style=flat-square)](https://portaly.cc/AlphaCore/support)
 
-[**English (`README.md`)**](./README.md) | [**繁體中文**](./README.zh-TW.md) | [**技術白皮書 (`TECHNICAL_WHITEPAPER.md`)**](./TECHNICAL_WHITEPAPER.md) | [**線上展示**](https://bgbg108555.github.io/NeuralSpecOcean/) | [**專案贊助**](#專案贊助與研發支持)
+[**English (`README.md`)**](./README.md) | [**繁體中文**](./README.zh-TW.md) | [**技術白皮書 (`TECHNICAL_WHITEPAPER.md`)**](./TECHNICAL_WHITEPAPER.md) | [**線上展示**](https://bgbg108555.github.io/NeuralSpecOcean/) | [**X 開發日誌 (@ShengChoi)**](https://x.com/ShengChoi) | [**專案贊助**](#專案贊助與研發支持)
 
 ---
 
@@ -19,8 +20,9 @@
 </div>
 
 > [!IMPORTANT]
-> **開源研發贊助支持（Research & Development Sponsorship）** — **NeuralSpecOcean** 以 [MIT License](./LICENSE) 免費開放完整原始碼與技術白皮書。若本系統之物理導向神經算子、多頻譜海浪水動力學或海洋光學管線對您的研究、教學或工程開發有所助益，歡迎贊助支持後續研發工作（包含下一階段 WebGPU Compute 色散波浪求解器與真實全球海岸地形串流）：  
-> **[前往 Portaly 贊助 NeuralSpecOcean 專案研發（支援國內外信用卡）→](https://portaly.cc/AlphaCore/support)**
+> **C++ MMORPG 前瞻技術研發與開源贊助支持** — **NeuralSpecOcean** 源於團隊正在開發中之**原創 C++ MMORPG** 海岸水動力學、物理導向神經算子與海洋光學前瞻驗證原型。目前本套水動力與光學管線正同步以**原生 C++** 實裝至 MMORPG 遊戲底層引擎；為促進即時流體與遊戲圖學技術交流，我們將完整 WebGL2 原型與數學推導白皮書以 [MIT License](./LICENSE) 免費開源回饋社群。  
+> - **追蹤 C++ MMORPG 與引擎開發日誌（X / Twitter）**：[**@ShengChoi (https://x.com/ShengChoi) →**](https://x.com/ShengChoi)  
+> - **贊助支持開源研發（支援國內外信用卡）**：[**前往 Portaly 贊助專案研發 →**](https://portaly.cc/AlphaCore/support)
 
 ---
 
@@ -146,6 +148,7 @@ node tools/verify_gpu_render.mjs
 
 若本專案對您的研究、教學或工程開發有所助益，歡迎透過以下管道支持後續研發工作（包含 WebGPU Compute Shader 色散波浪求解器、真實全球海岸地形高程串流與技術文件維護）：
 
+- **C++ MMORPG 與引擎開發日誌（X / Twitter）**：https://x.com/ShengChoi（`@ShengChoi`）
 - **專案贊助頁面（支援國內外信用卡）**：https://portaly.cc/AlphaCore/support（亦可透過儲存庫頂端由 [`.github/FUNDING.yml`](./.github/FUNDING.yml) 啟用之 **Sponsor** 按鈕前往）
 
 ---
@@ -156,7 +159,7 @@ node tools/verify_gpu_render.mjs
 
 ```bibtex
 @software{neuralspecocean2026,
-  author       = {bgbg108555},
+  author       = {Choi, Sheng},
   title        = {{NeuralSpecOcean}: Physics-Informed Neural and Multi-Spectral Coastal Ocean Simulation in WebGL2},
   year         = {2026},
   url          = {https://github.com/bgbg108555/NeuralSpecOcean},

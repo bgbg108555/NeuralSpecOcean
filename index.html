@@ -11,6 +11,8 @@
 <meta property="og:url" content="https://bgbg108555.github.io/NeuralSpecOcean/">
 <meta property="og:image" content="https://raw.githubusercontent.com/bgbg108555/NeuralSpecOcean/main/docs/images/social_preview.jpg">
 <meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:site" content="@ShengChoi">
+<meta name="twitter:creator" content="@ShengChoi">
 <meta name="twitter:title" content="NeuralSpecOcean — Physics-Informed Neural and Spectral Coastal Ocean Simulation">
 <meta name="twitter:description" content="Real-time WebGL2 coastal ocean simulation combining Sobolev-trained PINNs, tri-band spectral waves, shallow-water PDEs, and marine bio-optics.">
 <meta name="twitter:image" content="https://raw.githubusercontent.com/bgbg108555/NeuralSpecOcean/main/docs/images/social_preview.jpg">
@@ -46,16 +48,20 @@ select{width:100%;margin-top:3px;padding:5px 7px;background:#143344;color:#edf6f
 .perf-hud{position:fixed;right:16px;top:14px;width:258px;padding:10px 12px;background:rgba(8,22,34,0.88);backdrop-filter:blur(12px);border:1px solid rgba(132,188,212,0.44);border-radius:11px;box-shadow:0 8px 24px rgba(0,0,0,0.36);font-variant-numeric:tabular-nums;z-index:20;user-select:none;transition:opacity .26s cubic-bezier(.22,1,.36,1),transform .26s cubic-bezier(.22,1,.36,1)}
 body.gui-hidden aside{opacity:0;transform:translateX(-20px);pointer-events:none}
 body.gui-hidden .perf-hud{opacity:0;transform:translateX(20px);pointer-events:none}
-.sponsor-card{position:fixed;right:16px;bottom:14px;width:258px;padding:10px 12px;background:rgba(8,22,34,0.88);backdrop-filter:blur(12px);border:1px solid rgba(218,178,108,0.48);border-radius:11px;box-shadow:0 8px 24px rgba(0,0,0,0.38);z-index:20;transition:opacity .26s cubic-bezier(.22,1,.36,1),transform .26s cubic-bezier(.22,1,.36,1)}
+.sponsor-card{position:fixed;right:16px;bottom:14px;width:276px;padding:10px 12px;background:rgba(8,22,34,0.88);backdrop-filter:blur(12px);border:1px solid rgba(218,178,108,0.48);border-radius:11px;box-shadow:0 8px 24px rgba(0,0,0,0.38);z-index:20;transition:opacity .26s cubic-bezier(.22,1,.36,1),transform .26s cubic-bezier(.22,1,.36,1)}
 body.gui-hidden .sponsor-card{opacity:0;transform:translateY(14px);pointer-events:none}
 .sponsor-head{display:flex;justify-content:space-between;align-items:center;gap:6px}
 .sponsor-tag{font-size:10px;font-weight:700;letter-spacing:0.55px;color:#ebd094}
 .sponsor-gh{font-size:10.5px;color:#9dcce2;text-decoration:none;transition:color .15s}
 .sponsor-gh:hover{color:#dff5ff;text-decoration:underline}
 .sponsor-desc{margin:5px 0 8px;font-size:11px;line-height:1.45;color:#cde3ee}
-.sponsor-cta{display:block;width:100%;padding:6.5px 10px;border-radius:6px;text-align:center;text-decoration:none;font-size:12px;font-weight:600;letter-spacing:0.2px;color:#fff9ee;background:linear-gradient(180deg,rgba(156,108,42,0.9) 0%,rgba(116,76,24,0.94) 100%);border:1px solid rgba(236,196,122,0.62);transition:filter .16s,border-color .16s,transform .12s}
+.sponsor-actions{display:grid;grid-template-columns:1.12fr 1fr;gap:6px}
+.sponsor-x,.sponsor-cta{display:block;padding:6.5px 7px;border-radius:6px;text-align:center;text-decoration:none;font-size:11.5px;font-weight:600;white-space:nowrap;transition:filter .16s,border-color .16s,transform .12s}
+.sponsor-x{color:#eaf7ff;background:rgba(20,58,80,0.92);border:1px solid rgba(130,202,232,0.55)}
+.sponsor-x:hover{filter:brightness(1.14);border-color:#b2e8ff}
+.sponsor-cta{color:#fff9ee;background:linear-gradient(180deg,rgba(156,108,42,0.9) 0%,rgba(116,76,24,0.94) 100%);border:1px solid rgba(236,196,122,0.62)}
 .sponsor-cta:hover{filter:brightness(1.12);border-color:#ffe3a8}
-.sponsor-cta:active{transform:translateY(1px)}
+.sponsor-x:active,.sponsor-cta:active{transform:translateY(1px)}
 .restore-gui-pill{position:fixed;right:16px;bottom:14px;z-index:35;padding:6px 13px;border-radius:99px;background:rgba(8,24,38,0.56);backdrop-filter:blur(10px);border:1px solid rgba(140,204,230,0.38);color:rgba(232,248,255,0.88);font-size:11.5px;box-shadow:0 4px 16px rgba(0,0,0,0.34);opacity:0;visibility:hidden;pointer-events:none;transform:translateY(8px);transition:opacity .24s,transform .24s,visibility .24s,background .18s}
 .restore-gui-pill:hover{background:rgba(24,64,88,0.9);color:#fff;border-color:#a8e2f8}
 body.gui-hidden .restore-gui-pill{opacity:0.82;visibility:visible;pointer-events:auto;transform:translateY(0)}
@@ -102,7 +108,7 @@ body.gui-hidden .restore-gui-pill:hover{opacity:1}
 #shaderCountBadge{flex-shrink:0}
 .loading-gpu{display:block;margin-top:9px;padding-top:7px;border-top:1px solid rgba(126,180,202,0.18);font-size:10.5px;color:#7fa8ba;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
 [hidden]{display:none!important}
-@media(max-width:680px){aside{width:210px;top:auto;bottom:10px;left:10px;padding:11px}.perf-hud{width:206px;right:10px;top:10px;padding:8px 9px}.sponsor-card{width:146px;right:10px;bottom:10px;padding:7px 8px}.sponsor-desc{display:none}.sponsor-cta{margin-top:5px;padding:5px 6px;font-size:11px}}
+@media(max-width:680px){aside{width:210px;top:auto;bottom:10px;left:10px;padding:11px}.perf-hud{width:206px;right:10px;top:10px;padding:8px 9px}.sponsor-card{width:152px;right:10px;bottom:10px;padding:7px 8px}.sponsor-desc{display:none}.sponsor-actions{grid-template-columns:1fr;gap:4px;margin-top:5px}.sponsor-x,.sponsor-cta{padding:4.5px 6px;font-size:10.5px}}
 </style>
 <!-- Bundled Three.js license
 The MIT License
@@ -290,13 +296,16 @@ THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLI
     </div>
   </div>
 </section>
-<div id="sponsorCard" class="sponsor-card" role="complementary" aria-label="開源研發贊助">
+<div id="sponsorCard" class="sponsor-card" role="complementary" aria-label="C++ MMORPG 研發日誌與開源贊助">
   <div class="sponsor-head">
-    <span class="sponsor-tag">OPEN-SOURCE R&amp;D</span>
+    <span class="sponsor-tag">C++ MMORPG R&amp;D · MIT</span>
     <a class="sponsor-gh" href="https://github.com/bgbg108555/NeuralSpecOcean" target="_blank" rel="noopener noreferrer">GitHub ↗</a>
   </div>
-  <p class="sponsor-desc">本系統以 MIT 授權免費開源。若對您的研究或開發有所助益，歡迎贊助支持後續物理光學與 WebGPU 研發。</p>
-  <a class="sponsor-cta" href="https://portaly.cc/AlphaCore/support" target="_blank" rel="noopener noreferrer">贊助專案研發 · Sponsor ↗</a>
+  <p class="sponsor-desc">本系統為開發中 C++ MMORPG 之海洋物理前瞻原型（正移植原生 C++ 版），以 MIT 開源回饋社群。</p>
+  <div class="sponsor-actions">
+    <a class="sponsor-x" href="https://x.com/ShengChoi" target="_blank" rel="noopener noreferrer">追蹤 X 開發日誌 ↗</a>
+    <a class="sponsor-cta" href="https://portaly.cc/AlphaCore/support" target="_blank" rel="noopener noreferrer">贊助 · Sponsor ↗</a>
+  </div>
 </div>
 <button id="restoreGuiBtn" class="restore-gui-pill" type="button" title="顯示控制面板與效能計數器（快捷鍵 H 或 Esc）">顯示介面 (H)</button>
 <script>/**
