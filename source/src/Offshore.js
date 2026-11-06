@@ -186,8 +186,8 @@ vec3 displaced(vec2 p){
     ? gridSpacing * max(0.32, 1.0 - 0.21 * 3.14159265 * cos(3.14159265 * clamp(p.y / 175.0, -1.0, 1.0)))
     : ex;
   vec3 q = displaced(p);
-  vec3 dx = (displaced(p + vec2(ex, 0.0)) - displaced(p - vec2(ex, 0.0))) / (2.0 * ex);
-  vec3 dz = (displaced(p + vec2(0.0, ez)) - displaced(p - vec2(0.0, ez))) / (2.0 * ez);
+  vec3 dx = (displaced(p + vec2(ex, 0.0)) - q) / ex;
+  vec3 dz = (displaced(p + vec2(0.0, ez)) - q) / ez;
   vec4 wp = modelMatrix * vec4(q, 1.0);
   vWorld = wp.xyz;
   vNormal = normalize(mat3(modelMatrix) * normalize(cross(dz, dx)));
@@ -337,21 +337,22 @@ void main(){
   vec2 dPdy = dFdy(p);
   float pxFootprint = max(length(dPdx), length(dPdy));
 
-  // Reconstruct exact 3D opaque substrate/boulder hit from sceneDepth (ZERO extra samplers!):
-  // Discriminates 3D sculpted rocks (isRockHit) from smooth beach sand while guarding detached foreground silhouettes.
+  // Reconstruct exact 3D opaque substrate/boulder hit from sceneDepth (texel-center snapped to eliminate NearestFilter scanline sawtooth!):
   vec2 screenUV = (gl_FragCoord.xy / depthResolution - 0.5) / captureScale + 0.5;
-  float rawCenter = depthEnabled > 0.5 ? textureLod(sceneDepth, screenUV, 0.0).r : 1.0;
+  vec2 safeCapRes = max(captureResolution, vec2(1.0));
+  vec2 snappedDepthUV = (floor(clamp(screenUV, vec2(0.0), vec2(1.0) - 0.5 / safeCapRes) * safeCapRes) + 0.5) / safeCapRes;
+  float rawCenter = depthEnabled > 0.5 ? textureLod(sceneDepth, snappedDepthUV, 0.0).r : 1.0;
   vec3 exactBedHit = vec3(p.x, bed, p.y);
   float validContact = 0.0;
   float isRockHit = 0.0;
   float trueSubmergence = depth;
   if (depthEnabled > 0.5 && rawCenter < 0.999999) {
-    exactBedHit = reconstruct(screenUV, rawCenter);
+    exactBedHit = reconstruct(snappedDepthUV, rawCenter);
     float rawRayGap = length(exactBedHit - cameraPosition) - dist;
     validContact = smoothstep(-0.18, -0.04, rawRayGap);
     if (validContact > 0.005) {
       float hitSandBed = beachMode > 0.5 ? sampleBathymetry(exactBedHit.xz).r : -16.0;
-      isRockHit = smoothstep(0.005, 0.024, exactBedHit.y - hitSandBed) * smoothstep(0.01, 0.18, rockProx) * validContact;
+      isRockHit = smoothstep(0.065, 0.165, exactBedHit.y - hitSandBed) * smoothstep(0.04, 0.28, rockProx) * validContact;
       float hitSub = max(0.0, vWorld.y - exactBedHit.y);
       trueSubmergence = mix(depth, min(depth, hitSub), validContact);
     }
@@ -550,14 +551,15 @@ void main(){
   }
   vec3 color = mix(waterDeep, reflSky, F);
 
-  // Coordinate reflection handoff with ShoreVisual.js so thinning swash has ZERO double-reflection AND ZERO Fresnel step
-  float capillaryMatch = nearCoast ? smoothstep(-0.024, 0.008, depth) * 0.80 : 0.0;
-  float effectiveSandFilm = max(swash.g, capillaryMatch);
+  // Coordinate reflection handoff with ShoreVisual.js so thinning swash has ZERO double-reflection AND ZERO Fresnel dip!
+  float capillaryMatch = nearCoast ? smoothstep(-0.014, 0.009, depth) * 0.78 : 0.0;
+  float effectiveSandFilm = clamp(max(swash.g, capillaryMatch), 0.0, 1.0);
+  float filmWeight0 = nearCoast ? pow(smoothstep(0.01, 0.78, effectiveSandFilm), 0.85) * 0.88 : 0.0;
   float existingFilmRefl = nearCoast
-    ? (1.0 - smoothstep(0.038, 0.112, depth)) * smoothstep(0.02, 0.44, effectiveSandFilm) * 0.92
+    ? (1.0 - smoothstep(0.042, 0.125, depth)) * filmWeight0
     : 0.0;
   float targetMeniscusRefl = beachMode > 0.5
-    ? mix(existingFilmRefl, 1.0, smoothstep(0.008, 0.26, depth))
+    ? mix(filmWeight0, 1.0, smoothstep(0.008, 0.22, depth))
     : 1.0;
 
   // Deane & Stokes (2002) Subsurface Entrained Bubble-Plume Emulsion (clears smoothly inside shallow 3D rock meniscus!)

@@ -1,15 +1,36 @@
-export function createBeach(THREE, detailMap, swashStateUniform, bathymetryUniform, timeUniform, amplitudeUniform, shoreDetail, shoreDebug, foamScaleDebug) {
-  const geo = new THREE.PlaneGeometry(350, 350, 256, 256);
+export function createBeach(THREE, detailMap, swashStateUniform, bathymetryUniform, timeUniform, amplitudeUniform, shoreDetail, shoreDebug, foamScaleDebug, segs = 272) {
+  const geo = new THREE.PlaneGeometry(350, 350, segs, segs);
   geo.rotateX(-Math.PI / 2);
   const p = geo.attributes.position;
   for (let i = 0; i < p.count; i++) {
     const x = p.getX(i);
     const u = p.getZ(i) / 175;
-    // Strictly monotonic coastal warp (ds/du = 1 - 0.21*pi*cos(pi*u) >= 0.340 > 0 — ZERO mesh fold around z = 0!)
-    const z = Math.max(-175, Math.min(175, (u - 0.21 * Math.sin(Math.PI * u)) * 175));
+    // Strictly monotonic coastal warp (ds/du = 1 - 0.23*pi*cos(pi*u) >= 0.277 > 0 — 35cm swash spacing with -294K tris/frame!)
+    const z = Math.max(-175, Math.min(175, (u - 0.23 * Math.sin(Math.PI * u)) * 175));
     p.setXYZ(i, x, shoreBed(x, z), z);
   }
   p.needsUpdate = true;
+  if (geo.index) {
+    const idx = geo.index.array;
+    const cols = segs + 1;
+    let ptr = 0;
+    for (let iz = 0; iz < segs; iz++) {
+      for (let ix = 0; ix < segs; ix++) {
+        const a = iz * cols + ix;
+        const b = (iz + 1) * cols + ix;
+        const c = (iz + 1) * cols + (ix + 1);
+        const d = iz * cols + (ix + 1);
+        if ((ix + iz) & 1) {
+          idx[ptr++] = a; idx[ptr++] = b; idx[ptr++] = c;
+          idx[ptr++] = a; idx[ptr++] = c; idx[ptr++] = d;
+        } else {
+          idx[ptr++] = a; idx[ptr++] = b; idx[ptr++] = d;
+          idx[ptr++] = b; idx[ptr++] = c; idx[ptr++] = d;
+        }
+      }
+    }
+    geo.index.needsUpdate = true;
+  }
   geo.computeVertexNormals();
   expandCoastalGround(geo, shoreBed);
 

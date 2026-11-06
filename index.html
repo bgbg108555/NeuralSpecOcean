@@ -2,7 +2,7 @@
 <html lang="zh-Hant">
 <head>
 <meta charset="utf-8">
-<meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
 <title>NeuralSpecOcean | Physics-Informed Neural and Spectral Coastal Ocean Simulation</title>
 <meta name="description" content="NeuralSpecOcean: Real-time WebGL2 coastal ocean simulation combining physics-informed neural networks, multi-band spectral wave hydrodynamics, shallow-water PDEs, and marine radiative transfer.">
 <meta property="og:type" content="website">
@@ -20,12 +20,14 @@
 *{box-sizing:border-box}
 body{margin:0;overflow:hidden;background:#1a3348;color:#edf6fb;font:13.5px/1.45 "Microsoft JhengHei","PingFang TC",system-ui,sans-serif}
 canvas{display:block;touch-action:none}
-aside{position:fixed;left:16px;top:14px;width:294px;max-height:calc(100vh - 28px);overflow-y:auto;padding:12px 14px;background:rgba(9,25,38,0.86);backdrop-filter:blur(13px);border:1px solid rgba(132,186,210,0.44);border-radius:12px;box-shadow:0 10px 28px rgba(0,0,0,0.38);z-index:20;scrollbar-width:thin;scrollbar-color:rgba(132,184,206,0.35) transparent;transition:opacity .26s cubic-bezier(.22,1,.36,1),transform .26s cubic-bezier(.22,1,.36,1)}
-.panel-head{display:flex;justify-content:space-between;align-items:center;gap:6px}
-.head-actions{display:flex;align-items:center;gap:5px}
-.immersive-btn{padding:2px 8px;font-size:10.5px;border-radius:5px;background:rgba(24,78,102,0.85);border:1px solid rgba(136,214,240,0.55);color:#eafaff;white-space:nowrap}
+aside{position:fixed;left:16px;top:14px;width:308px;max-height:calc(100vh - 28px);overflow-y:auto;padding:12px 13px;background:rgba(9,25,38,0.86);backdrop-filter:blur(13px);border:1px solid rgba(132,186,210,0.44);border-radius:12px;box-shadow:0 10px 28px rgba(0,0,0,0.38);z-index:20;scrollbar-width:thin;scrollbar-color:rgba(132,184,206,0.35) transparent;transition:opacity .26s cubic-bezier(.22,1,.36,1),transform .26s cubic-bezier(.22,1,.36,1)}
+.panel-head{display:flex;justify-content:space-between;align-items:center;gap:5px;flex-wrap:nowrap}
+.head-actions{display:flex;align-items:center;gap:4px;flex-shrink:0}
+.lang-btn{padding:2px 5.5px;font-size:10px;font-weight:700;letter-spacing:0.2px;border-radius:5px;background:rgba(168,124,48,0.28);border:1px solid rgba(238,198,118,0.62);color:#ffeab8;white-space:nowrap}
+.lang-btn:hover{background:rgba(196,146,58,0.48);border-color:#ffe3a6;color:#fff}
+.immersive-btn{padding:2px 6px;font-size:10px;border-radius:5px;background:rgba(24,78,102,0.85);border:1px solid rgba(136,214,240,0.55);color:#eafaff;white-space:nowrap}
 .immersive-btn:hover{background:#2d7190;border-color:#b4ecff}
-h1{font-size:15.5px;margin:0;font-weight:700;letter-spacing:0.3px;color:#f3fbff}
+h1{font-size:14.5px;margin:0;font-weight:700;letter-spacing:0.15px;color:#f3fbff;white-space:nowrap}
 .sub{font-size:11px;color:#9bc0d1;margin:3px 0 8px}
 .quick{display:grid;grid-template-columns:repeat(3,1fr);gap:5px;margin-bottom:5px}
 .quick-row2{display:grid;grid-template-columns:repeat(2,1fr);gap:5px;margin-bottom:7px}
@@ -74,7 +76,7 @@ body.gui-hidden .restore-gui-pill:hover{opacity:1}
 .perf-max-tag{cursor:pointer;color:#b8ecff;border-bottom:1px dotted rgba(160,224,248,0.45)}
 .perf-cap-bar{display:flex;justify-content:space-between;align-items:center;gap:6px;margin-top:6px;padding:3px 6px;background:rgba(18,46,64,0.62);border:1px solid rgba(118,175,200,0.25);border-radius:6px;font-size:10.5px;color:#b7dce9}
 .perf-cap-bar select{width:auto;margin-top:0;padding:2px 5px;font-size:10.5px;border-radius:4px;background:#0f2a3a;border-color:rgba(125,185,208,0.45)}
-.perf-toggle{padding:2px 7px;font-size:10.5px;border-radius:5px;background:rgba(28,65,86,0.75);border:1px solid rgba(138,188,208,0.4);white-space:nowrap}
+.perf-toggle{padding:2px 6px;font-size:10px;border-radius:5px;background:rgba(28,65,86,0.75);border:1px solid rgba(138,188,208,0.4);white-space:nowrap}
 .perf-spark{width:100%;height:34px;margin:6px 0 6px;border-radius:5px;border:1px solid rgba(118,175,200,0.24);display:block;background:#071520}
 .perf-grid{display:grid;grid-template-columns:1fr 1fr;gap:5px;margin-bottom:5px}
 .perf-cell{padding:4px 6px;background:rgba(18,46,64,0.55);border:1px solid rgba(118,175,200,0.22);border-radius:6px}
@@ -108,7 +110,45 @@ body.gui-hidden .restore-gui-pill:hover{opacity:1}
 #shaderCountBadge{flex-shrink:0}
 .loading-gpu{display:block;margin-top:9px;padding-top:7px;border-top:1px solid rgba(126,180,202,0.18);font-size:10.5px;color:#7fa8ba;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
 [hidden]{display:none!important}
-@media(max-width:680px){aside{width:210px;top:auto;bottom:10px;left:10px;padding:11px}.perf-hud{width:206px;right:10px;top:10px;padding:8px 9px}.sponsor-card{width:152px;right:10px;bottom:10px;padding:7px 8px}.sponsor-desc{display:none}.sponsor-actions{grid-template-columns:1fr;gap:4px;margin-top:5px}.sponsor-x,.sponsor-cta{padding:4.5px 6px;font-size:10.5px}}
+@media (hover:none),(pointer:coarse),(max-width:880px){
+  aside,.perf-hud,.sponsor-card,.restore-gui-pill,.loading-card{backdrop-filter:none;-webkit-backdrop-filter:none}
+  aside{background:rgba(8,23,35,0.93)}
+  .perf-hud,.sponsor-card{background:rgba(7,20,31,0.93)}
+}
+@media (max-width:960px) and (min-width:761px){
+  aside{width:274px;left:12px;top:12px;max-height:calc(100dvh - 24px);padding:10px 11px}
+  aside h1{font-size:13px;letter-spacing:0}
+  .lang-btn,.immersive-btn,.perf-toggle{padding:2px 5px;font-size:9.5px}
+  .perf-hud{width:236px;right:12px;top:12px;padding:9px 10px}
+  .sponsor-card{width:244px;right:12px;bottom:12px;padding:9px 10px}
+}
+@media (max-width:760px) and (orientation:portrait),(max-width:540px){
+  .perf-hud{top:calc(env(safe-area-inset-top,0px) + 8px);left:8px;right:8px;width:auto;padding:7px 10px;border-radius:10px}
+  .perf-spark{width:100%}
+  .sponsor-card{bottom:calc(env(safe-area-inset-bottom,0px) + 8px);left:8px;right:8px;width:auto;padding:6px 10px;border-radius:10px}
+  .sponsor-desc{display:none}
+  .sponsor-actions{margin-top:5px;grid-template-columns:1fr 1fr;gap:6px}
+  .sponsor-x,.sponsor-cta{padding:5px 6px;font-size:11px}
+  aside{top:auto;bottom:calc(env(safe-area-inset-bottom,0px) + 76px);left:8px;right:8px;width:auto;max-height:min(35dvh,290px);padding:9px 11px;border-radius:11px;overscroll-behavior:contain;-webkit-overflow-scrolling:touch}
+  body.gui-hidden aside{transform:translateY(16px)}
+  body.gui-hidden .perf-hud{transform:translateY(-14px)}
+  .sub{margin:2px 0 6px;font-size:10.5px}
+  .quick button,.quick-row2 button{padding:6px 5px;font-size:11.5px}
+  input[type="range"]{height:22px}
+  .restore-gui-pill{right:10px;bottom:calc(env(safe-area-inset-bottom,0px) + 12px)}
+  .loading-card{width:min(368px,92vw);padding:20px 18px 18px}
+}
+@media (max-height:540px) and (orientation:landscape){
+  aside{left:calc(env(safe-area-inset-left,0px) + 8px);top:8px;bottom:auto;width:268px;max-height:calc(100dvh - 16px);padding:8px 10px;overscroll-behavior:contain}
+  aside h1{font-size:12.5px;letter-spacing:0}
+  .lang-btn,.immersive-btn,.perf-toggle{padding:2px 4.5px;font-size:9.5px}
+  .perf-hud{right:calc(env(safe-area-inset-right,0px) + 8px);top:8px;left:auto;width:216px;padding:7px 9px}
+  .sponsor-card{right:calc(env(safe-area-inset-right,0px) + 8px);bottom:8px;left:auto;width:216px;padding:6px 8px}
+  .sponsor-desc{display:none}
+  .sponsor-actions{margin-top:4px;grid-template-columns:1fr 1fr;gap:5px}
+  .sponsor-x,.sponsor-cta{padding:4px 5px;font-size:10.5px}
+  .sub{display:none}
+}
 </style>
 <!-- Bundled Three.js license
 The MIT License
@@ -128,15 +168,15 @@ THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLI
       <path class="loading-wave1" d="M6 42c7-5.5 13-5.5 20 0s13 5.5 20 0 9-3.5 12-1.5V54H6V42z" fill="rgba(110,240,200,0.78)"/>
     </svg>
     <p class="loading-title">NeuralSpecOcean</p>
-    <p class="loading-sub">物理導向神經網路與多頻譜海岸流體光學模擬系統</p>
+    <p id="loadingSub" class="loading-sub" data-i18n="loadingSub">物理導向神經網路與多頻譜海岸流體光學模擬系統</p>
     <div class="loading-track"><div id="loadingBarFill" class="loading-fill"></div></div>
     <div class="loading-meta">
-      <span id="loadingStage">正在啟動 WebGL2 光學引擎…</span>
+      <span id="loadingStage" data-i18n="loadingStageInit">正在啟動 WebGL2 光學引擎…</span>
       <span id="loadingPct" class="loading-pct">0%</span>
     </div>
     <div id="shaderCompileBox" class="shader-compile-box">
       <div class="shader-compile-head">
-        <span id="shaderStage" class="shader-stage">多執行緒著色器佇列待命…</span>
+        <span id="shaderStage" class="shader-stage" data-i18n="shaderStageInit">多執行緒著色器佇列待命…</span>
         <span id="shaderPct" class="shader-pct">0%</span>
       </div>
       <div class="shader-track"><div id="shaderBarFill" class="shader-fill"></div></div>
@@ -145,95 +185,97 @@ THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLI
         <span id="shaderCountBadge">0 / 0 Programs</span>
       </div>
     </div>
-    <small id="loadingGpuSub" class="loading-gpu">偵測硬體加速裝置中…</small>
+    <small id="loadingGpuSub" class="loading-gpu" data-i18n="loadingGpuDetect">偵測硬體加速裝置中…</small>
   </div>
 </div>
 <aside id="controlPanel">
   <div class="panel-head">
     <h1>NeuralSpecOcean</h1>
     <div class="head-actions">
-      <button id="immersiveToggleBtn" class="immersive-btn" type="button" title="隱藏控制介面（快捷鍵 H｜全螢幕 F）">沉浸全畫面</button>
+      <button id="langToggleBtn" class="lang-btn" type="button" title="Switch UI to English" aria-label="Switch UI to English">EN</button>
+      <button id="immersiveToggleBtn" class="immersive-btn" type="button" data-i18n="immersiveBtn" title="隱藏控制介面（快捷鍵 H｜全螢幕 F）">沉浸畫面</button>
       <button id="panelToggleBtn" class="perf-toggle" type="button">收合</button>
     </div>
   </div>
   <div id="controlPanelBody">
-  <p class="sub">物理導向神經網路・頻譜水動力學・水深輻射傳輸</p>
+  <p class="sub" data-i18n="panelSub">物理導向神經網路・頻譜水動力學・水深輻射傳輸</p>
   <div class="quick">
-    <button id="previewCoast" class="active">海岸全景</button>
-    <button id="previewRocks">礁石激浪</button>
-    <button id="previewSwash">沙灘拍岸</button>
+    <button id="previewCoast" class="active" data-i18n="presetCoast">海岸全景</button>
+    <button id="previewRocks" data-i18n="presetRocks">礁石激浪</button>
+    <button id="previewSwash" data-i18n="presetSwash">沙灘拍岸</button>
   </div>
   <div class="quick-row2">
-    <button id="previewOffshore">外海深浪</button>
-    <button id="previewDive">水下視角</button>
+    <button id="previewOffshore" data-i18n="presetOffshore">外海深浪</button>
+    <button id="previewDive" data-i18n="presetDive">水下視角</button>
   </div>
 
   <div class="sec-box">
-    <label>日夜時段（晨・午・暮・星夜） <output id="timeOfDayValue">15:36 午後</output>
+    <label><span data-i18n="lblTimeOfDay">日夜時段（晨・午・暮・星夜）</span> <output id="timeOfDayValue">15:36 午後</output>
       <input id="timeOfDay" type="range" min="0.00" max="24.00" value="15.60" step="0.01">
     </label>
     <div class="tod-chips">
-      <button id="todMorning" type="button">晨光</button>
-      <button id="todNoon" type="button">正午</button>
-      <button id="todAfternoon" type="button" class="active">午後</button>
-      <button id="todDusk" type="button">黃昏</button>
-      <button id="todNight" type="button" title="NASA SVS 4851 銀河星圖與月光海面">星夜</button>
+      <button id="todMorning" type="button" data-i18n="todMorning">晨光</button>
+      <button id="todNoon" type="button" data-i18n="todNoon">正午</button>
+      <button id="todAfternoon" type="button" class="active" data-i18n="todAfternoon">午後</button>
+      <button id="todDusk" type="button" data-i18n="todDusk">黃昏</button>
+      <button id="todNight" type="button" data-i18n="todNight" title="NASA SVS 4851 銀河星圖與月光海面">星夜</button>
     </div>
   </div>
 
   <div class="sec-box">
-    <label>海域水色預設
+    <label><span data-i18n="lblWaterPalette">海域水色預設</span>
       <select id="waterPalette">
-        <option value="emerald" selected>經典翡翠海岸（預設）</option>
-        <option value="maldives">珊瑚琉璃淺灣（蒂芬妮藍綠）</option>
-        <option value="pacific">太平洋深邃鈷藍（黑潮深藍）</option>
-        <option value="jade">花東碧玉礦物綠（海岸翠玉）</option>
-        <option value="nordic">北歐冷冽墨海（冷灰鋼藍）</option>
+        <option value="emerald" data-i18n="palEmerald" selected>經典翡翠海岸（預設）</option>
+        <option value="maldives" data-i18n="palMaldives">珊瑚琉璃淺灣（蒂芬妮藍綠）</option>
+        <option value="pacific" data-i18n="palPacific">太平洋深邃鈷藍（黑潮深藍）</option>
+        <option value="jade" data-i18n="palJade">花東碧玉礦物綠（海岸翠玉）</option>
+        <option value="nordic" data-i18n="palNordic">北歐冷冽墨海（冷灰鋼藍）</option>
       </select>
     </label>
-    <label>海水色調微調（翠綠 ↔ 鈷藍） <output id="waterTintValue">+0.00</output>
+    <label><span data-i18n="lblWaterTint">海水色調微調（翠綠 ↔ 鈷藍）</span> <output id="waterTintValue">+0.00</output>
       <input id="waterTint" type="range" min="-1.00" max="1.00" value="0.00" step="0.01">
     </label>
-    <label>海水深淺表現 <output id="waterDepthValue">1.00x 標準</output>
+    <label><span data-i18n="lblWaterDepth">海水深淺表現</span> <output id="waterDepthValue">1.00x 標準</output>
       <input id="waterDepthScale" type="range" min="0.35" max="2.40" value="1.00" step="0.01">
     </label>
-    <label>海水清澈度 <output id="waterClarityValue">1.00x</output>
+    <label><span data-i18n="lblWaterClarity">海水清澈度</span> <output id="waterClarityValue">1.00x</output>
       <input id="waterClarity" type="range" min="0.55" max="1.75" value="1.00" step="0.01">
     </label>
   </div>
 
-  <label>海岸地形（自動重算水深與折射）
+  <label><span data-i18n="lblTerrain">海岸地形（自動重算水深與折射）</span>
     <select id="terrainPreset">
-      <option value="baseline">自然彎曲海灣（Baseline）</option>
-      <option value="sandbar">離岸淺灘沙洲（Sandbar）</option>
+      <option value="baseline" data-i18n="terBaseline">自然彎曲海灣（Baseline）</option>
+      <option value="sandbar" data-i18n="terSandbar">離岸淺灘沙洲（Sandbar）</option>
     </select>
   </label>
 
-  <label>海浪高度 <output id="amplitudeValue">0.64 m</output>
+  <label><span data-i18n="lblAmplitude">海浪高度</span> <output id="amplitudeValue">0.64 m</output>
     <input id="amplitude" type="range" min="0.20" max="1.20" value="0.64" step="0.01">
   </label>
 
-  <label>碎浪與殘泡濃度 <output id="foamBoostValue">0.94x</output>
+  <label><span data-i18n="lblFoamBoost">碎浪與殘泡濃度</span> <output id="foamBoostValue">0.94x</output>
     <input id="foamBoost" type="range" min="0.00" max="1.80" value="0.94" step="0.01">
   </label>
 
-  <label>渲染畫質等級
+  <label><span data-i18n="lblQuality">渲染畫質等級</span>
     <select id="quality">
-      <option value="low">低品質（極速省顯存・核顯流暢）</option>
-      <option value="medium" selected>中品質（均衡標準・推薦）</option>
-      <option value="high">高品質（極致寫實・2x MSAA 超採樣）</option>
+      <option value="mobile" data-i18n="qualMobile">行動極速（手機高幀率最佳化）</option>
+      <option value="low" data-i18n="qualLow">低品質（極速省顯存・核顯流暢）</option>
+      <option value="medium" data-i18n="qualMedium" selected>中品質（均衡標準・推薦）</option>
+      <option value="high" data-i18n="qualHigh">高品質（極致寫實・2x MSAA 超採樣）</option>
     </select>
   </label>
 
-  <label>海浪與礁石空間音效 <output id="audioVolumeValue">72%</output>
+  <label><span data-i18n="lblAudioVol">海浪與礁石空間音效</span> <output id="audioVolumeValue">72%</output>
     <input id="audioVolume" type="range" min="0" max="100" value="72" step="1">
   </label>
 
   <div id="diveControls" class="dive-box" hidden>
-    <label>潛水深度 <output id="elevationValue">-1.20 m</output>
+    <label><span data-i18n="lblDiveElev">潛水深度</span> <output id="elevationValue">-1.20 m</output>
       <input id="elevation" type="range" min="-3.7" max="4.0" value="-1.2" step="0.02">
     </label>
-    <label>水下仰俯角 <output id="tiltValue">+0.06</output>
+    <label><span data-i18n="lblDiveTilt">水下仰俯角</span> <output id="tiltValue">+0.06</output>
       <input id="lookTilt" type="range" min="-0.7" max="1.0" value="0.06" step="0.01">
     </label>
     <small id="underwaterStatus"></small>
@@ -245,7 +287,7 @@ THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLI
   </div>
 
   <div class="status-bar">
-    <span>滑鼠旋轉・滾輪縮放・H 隱藏介面・F 全螢幕</span>
+    <span id="interactionHint">滑鼠旋轉・滾輪縮放・H 隱藏介面・F 全螢幕</span>
     <strong id="frameStatus">-- fps</strong>
   </div>
   <small id="gpuStatus">正在啟動 WebGL2 海景…</small>
@@ -256,15 +298,15 @@ THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLI
     <div class="perf-fps-wrap">
       <span id="perfFpsVal" class="perf-fps-num">--</span>
       <span class="perf-fps-unit">FPS</span>
-      <span class="perf-low">最大 <strong id="perfFpsMaxVal" class="perf-max-tag" title="點擊重置最大峰值 FPS">--</strong> · 1%Low <strong id="perfFpsLowVal">--</strong></span>
+      <span class="perf-low"><span data-i18n="perfMax">最大</span> <strong id="perfFpsMaxVal" class="perf-max-tag" title="點擊重置最大峰值 FPS">--</strong> · 1%Low <strong id="perfFpsLowVal">--</strong></span>
     </div>
     <button id="perfToggleBtn" class="perf-toggle" type="button">收合</button>
   </div>
   <div id="perfHudBody">
     <div class="perf-cap-bar">
-      <span>鎖幀 · 極限 <strong id="perfPotFpsVal" style="color:#9ef3d8">--</strong> · <span id="perfFrameMsVal">-- ms</span></span>
+      <span><span id="perfCapLabelEl" data-i18n="perfCapLabel">硬體極限</span> <strong id="perfPotFpsVal" style="color:#9ef3d8">--</strong> · <span id="perfFrameMsVal">-- ms</span></span>
       <select id="perfFpsCap" aria-label="FPS 鎖定上限">
-        <option value="0" selected>不鎖定</option>
+        <option value="0" data-i18n="fpsUncapped" selected>不鎖定</option>
         <option value="144">144 FPS</option>
         <option value="120">120 FPS</option>
         <option value="90">90 FPS</option>
@@ -275,20 +317,20 @@ THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLI
     <canvas id="perfSparkline" class="perf-spark" width="234" height="34"></canvas>
     <div class="perf-grid">
       <div class="perf-cell">
-        <span class="perf-k">GPU 渲染耗時</span>
+        <span class="perf-k" data-i18n="perfGpuTime">GPU 渲染耗時</span>
         <span id="perfGpuMsVal" class="perf-v">-- ms</span>
       </div>
       <div class="perf-cell">
-        <span class="perf-k">GPU 顯存 VRAM</span>
+        <span class="perf-k" data-i18n="perfVram">GPU 顯存 VRAM</span>
         <span id="perfVramVal" class="perf-v">-- MB</span>
       </div>
     </div>
     <div class="perf-row">
-      <div class="perf-row-top"><span>CPU 邏輯與提交</span><span id="perfCpuMsVal">-- ms</span></div>
+      <div class="perf-row-top"><span data-i18n="perfCpu">CPU 邏輯與提交</span><span id="perfCpuMsVal">-- ms</span></div>
       <span id="perfCpuSubVal" class="perf-sub">波浪 -- · 浪花 -- · 渲染 --</span>
     </div>
     <div class="perf-row">
-      <div class="perf-row-top"><span>RAM 記憶體</span><span id="perfRamVal">-- MB</span></div>
+      <div class="perf-row-top"><span data-i18n="perfRam">RAM 記憶體</span><span id="perfRamVal">-- MB</span></div>
       <span id="perfRamSubVal" class="perf-sub">JS Heap · 引擎緩衝 -- MB</span>
     </div>
     <div class="perf-row">
@@ -301,13 +343,13 @@ THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLI
     <span class="sponsor-tag">C++ MMORPG R&amp;D · MIT</span>
     <a class="sponsor-gh" href="https://github.com/bgbg108555/NeuralSpecOcean" target="_blank" rel="noopener noreferrer">GitHub ↗</a>
   </div>
-  <p class="sponsor-desc">本系統為開發中 C++ MMORPG 之海洋物理前瞻原型（正移植原生 C++ 版），以 MIT 開源回饋社群。</p>
+  <p class="sponsor-desc" data-i18n="sponsorDesc">本系統為開發中 C++ MMORPG 之海洋物理前瞻原型（正移植原生 C++ 版），以 MIT 開源回饋社群。</p>
   <div class="sponsor-actions">
-    <a class="sponsor-x" href="https://x.com/ShengChoi" target="_blank" rel="noopener noreferrer">追蹤 X 開發日誌 ↗</a>
-    <a class="sponsor-cta" href="https://portaly.cc/AlphaCore/support" target="_blank" rel="noopener noreferrer">贊助 · Sponsor ↗</a>
+    <a class="sponsor-x" data-i18n="sponsorX" href="https://x.com/ShengChoi" target="_blank" rel="noopener noreferrer">追蹤 X 開發日誌 ↗</a>
+    <a class="sponsor-cta" data-i18n="sponsorCta" href="https://portaly.cc/AlphaCore/support" target="_blank" rel="noopener noreferrer">贊助 · Sponsor ↗</a>
   </div>
 </div>
-<button id="restoreGuiBtn" class="restore-gui-pill" type="button" title="顯示控制面板與效能計數器（快捷鍵 H 或 Esc）">顯示介面 (H)</button>
+<button id="restoreGuiBtn" class="restore-gui-pill" type="button" data-i18n="restoreGui" title="顯示控制面板與效能計數器（快捷鍵 H 或 Esc）">顯示介面 (H)</button>
 <script>/**
  * @license
  * Copyright 2010-2024 Three.js Authors
@@ -56179,6 +56221,7 @@ void main(){
   let lastEnvTime = -1e9;
   let lastSunX = NaN, lastSunY = NaN, lastSunZ = NaN, lastNightMix = NaN;
   let envBandIdx = 0;
+  let bandStepInterval = 0.032;
 
   function latchBuildUniforms(currentTime) {
     const sDir = sharedUniforms.sunDirection.value;
@@ -56201,7 +56244,7 @@ void main(){
       Math.abs(curNight - lastNightMix);
     const sunMoved = !Number.isFinite(sunDelta) || sunDelta > 2e-4;
     const needFull = force || skyDomeUniforms.skyEnvReady.value < 0.5;
-    if (!needFull && !sunMoved && Math.abs(currentTime - lastEnvTime) < 0.024) return;
+    if (!needFull && !sunMoved && Math.abs(currentTime - lastEnvTime) < bandStepInterval) return;
     lastEnvTime = currentTime;
     lastSunX = sDir.x;
     lastSunY = sDir.y;
@@ -56279,9 +56322,10 @@ void main(){
     }
   }
 
-  function setQuality({ width = 640, height = 320, steps = 16, doBake = true } = {}) {
+  function setQuality({ width = 640, height = 320, steps = 16, bandInterval = 0.032, doBake = true } = {}) {
     const nw = Math.max(128, width | 0);
     const nh = Math.max(64, height | 0);
+    bandStepInterval = Math.max(0.016, bandInterval);
     buildUniforms.uCloudSteps.value = Math.max(6, Math.min(30, steps | 0));
     if (nw !== envW || nh !== envH) {
       envW = nw;
@@ -56637,13 +56681,14 @@ void main(){
       exposure: { value: 1.04 },
       bloomStrength: { value: 0.145 },
       uNightMix: { value: 0.0 },
-      uGodRaySteps: { value: 8 }
+      uGodRaySteps: { value: 8 },
+      uFastComposite: { value: 0.0 }
     },
     vertexShader: `varying vec2 vUv; void main(){ vUv = uv; gl_Position = vec4(position.xy, 0.0, 1.0); }`,
     fragmentShader: `
 uniform sampler2D tScene, tBloom;
 uniform vec2 texelSize, sunScreenPos;
-uniform float sunVisibleWeight, exposure, bloomStrength, uNightMix;
+uniform float sunVisibleWeight, exposure, bloomStrength, uNightMix, uFastComposite;
 uniform int uGodRaySteps;
 varying vec2 vUv;
 
@@ -56729,22 +56774,25 @@ vec3 linearToSRGB(vec3 c){
 }
 
 void main(){
-  // Subtle Contrast-Adaptive Micro-Sharpening (CAS) in linear space (preserves highlights without halos!)
-  vec3 c  = texture2D(tScene, vUv).rgb;
-  vec3 nN = texture2D(tScene, vUv + vec2(0.0,  texelSize.y)).rgb;
-  vec3 nS = texture2D(tScene, vUv + vec2(0.0, -texelSize.y)).rgb;
-  vec3 nE = texture2D(tScene, vUv + vec2( texelSize.x, 0.0)).rgb;
-  vec3 nW = texture2D(tScene, vUv + vec2(-texelSize.x, 0.0)).rgb;
+  // Subtle Contrast-Adaptive Micro-Sharpening (CAS) in linear space (single-tap fast path on mobile/low tier!)
+  vec3 c = texture2D(tScene, vUv).rgb;
+  vec3 hdr = c;
+  if (uFastComposite < 0.5) {
+    vec3 nN = texture2D(tScene, vUv + vec2(0.0,  texelSize.y)).rgb;
+    vec3 nS = texture2D(tScene, vUv + vec2(0.0, -texelSize.y)).rgb;
+    vec3 nE = texture2D(tScene, vUv + vec2( texelSize.x, 0.0)).rgb;
+    vec3 nW = texture2D(tScene, vUv + vec2(-texelSize.x, 0.0)).rgb;
 
-  vec3 mn = min(c, min(min(nN, nS), min(nE, nW)));
-  vec3 mx = max(c, max(max(nN, nS), max(nE, nW)));
-  float lumaMx = dot(mx, vec3(0.2126, 0.7152, 0.0722));
-  float lumaMn = dot(mn, vec3(0.2126, 0.7152, 0.0722));
-  // Attenuate sharpening on bright specular glints & high-contrast edges so water/foam/wet-rock highlights never shimmer!
-  float hdrPeak = max(mx.r, max(mx.g, mx.b));
-  float glintSuppress = 1.0 / (1.0 + lumaMx * 1.45 + max(0.0, hdrPeak - 0.85) * 3.5);
-  float casAmt = clamp((1.0 - (lumaMx - lumaMn) / max(lumaMx + 0.12, 0.14)) * 0.105 * glintSuppress, 0.0, 0.105);
-  vec3 hdr = max(vec3(0.0), c + (c * 4.0 - (nN + nS + nE + nW)) * casAmt);
+    vec3 mn = min(c, min(min(nN, nS), min(nE, nW)));
+    vec3 mx = max(c, max(max(nN, nS), max(nE, nW)));
+    float lumaMx = dot(mx, vec3(0.2126, 0.7152, 0.0722));
+    float lumaMn = dot(mn, vec3(0.2126, 0.7152, 0.0722));
+    // Attenuate sharpening on bright specular glints & high-contrast edges so water/foam/wet-rock highlights never shimmer!
+    float hdrPeak = max(mx.r, max(mx.g, mx.b));
+    float glintSuppress = 1.0 / (1.0 + lumaMx * 1.45 + max(0.0, hdrPeak - 0.85) * 3.5);
+    float casAmt = clamp((1.0 - (lumaMx - lumaMn) / max(lumaMx + 0.12, 0.14)) * 0.105 * glintSuppress, 0.0, 0.105);
+    hdr = max(vec3(0.0), c + (c * 4.0 - (nN + nS + nE + nW)) * casAmt);
+  }
 
   // Energy-conserving multi-scale HDR Bloom (liquid-diamond water glints + backlit wave crests + cloud rims)
   vec3 bloom = texture2D(tBloom, vUv).rgb;
@@ -56890,11 +56938,12 @@ void main(){
 
   return {
     render,
-    setQuality({ msaaSamples = 0, halfResBloom = false, godRaySteps = 8, bloomStrength = 0.145 } = {}) {
+    setQuality({ msaaSamples = 0, halfResBloom = false, godRaySteps = 8, bloomStrength = 0.145, fastComposite = false } = {}) {
       desiredMsaa = msaaSamples | 0;
       desiredHalfResBloom = !!halfResBloom;
       compositeMat.uniforms.uGodRaySteps.value = Math.max(0, Math.min(16, godRaySteps | 0));
       compositeMat.uniforms.bloomStrength.value = bloomStrength;
+      compositeMat.uniforms.uFastComposite.value = fastComposite ? 1.0 : 0.0;
     },
     getTargets: () => (sceneTarget ? [sceneTarget, ...downTargets, ...upTargets] : []),
     ensureCompileTarget() {
@@ -57188,7 +57237,7 @@ vec2 skewedBreakerWave(float phase, float skew){
 vec2 swashEnvelopeFromPhase(float ph){
   float u = fract((ph - 0.16) / 6.2831853);
   float rise = smoothstep(0.0, 0.19, u);
-  float drain = pow(1.0 - smoothstep(0.17, 0.99, u), 1.78);
+  float drain = pow(1.0 - smoothstep(0.17, 0.99, u), 1.58);
   float level = rise * drain;
   float upPulse = smoothstep(0.0, 0.055, u) * (1.0 - smoothstep(0.065, 0.215, u));
   float backPulse = smoothstep(0.20, 0.52, u) * (1.0 - smoothstep(0.76, 1.0, u));
@@ -57272,17 +57321,17 @@ vec4 evaluateCoastalHydro(vec2 p, float t, float ampScale){
   vec2 sw1b = swashEnvelopeFromPhase(ph1b - cusp1 * 0.7);
   vec2 sw2  = swashEnvelopeFromPhase(ph2 + cusp2);
   float swLevel = 0.235 * sw1a.x * pktEnv1a + 0.165 * sw1b.x * pktEnv1b + 0.135 * sw2.x * pktEnv2;
-  float runupLevel = (-0.022 + swLevel * lobeReach * rockShadow) * amp;
+  float runupLevel = (-0.028 + swLevel * 0.96 * lobeReach * rockShadow) * amp;
 
   float rawSwashDepth = runupLevel - bed;
   float uSwash = 0.48 * sw1a.y + 0.32 * sw1b.y + 0.20 * sw2.y;
   float uprushPos = clamp(uSwash, 0.0, 2.4);
-  float uprushRatio = smoothstep(-0.22, 0.36, uSwash);
+  float uprushRatio = smoothstep(-0.38, 0.36, uSwash);
   float beachFade = smoothstep(-0.24, 0.02, bed);
-  float slopeSheetFactor = mix(1.0, mix(0.42, 1.0, uprushRatio), beachFade);
+  float slopeSheetFactor = mix(1.0, mix(0.54, 1.0, uprushRatio), beachFade);
   float posBlend = smoothstep(-0.055, 0.075, rawSwashDepth);
   float shapedSwashDepth = rawSwashDepth * mix(1.0, slopeSheetFactor, posBlend);
-  float boreNose = 0.028 * amp * uprushPos * smoothstep(-0.025, 0.085, rawSwashDepth) * (1.0 - smoothstep(0.09, 0.42, rawSwashDepth));
+  float boreNose = 0.026 * amp * uprushPos * smoothstep(-0.025, 0.085, rawSwashDepth) * (1.0 - smoothstep(0.09, 0.42, rawSwashDepth));
   float swashEta = bed + shapedSwashDepth + boreNose;
 
   float landBlend = smoothstep(-0.68, 0.04, bed);
@@ -57377,7 +57426,7 @@ function evaluateCoastalSurfaceJS(bathySample, x, z, t, amplitude = 0.68) {
   const swashEnv = ph => {
     const u = fract((ph - 0.16) / (2 * Math.PI));
     const rise = smoothstep(0.0, 0.19, u);
-    const drain = Math.pow(1 - smoothstep(0.17, 0.99, u), 1.78);
+    const drain = Math.pow(1 - smoothstep(0.17, 0.99, u), 1.58);
     const upPulse = smoothstep(0.0, 0.055, u) * (1 - smoothstep(0.065, 0.215, u));
     const backPulse = smoothstep(0.20, 0.52, u) * (1 - smoothstep(0.76, 1.0, u));
     const vel = 2.65 * upPulse - 1.28 * backPulse;
@@ -57425,17 +57474,17 @@ function evaluateCoastalSurfaceJS(bathySample, x, z, t, amplitude = 0.68) {
   const [sw1bL, sw1bV] = swashEnv(ph1b - cusp1 * 0.7);
   const [sw2L, sw2V] = swashEnv(ph2 + cusp2);
   const swLevel = 0.235 * sw1aL * pktEnv1a + 0.165 * sw1bL * pktEnv1b + 0.135 * sw2L * pktEnv2;
-  const runupLevel = (-0.022 + swLevel * lobeReach * rockShadow) * amp;
+  const runupLevel = (-0.028 + swLevel * 0.96 * lobeReach * rockShadow) * amp;
 
   const rawSwashDepth = runupLevel - bed;
   const uSwash = 0.48 * sw1aV + 0.32 * sw1bV + 0.20 * sw2V;
   const uprushPos = clamp(uSwash, 0, 2.4);
-  const uprushRatio = smoothstep(-0.22, 0.36, uSwash);
+  const uprushRatio = smoothstep(-0.38, 0.36, uSwash);
   const beachFade = smoothstep(-0.24, 0.02, bed);
-  const slopeSheetFactor = 1.0 - beachFade * (1.0 - (0.42 + 0.58 * uprushRatio));
+  const slopeSheetFactor = 1.0 - beachFade * (1.0 - (0.54 + 0.46 * uprushRatio));
   const posBlend = smoothstep(-0.055, 0.075, rawSwashDepth);
   const shapedSwashDepth = rawSwashDepth * (1.0 + (slopeSheetFactor - 1.0) * posBlend);
-  const boreNose = 0.028 * amp * uprushPos * smoothstep(-0.025, 0.085, rawSwashDepth) * (1 - smoothstep(0.09, 0.42, rawSwashDepth));
+  const boreNose = 0.026 * amp * uprushPos * smoothstep(-0.025, 0.085, rawSwashDepth) * (1 - smoothstep(0.09, 0.42, rawSwashDepth));
   const swashEta = bed + shapedSwashDepth + boreNose;
 
   const landBlend = smoothstep(-0.68, 0.04, bed);
@@ -57557,27 +57606,27 @@ function evaluateCoastalKinematicsJS(bed, tau, rockProx, rockWake, rayX, rayZ, x
   const surfEta = surfElev > -0.44 * d0 ? surfElev : -0.44 * d0;
 
   const uSw1a = kwFract((ph1a + cusp1 - 0.16) * KW_INV_TAU);
-  const sw1aL = kwSmooth(0.0, 0.19, uSw1a) * Math.pow(1.0 - kwSmooth(0.17, 0.99, uSw1a), 1.78);
+  const sw1aL = kwSmooth(0.0, 0.19, uSw1a) * Math.pow(1.0 - kwSmooth(0.17, 0.99, uSw1a), 1.58);
   const sw1aV = 2.65 * kwSmooth(0.0, 0.055, uSw1a) * (1.0 - kwSmooth(0.065, 0.215, uSw1a))
               - 1.28 * kwSmooth(0.20, 0.52, uSw1a) * (1.0 - kwSmooth(0.76, 1.0, uSw1a));
 
   const uSw1b = kwFract((ph1b - cusp1 * 0.7 - 0.16) * KW_INV_TAU);
-  const sw1bL = kwSmooth(0.0, 0.19, uSw1b) * Math.pow(1.0 - kwSmooth(0.17, 0.99, uSw1b), 1.78);
+  const sw1bL = kwSmooth(0.0, 0.19, uSw1b) * Math.pow(1.0 - kwSmooth(0.17, 0.99, uSw1b), 1.58);
   const sw1bV = 2.65 * kwSmooth(0.0, 0.055, uSw1b) * (1.0 - kwSmooth(0.065, 0.215, uSw1b))
               - 1.28 * kwSmooth(0.20, 0.52, uSw1b) * (1.0 - kwSmooth(0.76, 1.0, uSw1b));
 
   const uSw2 = kwFract((ph2 + cusp2 - 0.16) * KW_INV_TAU);
-  const sw2L = kwSmooth(0.0, 0.19, uSw2) * Math.pow(1.0 - kwSmooth(0.17, 0.99, uSw2), 1.78);
+  const sw2L = kwSmooth(0.0, 0.19, uSw2) * Math.pow(1.0 - kwSmooth(0.17, 0.99, uSw2), 1.58);
   const sw2V = 2.65 * kwSmooth(0.0, 0.055, uSw2) * (1.0 - kwSmooth(0.065, 0.215, uSw2))
              - 1.28 * kwSmooth(0.20, 0.52, uSw2) * (1.0 - kwSmooth(0.76, 1.0, uSw2));
 
   const swLevel = 0.235 * sw1aL * pktEnv1a + 0.165 * sw1bL * pktEnv1b + 0.135 * sw2L * pktEnv2;
-  const rawSwashDepth = (-0.022 + swLevel * lobeReach * rockShadow) * amp - bed;
+  const rawSwashDepth = (-0.028 + swLevel * 0.96 * lobeReach * rockShadow) * amp - bed;
   const uSwash = 0.48 * sw1aV + 0.32 * sw1bV + 0.20 * sw2V;
   const uprushPos = kwClamp(uSwash, 0.0, 2.4);
-  const slopeSheet = 1.0 - beachFade * (1.0 - (0.42 + 0.58 * kwSmooth(-0.22, 0.36, uSwash)));
+  const slopeSheet = 1.0 - beachFade * (1.0 - (0.54 + 0.46 * kwSmooth(-0.38, 0.36, uSwash)));
   const shapedSwashDepth = rawSwashDepth * (1.0 + (slopeSheet - 1.0) * kwSmooth(-0.055, 0.075, rawSwashDepth));
-  const boreNose = 0.028 * amp * uprushPos * kwSmooth(-0.025, 0.085, rawSwashDepth) * (1.0 - kwSmooth(0.09, 0.42, rawSwashDepth));
+  const boreNose = 0.026 * amp * uprushPos * kwSmooth(-0.025, 0.085, rawSwashDepth) * (1.0 - kwSmooth(0.09, 0.42, rawSwashDepth));
   const swashEta = bed + shapedSwashDepth + boreNose;
 
   let eta = surfEta * (1.0 - landBlend) + swashEta * landBlend;
@@ -57650,15 +57699,15 @@ function evaluateCoastalKinematicsJS(bed, tau, rockProx, rockWake, rayX, rayZ, x
   const sEt2 = sEl2 > -0.44 * d0 ? sEl2 : -0.44 * d0;
 
   const uS1aN = kwFract((p1aN + cusp1 - 0.16) * KW_INV_TAU);
-  const sw1aLN = kwSmooth(0.0, 0.19, uS1aN) * Math.pow(1.0 - kwSmooth(0.17, 0.99, uS1aN), 1.78);
+  const sw1aLN = kwSmooth(0.0, 0.19, uS1aN) * Math.pow(1.0 - kwSmooth(0.17, 0.99, uS1aN), 1.58);
   const uS1bN = kwFract((p1bN - cusp1 * 0.7 - 0.16) * KW_INV_TAU);
-  const sw1bLN = kwSmooth(0.0, 0.19, uS1bN) * Math.pow(1.0 - kwSmooth(0.17, 0.99, uS1bN), 1.78);
+  const sw1bLN = kwSmooth(0.0, 0.19, uS1bN) * Math.pow(1.0 - kwSmooth(0.17, 0.99, uS1bN), 1.58);
   const uS2N = kwFract((p2N + cusp2 - 0.16) * KW_INV_TAU);
-  const sw2LN = kwSmooth(0.0, 0.19, uS2N) * Math.pow(1.0 - kwSmooth(0.17, 0.99, uS2N), 1.78);
+  const sw2LN = kwSmooth(0.0, 0.19, uS2N) * Math.pow(1.0 - kwSmooth(0.17, 0.99, uS2N), 1.58);
 
-  const rawSwD2 = (-0.022 + (0.235 * sw1aLN * pktEnv1a + 0.165 * sw1bLN * pktEnv1b + 0.135 * sw2LN * pktEnv2) * lobeReach * rockShadow) * amp - bed;
+  const rawSwD2 = (-0.028 + (0.235 * sw1aLN * pktEnv1a + 0.165 * sw1bLN * pktEnv1b + 0.135 * sw2LN * pktEnv2) * 0.96 * lobeReach * rockShadow) * amp - bed;
   const shSwD2 = rawSwD2 * (1.0 + (slopeSheet - 1.0) * kwSmooth(-0.055, 0.075, rawSwD2));
-  const bNose2 = 0.028 * amp * uprushPos * kwSmooth(-0.025, 0.085, rawSwD2) * (1.0 - kwSmooth(0.09, 0.42, rawSwD2));
+  const bNose2 = 0.026 * amp * uprushPos * kwSmooth(-0.025, 0.085, rawSwD2) * (1.0 - kwSmooth(0.09, 0.42, rawSwD2));
   let eta2 = sEt2 * (1.0 - landBlend) + (bed + shSwD2 + bNose2) * landBlend;
   if (eta2 < minSubBed) eta2 = minSubBed;
   const wCr2 = Math.max(0.0, 0.58 * bN1aX * pktEnv1a + 0.44 * bN1bX * pktEnv1b + 0.36 * bN2X * pktEnv2);
@@ -57741,6 +57790,10 @@ void main(){
   vec2 worldP = vec2(-180.0, -90.0) + vUv * vec2(360.0, 150.0);
   vec4 bathy = sampleBathymetry(worldP);
   float bed = bathy.r;
+  if (initPass < 0.5) {
+    if (bed > 1.05) { gl_FragColor = vec4(0.0); return; }
+    if (bed < -5.3) { gl_FragColor = vec4(1.0, 1.0, 0.0, 0.0); return; }
+  }
   float rockWake = bathy.a;
   vec4 contactData = texture2D(coastalContactMap, vUv);
   float tightRockProx = contactData.a;
@@ -57754,11 +57807,11 @@ void main(){
 
   if (initPass > 0.5) {
     float amp = clamp(amplitude / 0.6, 0.25, 2.0);
-    float lobeReach = 1.0 + 0.11 * sin(worldP.x * 0.135 + 0.6) + 0.055 * cos(worldP.x * 0.24 - 1.05);
-    float grainVar = (texture2D(detailMap, worldP * 0.11).r - 0.5) * 0.06;
-    float maxReach = 0.34 * amp * lobeReach * (1.0 - 0.28 * rockWake) + grainVar;
-    float wetInit = max(1.0 - smoothstep(maxReach - 0.09, maxReach + 0.10, bed), tightRockProx * smoothstep(0.45, -0.05, bed));
-    float filmInit = depth > 0.002 ? 1.0 : 0.60 * (1.0 - smoothstep(-0.02, maxReach * 0.82, bed));
+    float lobeReach = 1.0 + 0.14 * sin(worldP.x * 0.125 + 0.6) + 0.085 * cos(worldP.x * 0.26 - 1.05);
+    float grainVar = (texture2D(detailMap, worldP * 0.11).r - 0.5) * 0.055;
+    float maxReach = 0.30 * amp * lobeReach * (1.0 - 0.28 * rockWake) + grainVar;
+    float wetInit = max(1.0 - smoothstep(maxReach - 0.11, maxReach + 0.13, bed), tightRockProx * smoothstep(0.45, -0.05, bed));
+    float filmInit = depth > 0.002 ? 1.0 : 0.52 * (1.0 - smoothstep(-0.03, maxReach * 0.76, bed));
     vec4 impInit = texture2D(impactFoamMap, vUv);
     gl_FragColor = vec4(wetInit, filmInit, clamp(breaker * 0.44 + (impInit.r + impInit.g + impInit.a * 0.35) * 0.65, 0.0, 1.0), 0.0);
     return;
@@ -57782,11 +57835,19 @@ void main(){
     float tangSign = dot(vel, tangDir) >= 0.0 ? 1.0 : -1.0;
     vel += rockOutN * (intoWall * 0.92 * tightRockProx) + tangDir * (tangSign * intoWall * 0.58 * tightRockProx);
   }
-  vec2 backWorld = worldP - vel * stepDt;
-  vec2 backUv = clamp((backWorld - vec2(-180.0, -90.0)) / vec2(360.0, 150.0), 0.0, 1.0);
-
+  vec2 texel = 1.0 / vec2(512.0, 256.0);
   vec4 here = texture2D(prevState, vUv);
+  float submerged = smoothstep(-0.003, 0.014, depth);
+  // Viscous lubrication scaling: bulk water (submerged=1) advects at 100% wave speed; thin exposed wet-sand film drifts gently seaward instead of pulling 0 from dry uphill sand!
+  vec2 effVel = vel * mix(0.08 * here.g, 1.0, submerged);
+  vec2 backWorld = worldP - effVel * stepDt;
+  vec2 backUv = clamp((backWorld - vec2(-180.0, -90.0)) / vec2(360.0, 150.0), 0.0, 1.0);
   vec4 adv = texture2D(prevState, backUv);
+  vec4 nE = texture2D(prevState, clamp(vUv + vec2(texel.x, 0.0), 0.0, 1.0));
+  vec4 nW = texture2D(prevState, clamp(vUv - vec2(texel.x, 0.0), 0.0, 1.0));
+  vec4 nN = texture2D(prevState, clamp(vUv + vec2(0.0, texel.y), 0.0, 1.0));
+  vec4 nS = texture2D(prevState, clamp(vUv - vec2(0.0, texel.y), 0.0, 1.0));
+  vec4 avgHere = 0.25 * (nE + nW + nN + nS);
 
   // Spatial sand porosity variation so drainage & drying form organic grain-scale fingers instead of uniform bands
   float porosity = texture2D(detailMap, worldP * 0.14 + vec2(1.7, 3.1)).r;
@@ -57795,18 +57856,18 @@ void main(){
   vec4 impactData = texture2D(impactFoamMap, vUv);
   float rockRunoff = impactData.a * smoothstep(0.06, 0.52, max(tightRockProx, bathy.b * 0.72));
 
-  // 1. Wet sand & basal rock-collar saturation (R): saturates on wave contact or PINN rock wash runoff
-  float submerged = smoothstep(-0.003, 0.012, depth);
-  float dryTau = mix(13.5, 22.0, porosity);
-  float wet = mix(here.r * exp(-stepDt / dryTau), 1.0, 1.0 - pow(1.0 - submerged, 1.0 + stepDt * 24.0));
-  wet = max(wet, max(submerged, clamp(rockRunoff * 0.90, 0.0, 1.0)));
+  // 1. Wet sand & basal rock-collar saturation (R): C^2 B-Spline handles spatial smoothness without uphill Jacobi creep!
+  float capillaryReach = smoothstep(-0.014, 0.012, depth + (porosity - 0.5) * 0.012);
+  float dryTau = mix(14.0, 22.5, porosity);
+  float wetDiffused = mix(here.r, avgHere.r, clamp(stepDt * 0.45, 0.0, 0.045));
+  float wet = mix(wetDiffused * exp(-stepDt / dryTau), 1.0, 1.0 - pow(1.0 - capillaryReach, 1.0 + stepDt * 22.0));
+  wet = max(wet, max(capillaryReach * 0.96, clamp(rockRunoff * 0.90, 0.0, 1.0)));
 
-  // 2. Thin mirror-gloss receding water film (G): lingers ~3.0-5.4s behind retreating water tongue & rock drainage!
-  float filmTau = mix(5.4, 2.7, clamp(bed / 0.44, 0.0, 1.0)) * (0.80 + 0.42 * porosity);
+  // 2. Thin mirror-gloss receding water film (G): top-down gravity drainage (no uphill diffusion plateau -> never blinks out!)
+  float filmTau = mix(6.8, 3.8, clamp(bed / 0.44, 0.0, 1.0)) * (0.80 + 0.42 * porosity);
   float film = max(max(submerged, clamp(rockRunoff * 0.76, 0.0, 0.88)), here.g * exp(-stepDt / filmTau));
 
   // 3. Patchy turbulent foam advection + isotropic eddy diffusion + continuous rock collar boil (B):
-  vec2 texel = 1.0 / vec2(512.0, 256.0);
   float lapFoam = 0.25 * (
     texture2D(prevState, clamp(backUv + vec2(texel.x * 1.6, 0.0), 0.0, 1.0)).b +
     texture2D(prevState, clamp(backUv - vec2(texel.x * 1.6, 0.0), 0.0, 1.0)).b +
@@ -57826,19 +57887,23 @@ void main(){
                        * smoothstep(-0.04, 0.12, depth);
   float wakeShear      = rockWake * max(adv.b, 0.35 * waveActivity) * waveActivity * 0.65 * patchy * smoothstep(0.01, 0.18, depth);
 
-  // Softened, patchy breaker & swash injection (zero uniform band wall!)
+  // Softened, patchy breaker & swash injection + persistent viscous-film foam retention during recession!
   float softBreakerSrc = breaker * (0.28 + 1.15 * patchy * patchy);
-  float softSwashSrc   = swashLip * (0.24 + 0.92 * patchy * patchy);
+  float uprushSheetSrc = smoothstep(0.04, 0.62, crossVel) * smoothstep(-0.004, 0.085, depth) * smoothstep(-0.45, 0.36, bed) * 0.54;
+  float softSwashSrc   = (swashLip * smoothstep(-0.004, 0.042, depth) + uprushSheetSrc) * (0.26 + 0.90 * patchy * patchy);
   float foamSrc = (softBreakerSrc + softSwashSrc + dynRockImpact * 1.85 + liveRockCollar * 1.32 + wakeShear) * foamBoost;
-  float foamTau = mix(mix(0.65, 1.55, film), 2.55 * (1.0 - 0.36 * boilScour), submerged);
-  float advBlended = mix(adv.b, lapFoam, 0.34);
-  float baseFoam = mix(here.b, advBlended, mix(0.28, 0.92, max(submerged, film * 0.58))) * exp(-stepDt / max(0.25, foamTau));
-  float foamAdv = clamp(baseFoam + foamSrc * stepDt * 1.58, 0.0, 1.0);
+  float foamTau = mix(mix(1.45, 4.15, film), 3.35 * (1.0 - 0.34 * boilScour), submerged);
+  float advBlended = mix(adv.b, lapFoam, 0.32);
+  float baseFoam = mix(here.b, advBlended, mix(0.14 * film, 0.90, submerged)) * exp(-stepDt / max(0.25, foamTau));
+  float foamAdv = clamp(baseFoam + foamSrc * stepDt * 1.62, 0.0, 1.0);
 
-  // 4. Scalloped high-water strandline bubble residue (A): deposited along curved lobe turnaround arcs!
-  float turnaround = max(0.0, here.g - submerged) * smoothstep(0.01, 0.38, bed) * (0.32 + 0.98 * patchy);
-  float washedClean = 1.0 - 0.88 * submerged;
-  float strand = clamp(here.a * exp(-stepDt / 6.2) * washedClean + turnaround * 2.35 * foamBoost, 0.0, 1.0);
+  // 4. Delicate arcuate turnaround strandline bubble residue (A): lingers gracefully on active receding film!
+  float meniscusRetreat = max(0.0, here.g - submerged) * (1.0 - smoothstep(0.020, 0.075, max(depth, 0.0)))
+                        * smoothstep(-0.04, 0.38, bed) * (0.28 + 0.88 * patchy);
+  float washedClean = 1.0 - smoothstep(0.020, 0.068, depth);
+  float strandDiff = mix(here.a, avgHere.a, clamp(stepDt * 0.55, 0.0, 0.055));
+  float strand = clamp(strandDiff * exp(-stepDt / 4.20) * washedClean + meniscusRetreat * stepDt * 3.8 * foamBoost, 0.0, 0.92)
+               * smoothstep(0.04, 0.32, film) * smoothstep(0.25, 0.62, wet);
 
   gl_FragColor = vec4(wet, film, foamAdv, strand);
 }`
@@ -57951,11 +58016,39 @@ const swashStateGLSL = `
 #ifndef SWASH_STATE_GLSL
 #define SWASH_STATE_GLSL
 uniform sampler2D swashStateMap;
+// Sigg & Hadwiger (2005) 4-tap hardware-bilinear C^2 Cubic B-Spline filter in the coastal swash/surf belt,
+// with 1-tap hardware LinearFilter fast-path in deep offshore water (p.y <= -18m) where beach sand is submerged!
 vec4 sampleSwashState(vec2 p){
   vec2 uv = (p - vec2(-180.0, -90.0)) / vec2(360.0, 150.0);
   float inside = smoothstep(-180.0, -166.0, p.x) * (1.0 - smoothstep(166.0, 180.0, p.x))
                * smoothstep(-90.0, -76.0, p.y) * (1.0 - smoothstep(52.0, 60.0, p.y));
-  return texture2D(swashStateMap, clamp(uv, 0.0, 1.0)) * inside;
+  if (inside <= 1e-4) return vec4(0.0);
+  const vec2 texSize = vec2(512.0, 256.0);
+  const vec2 invTex  = 1.0 / texSize;
+  vec2 clampedUv = clamp(uv, invTex * 0.5, vec2(1.0) - invTex * 0.5);
+  if (p.y <= 4.0 || p.y >= 32.0) {
+    return texture2D(swashStateMap, clampedUv) * inside;
+  }
+  vec2 tc = clampedUv * texSize - 0.5;
+  vec2 base = floor(tc);
+  vec2 f = tc - base;
+  vec2 f2 = f * f;
+  vec2 f3 = f2 * f;
+  vec2 omf = 1.0 - f;
+  vec2 w0 = (omf * omf * omf) * (1.0 / 6.0);
+  vec2 w1 = (3.0 * f3 - 6.0 * f2 + 4.0) * (1.0 / 6.0);
+  vec2 w2 = (-3.0 * f3 + 3.0 * f2 + 3.0 * f + 1.0) * (1.0 / 6.0);
+  vec2 w3 = f3 * (1.0 / 6.0);
+  vec2 g0 = w0 + w1;
+  vec2 g1 = w2 + w3;
+  vec2 h0 = clamp((base - 0.5 + w1 / max(g0, vec2(1e-5))) * invTex, invTex * 0.5, vec2(1.0) - invTex * 0.5);
+  vec2 h1 = clamp((base + 1.5 + w3 / max(g1, vec2(1e-5))) * invTex, invTex * 0.5, vec2(1.0) - invTex * 0.5);
+  vec4 s00 = texture2D(swashStateMap, vec2(h0.x, h0.y));
+  vec4 s10 = texture2D(swashStateMap, vec2(h1.x, h0.y));
+  vec4 s01 = texture2D(swashStateMap, vec2(h0.x, h1.y));
+  vec4 s11 = texture2D(swashStateMap, vec2(h1.x, h1.y));
+  vec4 bicubic = (s00 * g0.x + s10 * g1.x) * g0.y + (s01 * g0.x + s11 * g1.x) * g1.y;
+  return bicubic * inside;
 }
 #endif
 `;
@@ -58664,7 +58757,8 @@ function createSpectralWaves(THREE, {
   seed = 1234,
   band = 'full',
   geometrySpacing = 0,
-  linearFilter = false
+  linearFilter = false,
+  pingPong = false
 } = {}) {
   if (size < 2 || (size & (size - 1))) throw Error('size must be a power of two');
   if (!['full', 'long', 'short', 'chop'].includes(band)) throw Error('unknown band');
@@ -58685,7 +58779,10 @@ function createSpectralWaves(THREE, {
   // Packed Hermitian 2-in-1 complex IFFT buffers: Z = dx + i*dz solves BOTH spatial axes in 1 IFFT instead of 2!
   const re = new Float32Array(N), im = new Float32Array(N);
   const dxr = new Float32Array(N), dxi = new Float32Array(N);
-  const pixels = new Float32Array(N * 4);
+  const pixelsA = new Float32Array(N * 4);
+  const pixelsB = pingPong ? new Float32Array(N * 4) : null;
+  let curPixels = pixelsA;
+  let prevPixels = pingPong ? pixelsB : pixelsA;
 
   let chopSlopeVarSum = 0;
   let dispJacobianVarSum = 0;
@@ -58776,6 +58873,40 @@ function createSpectralWaves(THREE, {
     }
   }
 
+  // Compact active Hermitian conjugate-pair & active-row tables:
+  // Skips 86-97% of zero-amplitude spectral cells (Math.sin/cos) & 58-80% of all-zero 1D row IFFTs with 0.0 bit loss!
+  const tmpPairI = [], tmpPairJ = [], tmpOmega = [], tmpSumRe = [], tmpSumIm = [], tmpDifRe = [], tmpDifIm = [];
+  const rowUsedFlags = new Uint8Array(n);
+  for (let i = 0; i < N; i++) {
+    const j = conjIdx[i];
+    if (i > j) continue;
+    const r0i = re0[i], i0i = im0[i], r0j = re0[j], i0j = im0[j];
+    if (r0i === 0 && i0i === 0 && r0j === 0 && i0j === 0) continue;
+    tmpPairI.push(i);
+    tmpPairJ.push(j);
+    tmpOmega.push(omega[i]);
+    tmpSumRe.push(r0i + r0j);
+    tmpSumIm.push(i0i + i0j);
+    tmpDifRe.push(r0i - r0j);
+    tmpDifIm.push(i0i - i0j);
+    rowUsedFlags[(i / n) | 0] = 1;
+    rowUsedFlags[(j / n) | 0] = 1;
+  }
+  const pairCount = tmpPairI.length;
+  const pairI = new Int32Array(tmpPairI);
+  const pairJ = new Int32Array(tmpPairJ);
+  const pairOmega = new Float32Array(tmpOmega);
+  const pairSumRe = new Float32Array(tmpSumRe);
+  const pairSumIm = new Float32Array(tmpSumIm);
+  const pairDifRe = new Float32Array(tmpDifRe);
+  const pairDifIm = new Float32Array(tmpDifIm);
+  const tmpActiveRowOffsets = [];
+  for (let y = 0; y < n; y++) {
+    if (rowUsedFlags[y]) tmpActiveRowOffsets.push(y * n);
+  }
+  const activeRowOffsets = new Int32Array(tmpActiveRowOffsets);
+  const activeRowCount = activeRowOffsets.length;
+
   // Precompute bit-reversal swap pairs & radix-2 inverse FFT twiddle tables ONCE at startup (~4x faster CPU FFT!)
   const swapA = [], swapB = [];
   for (let i = 1, j = 0; i < n; i++) {
@@ -58840,11 +58971,19 @@ function createSpectralWaves(THREE, {
   }
 
   const filterMode = linearFilter ? THREE.LinearFilter : THREE.NearestFilter;
-  const texture = new THREE.DataTexture(pixels, n, n, THREE.RGBAFormat, THREE.FloatType);
-  texture.wrapS = texture.wrapT = THREE.RepeatWrapping;
-  texture.minFilter = texture.magFilter = filterMode;
-  texture.generateMipmaps = false;
-  texture.needsUpdate = true;
+  function makeWaveTexture(floatBuf) {
+    // Native RGBA32F FloatType maps directly to DXGI_FORMAT_R32G32B32A32_FLOAT / Metal RGBA32Float via zero-conversion AVX memcpy!
+    const tex = new THREE.DataTexture(floatBuf, n, n, THREE.RGBAFormat, THREE.FloatType);
+    tex.wrapS = tex.wrapT = THREE.RepeatWrapping;
+    tex.minFilter = tex.magFilter = filterMode;
+    tex.generateMipmaps = false;
+    tex.needsUpdate = true;
+    return tex;
+  }
+  const texA = makeWaveTexture(pixelsA);
+  const texB = pingPong ? makeWaveTexture(pixelsB) : null;
+  let curTex = texA;
+  let prevTex = pingPong ? texB : texA;
 
   const fixedHeightBound = 2 * re0.reduce((acc, r, i) => acc + Math.hypot(r, im0[i]), 0);
   // Time-invariant Parseval 3.1-sigma spectral gradient bound: eliminates frame-to-frame chop & midScale jumps!
@@ -58852,35 +58991,45 @@ function createSpectralWaves(THREE, {
   let lastMaxImaginary = 0, lastSpectrum = null, maxGradient = 0, maxHeight = 0;
   const invDs = (N * n) / length;
 
-  function flushGpuTexture() {
-    texture.needsUpdate = true;
-  }
-
   function update(t) {
-    for (let i = 0; i < N; i++) {
-      const j = conjIdx[i];
-      const w = omega[i] * t;
+    dxr.fill(0);
+    dxi.fill(0);
+    if (!isChop) {
+      re.fill(0);
+      im.fill(0);
+    }
+    for (let p = 0; p < pairCount; p++) {
+      const i = pairI[p], j = pairJ[p];
+      const w = pairOmega[p] * t;
       const c = Math.cos(w), s = Math.sin(w);
-      const r0i = re0[i], i0i = im0[i], r0j = re0[j], i0j = im0[j];
-      const r = (r0i + r0j) * c - (i0i + i0j) * s;
-      const q = (r0i - r0j) * s + (i0i - i0j) * c;
-      const fx = fxArr[i], fz = fzArr[i];
+      const r = pairSumRe[p] * c - pairSumIm[p] * s;
+      const q = pairDifRe[p] * s + pairDifIm[p] * c;
+      const fxi = fxArr[i], fzi = fzArr[i];
       if (!isChop) {
         re[i] = r;
         im[i] = q;
       }
       // Hermitian 2-in-1 complex packing: Z_hat = D_x_hat + i * D_z_hat -> Re(IFFT(Z)) = dx, Im(IFFT(Z)) = dz!
-      dxr[i] = -q * fx - r * fz;
-      dxi[i] =  r * fx - q * fz;
+      dxr[i] = -q * fxi - r * fzi;
+      dxi[i] =  r * fxi - q * fzi;
+      if (j !== i) {
+        const fxj = fxArr[j], fzj = fzArr[j];
+        if (!isChop) {
+          re[j] = r;
+          im[j] = -q;
+        }
+        dxr[j] =  q * fxj - r * fzj;
+        dxi[j] =  r * fxj + q * fzj;
+      }
     }
     if (n <= 8 && !isChop) lastSpectrum = { re: re.slice(), im: im.slice() };
 
     if (isChop) {
-      for (let y = 0; y < n; y++) ifft1D(dxr, dxi, y * n, 1);
+      for (let rIdx = 0; rIdx < activeRowCount; rIdx++) ifft1D(dxr, dxi, activeRowOffsets[rIdx], 1);
       for (let x = 0; x < n; x++) ifft1D(dxr, dxi, x, n);
     } else {
-      for (let y = 0; y < n; y++) {
-        const row = y * n;
+      for (let rIdx = 0; rIdx < activeRowCount; rIdx++) {
+        const row = activeRowOffsets[rIdx];
         ifft1D(re, im, row, 1);
         ifft1D(dxr, dxi, row, 1);
       }
@@ -58894,6 +59043,7 @@ function createSpectralWaves(THREE, {
     maxHeight = 0;
     let xx = 0, xz = 0, zx = 0, zz = 0;
     const mask = n - 1;
+    const outPixels = curPixels;
 
     if (isChop) {
       for (let y = 0; y < n; y++) {
@@ -58908,13 +59058,13 @@ function createSpectralWaves(THREE, {
           const conv = -((dxr[ix] - dxr[i]) + (dxi[iz] - dxi[i])) * N;
           const crestSharp = Math.max(0.0, Math.min(1.0, conv * 0.85));
           const pOff = i * 4;
-          pixels[pOff] = 0.0;
-          pixels[pOff + 1] = sxVal;
-          pixels[pOff + 2] = szVal;
-          pixels[pOff + 3] = crestSharp;
+          outPixels[pOff] = 0.0;
+          outPixels[pOff + 1] = sxVal;
+          outPixels[pOff + 2] = szVal;
+          outPixels[pOff + 3] = crestSharp;
         }
       }
-      flushGpuTexture();
+      curTex.needsUpdate = true;
       return;
     }
 
@@ -58950,19 +59100,23 @@ function createSpectralWaves(THREE, {
         // Pack normalized crest orbital convergence into .a so distant ocean fragments have real per-pixel FFT whitecap energy!
         const crestConv = Math.max(0.0, Math.min(1.0, -(dxx + dzz) * 0.55));
         const pOff = i * 4;
-        pixels[pOff] = hVal;
-        pixels[pOff + 1] = dxVal;
-        pixels[pOff + 2] = dzVal;
-        pixels[pOff + 3] = crestConv;
+        outPixels[pOff] = hVal;
+        outPixels[pOff + 1] = dxVal;
+        outPixels[pOff + 2] = dzVal;
+        outPixels[pOff + 3] = crestConv;
       }
     }
     maxGradient = Math.hypot(xx, xz, zx, zz);
-    flushGpuTexture();
+    curTex.needsUpdate = true;
   }
 
   update(0);
+  if (pingPong) {
+    prevPixels.set(curPixels);
+    prevTex.needsUpdate = true;
+  }
 
-  function sampleHeight(x, z, channel = 0, source = pixels) {
+  function sampleHeight(x, z, channel = 0, source = curPixels) {
     const fx = (((x / length) % 1 + 1) % 1) * n - 0.5;
     const fz = (((z / length) % 1 + 1) % 1) * n - 0.5;
     const x0 = Math.floor(fx), z0 = Math.floor(fz);
@@ -58978,18 +59132,39 @@ function createSpectralWaves(THREE, {
 
   return {
     couplingModes: Array.from(re0, (r, i) => ({ re: r, im: im0[i], kx: kx[i], kz: kz[i], omega: omega[i] })),
-    texture,
+    get texture() {
+      return curTex;
+    },
+    get previousTexture() {
+      return prevTex;
+    },
+    get previousPixels() {
+      return prevPixels;
+    },
+    advanceBracket() {
+      if (!pingPong) return;
+      const tmpT = curTex; curTex = prevTex; prevTex = tmpT;
+      const tmpP = curPixels; curPixels = prevPixels; prevPixels = tmpP;
+    },
+    syncPrevious() {
+      if (!pingPong) return;
+      prevPixels.set(curPixels);
+      prevTex.needsUpdate = true;
+    },
     update,
     sampleHeight,
     setLinearFilter(enabled) {
       const fMode = enabled ? THREE.LinearFilter : THREE.NearestFilter;
-      if (texture.minFilter !== fMode) {
-        texture.minFilter = texture.magFilter = fMode;
-        texture.needsUpdate = true;
+      for (const tex of (texB ? [texA, texB] : [texA])) {
+        if (tex.minFilter !== fMode) {
+          tex.minFilter = tex.magFilter = fMode;
+          tex.needsUpdate = true;
+        }
       }
     },
     dispose() {
-      texture.dispose();
+      texA.dispose();
+      if (texB) texB.dispose();
     },
     get directionalPower() {
       return directionalPower.slice();
@@ -59122,70 +59297,137 @@ const mediumWaveGLSL = `vec3 mediumWave(vec2 p,float t){
 }`;
 
 /** Bounded visual foam approximation: source from compression, semi-Lagrangian drift, exponential decay. */
-function createFoamField(THREE,{size=64,length=240,lifetime=3}={}){
- const a=new Float32Array(size*size),b=new Float32Array(size*size),pixels=new Uint8Array(size*size*4),stagingPixels=new Uint8Array(size*size*4);let current=a,next=b;let labels=new Float32Array(size*size*2),nextLabels=new Float32Array(size*size*2);const labelPixels=new Float32Array(size*size*4),stagingLabelPixels=new Float32Array(size*size*4);const previousPixels=new Float32Array(size*size*4);
- // Lightweight 1x1 stub for legacy API compatibility (Offshore.js unpacks both current & previous offsets from materialTexture.xyzw!)
- const previousMaterialTexture=new THREE.DataTexture(new Float32Array(4),1,1,THREE.RGBAFormat,THREE.FloatType);previousMaterialTexture.needsUpdate=true;
- const materialTexture=new THREE.DataTexture(labelPixels,size,size,THREE.RGBAFormat,THREE.FloatType);materialTexture.wrapS=materialTexture.wrapT=THREE.RepeatWrapping;materialTexture.minFilter=materialTexture.magFilter=THREE.NearestFilter;materialTexture.generateMipmaps=false;materialTexture.needsUpdate=true;
- const texture=new THREE.DataTexture(pixels,size,size,THREE.RGBAFormat,THREE.UnsignedByteType);texture.wrapS=texture.wrapT=THREE.RepeatWrapping;texture.minFilter=texture.magFilter=THREE.LinearFilter;texture.generateMipmaps=false;texture.needsUpdate=true;
- const mask=size-1;
- function labelAt(x,z,c){return labels[((z&mask)*size+(x&mask))*2+c]}
- function at(x,z){return current[(z&mask)*size+(x&mask)]}
- function uploadTex(){
-  materialTexture.needsUpdate=true;texture.needsUpdate=true;
- }
- function updateRows(dt,source,flow,jStart,jEnd){
-  const d=size/length,decay=Math.exp(-dt/lifetime),cellLen=length/size;
-  for(let j=jStart;j<jEnd;j++){
-   const wz=(j+.5)*cellLen,rowOff=j*size;
-   for(let i=0;i<size;i++){
-    const wx=(i+.5)*cellLen,r=source(wx,wz,i,j);
-    const isObj=typeof r==='object'&&r!==null;
-    const strength=isObj?r[0]:r,vx=isObj?r[1]:flow[0],vz=isObj?r[2]:flow[1];
-    const x=i-vx*dt*d,z=j-vz*dt*d,x0=Math.floor(x),z0=Math.floor(z),u=x-x0,v=z-z0;
-    const f=(at(x0,z0)*(1-u)+at(x0+1,z0)*u)*(1-v)+(at(x0,z0+1)*(1-u)+at(x0+1,z0+1)*u)*v;
-    const idx=rowOff+i,lOff=idx*2,pOff=idx*4;
-    for(let c=0;c<2;c++){
-     const adv=(labelAt(x0,z0,c)*(1-u)+labelAt(x0+1,z0,c)*u)*(1-v)+(labelAt(x0,z0+1,c)*(1-u)+labelAt(x0+1,z0+1,c)*u)*v;
-     const offset=adv-(c===0?vx:vz)*dt;
-     nextLabels[lOff+c]=offset;
-     stagingLabelPixels[pOff+c]=offset;
-     stagingLabelPixels[pOff+c+2]=previousPixels[pOff+c];
+function createFoamField(THREE, { size = 64, length = 240, lifetime = 3 } = {}) {
+  const a = new Float32Array(size * size), b = new Float32Array(size * size);
+  let activePixels = new Uint8Array(size * size * 4), stagingPixels = new Uint8Array(size * size * 4);
+  let current = a, next = b;
+  let labels = new Float32Array(size * size * 2), nextLabels = new Float32Array(size * size * 2);
+  let activeLabelPixels = new Float32Array(size * size * 4), stagingLabelPixels = new Float32Array(size * size * 4);
+
+  // Lightweight 1x1 stub for legacy API compatibility (Offshore.js unpacks both current & previous offsets from materialTexture.xyzw!)
+  const previousMaterialTexture = new THREE.DataTexture(new Float32Array(4), 1, 1, THREE.RGBAFormat, THREE.FloatType);
+  previousMaterialTexture.needsUpdate = true;
+
+  const materialTexture = new THREE.DataTexture(activeLabelPixels, size, size, THREE.RGBAFormat, THREE.FloatType);
+  materialTexture.wrapS = materialTexture.wrapT = THREE.RepeatWrapping;
+  materialTexture.minFilter = materialTexture.magFilter = THREE.NearestFilter;
+  materialTexture.generateMipmaps = false;
+  materialTexture.needsUpdate = true;
+
+  const texture = new THREE.DataTexture(activePixels, size, size, THREE.RGBAFormat, THREE.UnsignedByteType);
+  texture.wrapS = texture.wrapT = THREE.RepeatWrapping;
+  texture.minFilter = texture.magFilter = THREE.LinearFilter;
+  texture.generateMipmaps = false;
+  texture.needsUpdate = true;
+
+  const mask = size - 1;
+
+  function uploadTex(doMat = true, doDen = true) {
+    if (doMat) materialTexture.needsUpdate = true;
+    if (doDen) texture.needsUpdate = true;
+  }
+
+  function updateRows(dt, source, flow, jStart, jEnd) {
+    const d = size / length, decay = Math.exp(-dt / lifetime), cellLen = length / size;
+    for (let j = jStart; j < jEnd; j++) {
+      const wz = (j + 0.5) * cellLen, rowOff = j * size;
+      for (let i = 0; i < size; i++) {
+        const wx = (i + 0.5) * cellLen, r = source(wx, wz, i, j);
+        const isObj = typeof r === 'object' && r !== null;
+        const strength = isObj ? r[0] : r, vx = isObj ? r[1] : flow[0], vz = isObj ? r[2] : flow[1];
+        const x = i - vx * dt * d, z = j - vz * dt * d;
+        const x0 = Math.floor(x), z0 = Math.floor(z), u = x - x0, v = z - z0, omu = 1 - u, omv = 1 - v;
+        const ix0 = x0 & mask, ix1 = (x0 + 1) & mask, iz0 = (z0 & mask) * size, iz1 = ((z0 + 1) & mask) * size;
+        const i00 = iz0 + ix0, i10 = iz0 + ix1, i01 = iz1 + ix0, i11 = iz1 + ix1;
+        const w00 = omu * omv, w10 = u * omv, w01 = omu * v, w11 = u * v;
+        const f = current[i00] * w00 + current[i10] * w10 + current[i01] * w01 + current[i11] * w11;
+        const idx = rowOff + i, lOff = idx * 2, pOff = idx * 4;
+        const l00 = i00 * 2, l10 = i10 * 2, l01 = i01 * 2, l11 = i11 * 2;
+        const offX = (labels[l00] * w00 + labels[l10] * w10 + labels[l01] * w01 + labels[l11] * w11) - vx * dt;
+        const offZ = (labels[l00 + 1] * w00 + labels[l10 + 1] * w10 + labels[l01 + 1] * w01 + labels[l11 + 1] * w11) - vz * dt;
+        nextLabels[lOff] = offX;
+        nextLabels[lOff + 1] = offZ;
+        stagingLabelPixels[pOff] = offX;
+        stagingLabelPixels[pOff + 1] = offZ;
+        stagingLabelPixels[pOff + 2] = activeLabelPixels[pOff];
+        stagingLabelPixels[pOff + 3] = activeLabelPixels[pOff + 1];
+        const s = strength > 0 ? strength : 0;
+        const value = Math.min(1, Math.max(0, f * decay + s * dt));
+        next[idx] = value;
+        const q = (value * 255 + 0.5) | 0;
+        stagingPixels[pOff] = q;
+        stagingPixels[pOff + 1] = q;
+        stagingPixels[pOff + 2] = q;
+        stagingPixels[pOff + 3] = 255;
+      }
     }
-    const s=strength>0?strength:0;
-    const value=Math.min(1,Math.max(0,f*decay+s*dt));
-    next[idx]=value;
-    const q=(value*255+0.5)|0;
-    stagingPixels[pOff]=q;stagingPixels[pOff+1]=q;stagingPixels[pOff+2]=q;stagingPixels[pOff+3]=255;
-   }
   }
- }
- function commitStaging(){
-  labelPixels.set(stagingLabelPixels);
-  pixels.set(stagingPixels);
-  uploadTex();
- }
- function update(dt,source,flow=[.65,.18]){
-  previousPixels.set(labelPixels);
-  dt=Math.max(0,Math.min(.2,dt));
-  updateRows(dt,source,flow,0,size);
-  [current,next]=[next,current];[labels,nextLabels]=[nextLabels,labels];
-  commitStaging();
- }
- function updateSlice(dt,source,sliceIdx,totalSlices=4,flow=[.65,.18]){
-  dt=Math.max(0,Math.min(.2,dt));
-  if(sliceIdx===0)previousPixels.set(labelPixels);
-  const rowsPer=size/totalSlices;
-  const j0=Math.round(sliceIdx*rowsPer),j1=sliceIdx===totalSlices-1?size:Math.round((sliceIdx+1)*rowsPer);
-  updateRows(dt,source,flow,j0,j1);
-  if(sliceIdx===totalSlices-1){
-   [current,next]=[next,current];[labels,nextLabels]=[nextLabels,labels];
-   commitStaging();
-   return true;
+
+  function commitStaging() {
+    const tmpL = activeLabelPixels; activeLabelPixels = stagingLabelPixels; stagingLabelPixels = tmpL;
+    const tmpP = activePixels; activePixels = stagingPixels; stagingPixels = tmpP;
+    materialTexture.image.data = activeLabelPixels;
+    texture.image.data = activePixels;
+    uploadTex(true, true);
   }
-  return false;
- }
- return{texture,materialTexture,previousMaterialTexture,syncMaterialHistory(){for(let k=0;k<size*size;k++){labelPixels[k*4+2]=labelPixels[k*4];labelPixels[k*4+3]=labelPixels[k*4+1];}stagingLabelPixels.set(labelPixels);materialTexture.needsUpdate=true;previousPixels.set(labelPixels)},update,updateSlice,get materialOffsets(){return labels},reset(){previousPixels.fill(0);labels.fill(0);nextLabels.fill(0);labelPixels.fill(0);stagingLabelPixels.fill(0);materialTexture.needsUpdate=true;current.fill(0);next.fill(0);pixels.fill(0);stagingPixels.fill(0);texture.needsUpdate=true},get values(){return current},dispose(){texture.dispose();materialTexture.dispose();previousMaterialTexture.dispose()}};
+
+  function update(dt, source, flow = [0.65, 0.18]) {
+    dt = Math.max(0, Math.min(0.2, dt));
+    updateRows(dt, source, flow, 0, size);
+    [current, next] = [next, current];
+    [labels, nextLabels] = [nextLabels, labels];
+    commitStaging();
+  }
+
+  function updateSlice(dt, source, sliceIdx, totalSlices = 4, flow = [0.65, 0.18]) {
+    dt = Math.max(0, Math.min(0.2, dt));
+    const rowsPer = size / totalSlices;
+    const j0 = Math.round(sliceIdx * rowsPer), j1 = sliceIdx === totalSlices - 1 ? size : Math.round((sliceIdx + 1) * rowsPer);
+    updateRows(dt, source, flow, j0, j1);
+    if (sliceIdx === totalSlices - 1) {
+      [current, next] = [next, current];
+      [labels, nextLabels] = [nextLabels, labels];
+      commitStaging();
+      return true;
+    }
+    return false;
+  }
+
+  return {
+    texture,
+    materialTexture,
+    previousMaterialTexture,
+    syncMaterialHistory() {
+      for (let k = 0; k < size * size; k++) {
+        activeLabelPixels[k * 4 + 2] = activeLabelPixels[k * 4];
+        activeLabelPixels[k * 4 + 3] = activeLabelPixels[k * 4 + 1];
+      }
+      stagingLabelPixels.set(activeLabelPixels);
+      uploadTex(true, false);
+    },
+    update,
+    updateSlice,
+    get materialOffsets() { return labels; },
+    reset() {
+      labels.fill(0);
+      nextLabels.fill(0);
+      activeLabelPixels.fill(0);
+      stagingLabelPixels.fill(0);
+      current.fill(0);
+      next.fill(0);
+      activePixels.fill(0);
+      stagingPixels.fill(0);
+      materialTexture.image.data = activeLabelPixels;
+      texture.image.data = activePixels;
+      uploadTex(true, true);
+    },
+    get values() { return current; },
+    dispose() {
+      texture.dispose();
+      materialTexture.dispose();
+      previousMaterialTexture.dispose();
+    }
+  };
 }
 
 /* Fine, organic multi-scale ocean froth, turbulent filaments & cellular bubble lace.
@@ -59310,63 +59552,63 @@ uniform vec3 sunDirection, skyTop, skyHorizon;
 uniform sampler2D skyEnvMap, rockShadowMap, coastalContactMap;
 uniform mat4 rockShadowMatrix;
 
-vec3 evaluateBeachSand(vec3 baseSandAlbedo, vec3 world, vec3 normal, float underwaterWeight, float rippleRidge){
-  vec4 swash = sampleSwashState(world.xz);
-  vec4 bathy = sampleBathymetry(world.xz);
-  float bed = bathy.r;
+vec3 evaluateBeachSandDirect(vec3 baseSandAlbedo, vec3 world, vec3 normal, float underwaterWeight, float rippleRidge, float swashWaterDepth, float sunShadow){
+  float airExposure = (1.0 - smoothstep(0.042, 0.125, swashWaterDepth)) * (1.0 - underwaterWeight);
+  float wet = 0.0;
+  float film = 0.0;
 
-  // Evaluate local water column depth so submerged sand doesn't double-reflect the sky!
-  vec4 hydro = evaluateCoastalHydro(world.xz, time, amplitude);
-  float swashWaterDepth = hydro.x - bed;
-  float airExposure = (1.0 - smoothstep(0.038, 0.112, swashWaterDepth)) * (1.0 - underwaterWeight);
+  // High dry backshore & coastal cliffs (>1.25m above MSL): swash & capillary moisture are identically zero!
+  if (world.y < 1.25 && world.z < 36.0) {
+    vec4 swash = sampleSwashState(world.xz);
+    // Multi-scale porous grain capillary seepage + 3D sand-ripple trough fingering (-rippleRidge):
+    // Moisture naturally fingers further landward inside ripple valleys while ripple crests drain first!
+    float grainBroad = texture2D(detailMap, world.xz * 0.085 + vec2(1.9, 4.3)).r;
+    float grainMacro = texture2D(detailMap, world.xz * 0.24 + vec2(3.1, 0.9)).r;
+    float grainFine  = texture2D(detailMap, world.xz * 1.35 + vec2(0.4, 2.7)).r;
+    float troughBias = -rippleRidge;
+    float seepage = (grainBroad - 0.5) * 0.15 + (grainMacro - 0.5) * 0.11 + (grainFine - 0.5) * 0.06 + troughBias * 0.090;
 
-  // Porous grain-level capillary seepage softens both the waterline capillary fringe & upper wet-sand margin
-  float grainMacro = texture2D(detailMap, world.xz * 0.22 + vec2(3.1, 0.9)).r;
-  float grainFine  = texture2D(detailMap, world.xz * 1.35 + vec2(0.4, 2.7)).r;
-  float seepage = (grainMacro - 0.5) * 0.18 + (grainFine - 0.5) * 0.09 - rippleRidge * 0.06;
+    float capillaryWet  = smoothstep(-0.038, 0.008, swashWaterDepth + seepage * 0.028);
+    float capillaryFilm = smoothstep(-0.014, 0.009, swashWaterDepth + seepage * 0.012 + troughBias * 0.007) * 0.78;
 
-  float capillaryWet  = smoothstep(-0.045, 0.006, swashWaterDepth + seepage * 0.028);
-  float capillaryFilm = smoothstep(-0.024, 0.008, swashWaterDepth + seepage * 0.016 - rippleRidge * 0.007) * 0.80;
+    // Smooth C^2 bicubic moisture field + wide capillary fringe (eliminates polygonal cutoff & dark-chocolate stain!)
+    float rawWet = max(swash.r, capillaryWet);
+    float fringeMod = smoothstep(0.02, 0.48, rawWet) * (1.0 - smoothstep(0.68, 0.98, rawWet));
+    wet = clamp(smoothstep(0.025, 0.94, rawWet + seepage * 1.15 * fringeMod), 0.0, 1.0);
 
-  float rawWet = max(swash.r, capillaryWet);
-  float wet = smoothstep(0.05, 0.86, rawWet + seepage * smoothstep(0.02, 0.38, rawWet) * (1.0 - smoothstep(0.72, 0.98, rawWet)));
-
-  // Receding water film pools visibly inside 3D sand-ripple troughs (-rippleRidge) while crests drain to satin damp first!
-  float baseFilm = max(clamp(swash.g, 0.0, 1.0), capillaryFilm);
-  float troughPool = clamp(
-    baseFilm + 0.32 * (-rippleRidge) * smoothstep(0.05, 0.55, baseFilm) * (1.0 - baseFilm * 0.65)
-    + (grainFine - 0.5) * 0.07 * baseFilm,
-    0.0,
-    1.0
-  );
-  float film = troughPool * airExposure;
+    // Receding water film pools visibly inside 3D sand-ripple troughs while crests drain to satin damp first!
+    float baseFilm = max(clamp(swash.g, 0.0, 1.0), capillaryFilm);
+    float troughPool = clamp(
+      baseFilm + 0.30 * troughBias * smoothstep(0.04, 0.54, baseFilm) * (1.0 - baseFilm * 0.62)
+      + (grainFine - 0.5) * 0.06 * baseFilm,
+      0.0,
+      1.0
+    );
+    film = troughPool * airExposure;
+  }
 
   vec3 N = normalize(normal);
   vec3 V = normalize(cameraPosition - world);
   vec3 L = normalize(sunDirection);
 
-  // Soft 2048x2048 directional sun shadow + basal rock contact ambient occlusion!
-  float sunShadow = pbrEvaluateSunShadow(
-    rockShadowMap,
-    rockShadowMatrix,
-    rockShadowEnabled,
-    world,
-    vec3(0.0, 0.035, 0.0),
-    gl_FragCoord.xy
-  );
-  vec2 contactUv = clamp((world.xz - vec2(-180.0, -90.0)) / vec2(360.0, 150.0), 0.0, 1.0);
-  float basalRockAO = 1.0 - 0.42 * texture2D(coastalContactMap, contactUv).r;
+  float basalRockAO = 1.0;
+  if (world.z > -88.0 && world.z < 58.0 && abs(world.x) < 178.0) {
+    vec2 contactUv = clamp((world.xz - vec2(-180.0, -90.0)) / vec2(360.0, 150.0), 0.0, 1.0);
+    basalRockAO = 1.0 - 0.40 * texture2D(coastalContactMap, contactUv).r;
+  }
 
-  // 1. Lekner & Dorf (1988) internal pore reflection darkening + rich golden-amber chroma enrichment!
-  vec3 sandAlbedo = pbrWetPorousAlbedo(baseSandAlbedo, smoothstep(0.02, 0.78, wet), 0.42);
+  // 1. 3-Zone Coastal Quartz Sand Moisture Optics (Lekner & Dorf 1988):
+  //    Dry sunlit tan -> soft warm damp capillary fringe -> saturated wet golden-umber under water film!
+  float porousDarkW = clamp(pow(wet, 1.18) * 0.82 + film * 0.22, 0.0, 1.0);
+  vec3 sandAlbedo = pbrWetPorousAlbedo(baseSandAlbedo, porousDarkW, 0.54);
 
   // 2. Oren-Nayar rough quartz-grain diffuse + damp capillary GGX microfacet sheen
-  float sandRough = mix(0.85, 0.16, max(wet * 0.70, film * 0.88));
+  float sandRough = mix(0.86, 0.17, clamp(max(wet * 0.64, film * 0.90), 0.0, 1.0));
   vec3 sunE = pbrSunIrradiance(L) * sunShadow;
   vec3 hemiE = pbrHemisphereIrradiance(N, skyTop, skyHorizon) * basalRockAO;
 
   float diffON = pbrDiffuseOrenNayar(N, V, L, sandRough);
-  vec3 dampSpec = pbrSpecularGGX(N, V, L, sandRough, vec3(0.030)) * mix(0.04, 0.78, wet) * (1.0 - film * 0.78) * airExposure;
+  vec3 dampSpec = pbrSpecularGGX(N, V, L, sandRough, vec3(0.028)) * mix(0.03, 0.74, wet * wet) * (1.0 - film * 0.80) * airExposure;
 
   vec3 color = (sandAlbedo * diffON + dampSpec) * sunE + (sandAlbedo / PBR_PI) * hemiE * 1.15;
 
@@ -59375,20 +59617,38 @@ vec3 evaluateBeachSand(vec3 baseSandAlbedo, vec3 world, vec3 normal, float under
     vec2 filmMicro = vec2(
       texture2D(detailMap, world.xz * 0.85 + vec2(0.0, time * 0.042)).r - 0.5,
       texture2D(detailMap, world.xz * 0.85 + vec2(4.1, time * 0.052)).r - 0.5
-    ) * 0.011 * (1.0 - film * 0.35);
-    vec3 flatBeachN = normalize(mix(N, normalize(vec3(0.0, 1.0, -0.066)), smoothstep(0.14, 0.80, film) * 0.72));
+    ) * 0.010 * (1.0 - film * 0.35);
+    vec3 flatBeachN = normalize(mix(N, normalize(vec3(0.0, 1.0, -0.066)), smoothstep(0.12, 0.78, film) * 0.74));
     vec3 filmN = normalize(flatBeachN + vec3(filmMicro.x, 0.0, filmMicro.y));
     vec3 R = reflect(-V, filmN);
     R.y = max(R.y, abs(R.y) * 0.25 + 0.012);
     vec3 filmSky = pbrSampleSkyEnv(skyEnvMap, skyEnvReady, R, L, skyTop, skyHorizon) * mix(0.68, 1.0, basalRockAO);
     float fresnelFilm = pbrFresnelScalar(max(dot(filmN, V), 0.001), 0.0204);
-    float filmWeight = smoothstep(0.02, 0.44, film) * 0.92;
-    color = mix(color, filmSky, clamp(fresnelFilm * filmWeight, 0.0, 0.86));
+    float filmWeight = pow(smoothstep(0.01, 0.78, film), 0.85) * 0.88;
+    color = mix(color, filmSky, clamp(fresnelFilm * filmWeight, 0.0, 0.85));
     vec3 filmSunSpec = pbrSpecularGGX(filmN, V, L, 0.062, vec3(0.0204)) * sunE * filmWeight;
     color += filmSunSpec;
   }
 
   return color;
+}
+
+vec3 evaluateBeachSand(vec3 baseSandAlbedo, vec3 world, vec3 normal, float underwaterWeight, float rippleRidge, float extraWaveH){
+  float bed = sampleBathymetry(world.xz).r;
+  float hydroX = bed > -5.3 ? evaluateCoastalHydro(world.xz, time, amplitude).x : 0.0;
+  float sunShadow = pbrEvaluateSunShadow(
+    rockShadowMap,
+    rockShadowMatrix,
+    rockShadowEnabled,
+    world,
+    vec3(0.0, 0.035, 0.0),
+    gl_FragCoord.xy
+  );
+  return evaluateBeachSandDirect(baseSandAlbedo, world, normal, underwaterWeight, rippleRidge, extraWaveH + hydroX - bed, sunShadow);
+}
+
+vec3 evaluateBeachSand(vec3 baseSandAlbedo, vec3 world, vec3 normal, float underwaterWeight, float rippleRidge){
+  return evaluateBeachSand(baseSandAlbedo, world, normal, underwaterWeight, rippleRidge, 0.0);
 }
 
 vec3 shoreDebugColor(vec3 world, float naturalWeight){
@@ -61318,18 +61578,39 @@ function expandCoastalGround(geometry, bed) {
   geometry.computeBoundingSphere();
 }
 
-function createBeach(THREE, detailMap, swashStateUniform, bathymetryUniform, timeUniform, amplitudeUniform, shoreDetail, shoreDebug, foamScaleDebug) {
-  const geo = new THREE.PlaneGeometry(350, 350, 256, 256);
+function createBeach(THREE, detailMap, swashStateUniform, bathymetryUniform, timeUniform, amplitudeUniform, shoreDetail, shoreDebug, foamScaleDebug, segs = 272) {
+  const geo = new THREE.PlaneGeometry(350, 350, segs, segs);
   geo.rotateX(-Math.PI / 2);
   const p = geo.attributes.position;
   for (let i = 0; i < p.count; i++) {
     const x = p.getX(i);
     const u = p.getZ(i) / 175;
-    // Strictly monotonic coastal warp (ds/du = 1 - 0.21*pi*cos(pi*u) >= 0.340 > 0 — ZERO mesh fold around z = 0!)
-    const z = Math.max(-175, Math.min(175, (u - 0.21 * Math.sin(Math.PI * u)) * 175));
+    // Strictly monotonic coastal warp (ds/du = 1 - 0.23*pi*cos(pi*u) >= 0.277 > 0 — 35cm swash spacing with -294K tris/frame!)
+    const z = Math.max(-175, Math.min(175, (u - 0.23 * Math.sin(Math.PI * u)) * 175));
     p.setXYZ(i, x, shoreBed(x, z), z);
   }
   p.needsUpdate = true;
+  if (geo.index) {
+    const idx = geo.index.array;
+    const cols = segs + 1;
+    let ptr = 0;
+    for (let iz = 0; iz < segs; iz++) {
+      for (let ix = 0; ix < segs; ix++) {
+        const a = iz * cols + ix;
+        const b = (iz + 1) * cols + ix;
+        const c = (iz + 1) * cols + (ix + 1);
+        const d = iz * cols + (ix + 1);
+        if ((ix + iz) & 1) {
+          idx[ptr++] = a; idx[ptr++] = b; idx[ptr++] = c;
+          idx[ptr++] = a; idx[ptr++] = c; idx[ptr++] = d;
+        } else {
+          idx[ptr++] = a; idx[ptr++] = b; idx[ptr++] = d;
+          idx[ptr++] = b; idx[ptr++] = c; idx[ptr++] = d;
+        }
+      }
+    }
+    geo.index.needsUpdate = true;
+  }
   geo.computeVertexNormals();
   expandCoastalGround(geo, shoreBed);
 
@@ -61708,8 +61989,8 @@ vec3 displaced(vec2 p){
     ? gridSpacing * max(0.32, 1.0 - 0.21 * 3.14159265 * cos(3.14159265 * clamp(p.y / 175.0, -1.0, 1.0)))
     : ex;
   vec3 q = displaced(p);
-  vec3 dx = (displaced(p + vec2(ex, 0.0)) - displaced(p - vec2(ex, 0.0))) / (2.0 * ex);
-  vec3 dz = (displaced(p + vec2(0.0, ez)) - displaced(p - vec2(0.0, ez))) / (2.0 * ez);
+  vec3 dx = (displaced(p + vec2(ex, 0.0)) - q) / ex;
+  vec3 dz = (displaced(p + vec2(0.0, ez)) - q) / ez;
   vec4 wp = modelMatrix * vec4(q, 1.0);
   vWorld = wp.xyz;
   vNormal = normalize(mat3(modelMatrix) * normalize(cross(dz, dx)));
@@ -61859,21 +62140,22 @@ void main(){
   vec2 dPdy = dFdy(p);
   float pxFootprint = max(length(dPdx), length(dPdy));
 
-  // Reconstruct exact 3D opaque substrate/boulder hit from sceneDepth (ZERO extra samplers!):
-  // Discriminates 3D sculpted rocks (isRockHit) from smooth beach sand while guarding detached foreground silhouettes.
+  // Reconstruct exact 3D opaque substrate/boulder hit from sceneDepth (texel-center snapped to eliminate NearestFilter scanline sawtooth!):
   vec2 screenUV = (gl_FragCoord.xy / depthResolution - 0.5) / captureScale + 0.5;
-  float rawCenter = depthEnabled > 0.5 ? textureLod(sceneDepth, screenUV, 0.0).r : 1.0;
+  vec2 safeCapRes = max(captureResolution, vec2(1.0));
+  vec2 snappedDepthUV = (floor(clamp(screenUV, vec2(0.0), vec2(1.0) - 0.5 / safeCapRes) * safeCapRes) + 0.5) / safeCapRes;
+  float rawCenter = depthEnabled > 0.5 ? textureLod(sceneDepth, snappedDepthUV, 0.0).r : 1.0;
   vec3 exactBedHit = vec3(p.x, bed, p.y);
   float validContact = 0.0;
   float isRockHit = 0.0;
   float trueSubmergence = depth;
   if (depthEnabled > 0.5 && rawCenter < 0.999999) {
-    exactBedHit = reconstruct(screenUV, rawCenter);
+    exactBedHit = reconstruct(snappedDepthUV, rawCenter);
     float rawRayGap = length(exactBedHit - cameraPosition) - dist;
     validContact = smoothstep(-0.18, -0.04, rawRayGap);
     if (validContact > 0.005) {
       float hitSandBed = beachMode > 0.5 ? sampleBathymetry(exactBedHit.xz).r : -16.0;
-      isRockHit = smoothstep(0.005, 0.024, exactBedHit.y - hitSandBed) * smoothstep(0.01, 0.18, rockProx) * validContact;
+      isRockHit = smoothstep(0.065, 0.165, exactBedHit.y - hitSandBed) * smoothstep(0.04, 0.28, rockProx) * validContact;
       float hitSub = max(0.0, vWorld.y - exactBedHit.y);
       trueSubmergence = mix(depth, min(depth, hitSub), validContact);
     }
@@ -62072,14 +62354,15 @@ void main(){
   }
   vec3 color = mix(waterDeep, reflSky, F);
 
-  // Coordinate reflection handoff with ShoreVisual.js so thinning swash has ZERO double-reflection AND ZERO Fresnel step
-  float capillaryMatch = nearCoast ? smoothstep(-0.024, 0.008, depth) * 0.80 : 0.0;
-  float effectiveSandFilm = max(swash.g, capillaryMatch);
+  // Coordinate reflection handoff with ShoreVisual.js so thinning swash has ZERO double-reflection AND ZERO Fresnel dip!
+  float capillaryMatch = nearCoast ? smoothstep(-0.014, 0.009, depth) * 0.78 : 0.0;
+  float effectiveSandFilm = clamp(max(swash.g, capillaryMatch), 0.0, 1.0);
+  float filmWeight0 = nearCoast ? pow(smoothstep(0.01, 0.78, effectiveSandFilm), 0.85) * 0.88 : 0.0;
   float existingFilmRefl = nearCoast
-    ? (1.0 - smoothstep(0.038, 0.112, depth)) * smoothstep(0.02, 0.44, effectiveSandFilm) * 0.92
+    ? (1.0 - smoothstep(0.042, 0.125, depth)) * filmWeight0
     : 0.0;
   float targetMeniscusRefl = beachMode > 0.5
-    ? mix(existingFilmRefl, 1.0, smoothstep(0.008, 0.26, depth))
+    ? mix(filmWeight0, 1.0, smoothstep(0.008, 0.22, depth))
     : 1.0;
 
   // Deane & Stokes (2002) Subsurface Entrained Bubble-Plume Emulsion (clears smoothly inside shallow 3D rock meniscus!)
@@ -62470,6 +62753,7 @@ function createCoastalFoamLayer(
     inverseProjection: sharedUniforms.inverseProjection,
     cameraWorld: sharedUniforms.cameraWorld,
     depthResolution: sharedUniforms.depthResolution,
+    captureResolution: sharedUniforms.captureResolution || { value: new THREE.Vector2(1, 1) },
     captureScale: sharedUniforms.captureScale,
     depthEnabled: sharedUniforms.depthEnabled,
     longWave: sharedUniforms.longWave,
@@ -62506,7 +62790,7 @@ ${coastalWavesGLSL}
 uniform sampler2D longWave, longPrevious, shortWave, coastalContactMap;
 uniform float lengthLong, lengthShort, resolutionLong, resolutionShort, amplitude, chop, gridSpacing, longMix, crestShape, time, beachMode, midScale, uWaveLinear;
 varying vec3 vWorld, vNormal;
-varying float vJacobian;
+varying float vJacobian, vWaterSurfY;
 varying vec2 vRest;
 
 vec3 field(sampler2D tex, vec2 p, float len, float n){
@@ -62526,7 +62810,7 @@ vec3 field(sampler2D tex, vec2 p, float len, float n){
 ${mediumWaveGLSL}
 
 // Matches Offshore.js water surface over water, and conforms smoothly onto wet beach sand above waterline
-vec3 displacedFoamSurface(vec2 p){
+vec4 displacedFoamSurface(vec2 p, bool isCenter){
   vec3 f = mix(field(longPrevious, p, lengthLong, resolutionLong), field(longWave, p, lengthLong, resolutionLong), longMix)
          + field(shortWave, p, lengthShort, resolutionShort);
   float bed0 = beachMode > 0.5 ? sampleBathymetry(p).r : -16.0;
@@ -62541,33 +62825,39 @@ vec3 displacedFoamSurface(vec2 p){
 
   vec2 delta = (f.yz * amplitude * chop + mid.yz) * chopAtten;
   vec2 worldP = p + delta;
+  float hWater = h;
 
-  if (beachMode > 0.5) {
+  if (beachMode > 0.5 && bed0 > -5.3) {
     vec4 hydro = evaluateCoastalHydro(worldP, time, amplitude);
-    float pitchLean = 0.24 * hydro.y * smoothstep(0.08, 0.80, d0);
+    float pitchLean = 0.22 * hydro.y * smoothstep(0.08, 0.80, d0);
     worldP.y += pitchLean;
     float rockProxW = sampleBathymetry(worldP).b;
     float rockMeniscusLift = rockProxW * (0.026 + 0.036 * smoothstep(0.05, 0.85, abs(hydro.w) * 0.52 + hydro.y)) * smoothstep(0.01, 0.30, d0);
     h += hydro.x + rockMeniscusLift;
-    // Taper vertical pillow cushion cleanly right against sculpted 3D rock faces so foamLayer meets CoastalRocks at exact meniscus waterline!
-    vec2 cUvW = clamp((worldP - vec2(-180.0, -90.0)) / vec2(360.0, 150.0), 0.0, 1.0);
-    float tightWallProx = textureLod(coastalContactMap, cUvW, 0.0).a;
-    float wallCushionTaper = 1.0 - 0.84 * smoothstep(0.25, 0.92, tightWallProx);
-    // Non-orthogonal golden-sector organic billow modulation (eliminates sin(x)*cos(z) egg-carton diamond grid!)
-    float billowWave = 0.56
-      + 0.22 * sin(dot(worldP, vec2(0.82, 0.57)) * 1.08 - time * 2.05)
-      + 0.14 * cos(dot(worldP, vec2(-0.53, 0.85)) * 1.48 - time * 2.35)
-      + 0.08 * sin(dot(worldP, vec2(0.28, -0.96)) * 1.92 + time * 1.75);
-    float rollerCushion = hydro.y * (0.040 + 0.048 * billowWave) * smoothstep(0.06, 0.48, d0) * wallCushionTaper;
-    float collarCushion = rockProxW * smoothstep(0.08, 0.85, abs(hydro.w) * 0.52 + hydro.y) * (0.026 + 0.024 * billowWave) * wallCushionTaper;
-    h += rollerCushion + collarCushion;
+    hWater = h;
+    if (isCenter) {
+      // Taper vertical pillow cushion cleanly right against sculpted 3D rock faces so foamLayer meets CoastalRocks at exact meniscus waterline!
+      vec2 cUvW = clamp((worldP - vec2(-180.0, -90.0)) / vec2(360.0, 150.0), 0.0, 1.0);
+      float tightWallProx = textureLod(coastalContactMap, cUvW, 0.0).a;
+      float wallCushionTaper = 1.0 - 0.84 * smoothstep(0.25, 0.92, tightWallProx);
+      // Non-orthogonal golden-sector organic billow modulation (eliminates sin(x)*cos(z) egg-carton diamond grid!)
+      float billowWave = 0.56
+        + 0.22 * sin(dot(worldP, vec2(0.82, 0.57)) * 1.08 - time * 2.05)
+        + 0.14 * cos(dot(worldP, vec2(-0.53, 0.85)) * 1.48 - time * 2.35)
+        + 0.08 * sin(dot(worldP, vec2(0.28, -0.96)) * 1.92 + time * 1.75);
+      float rollerCushion = hydro.y * (0.040 + 0.048 * billowWave) * smoothstep(0.06, 0.48, d0) * wallCushionTaper;
+      float collarCushion = rockProxW * smoothstep(0.08, 0.85, abs(hydro.w) * 0.52 + hydro.y) * (0.026 + 0.024 * billowWave) * wallCushionTaper;
+      h += rollerCushion + collarCushion;
+    } else {
+      h += hydro.y * 0.066 * smoothstep(0.06, 0.48, d0);
+    }
   }
 
   float bedW = beachMode > 0.5 ? sampleBathymetry(worldP).r : -16.0;
-  float waterDepth = h - bedW;
-  float sandClearance = beachMode > 0.5 ? mix(0.006, 0.024, 1.0 - smoothstep(-0.01, 0.42, waterDepth)) : 0.003;
+  float waterDepth = hWater - bedW;
+  float sandClearance = beachMode > 0.5 ? mix(0.008, 0.026, 1.0 - smoothstep(-0.01, 0.42, waterDepth)) : 0.004;
   float surfaceY = max(h, bedW) + sandClearance;
-  return vec3(worldP.x, surfaceY, worldP.y);
+  return vec4(worldP.x, surfaceY, worldP.y, hWater);
 }
 
 void main(){
@@ -62581,6 +62871,7 @@ void main(){
       vWorld = wpDry.xyz;
       vNormal = vec3(0.0, 1.0, 0.0);
       vJacobian = 1.0;
+      vWaterSurfY = -0.5;
       gl_Position = projectionMatrix * viewMatrix * wpDry;
       return;
     }
@@ -62589,9 +62880,11 @@ void main(){
   float ez = beachMode > 0.5
     ? gridSpacing * max(0.32, 1.0 - 0.21 * 3.14159265 * cos(3.14159265 * clamp(p.y / 175.0, -1.0, 1.0)))
     : ex;
-  vec3 q = displacedFoamSurface(p);
-  vec3 dx = (displacedFoamSurface(p + vec2(ex, 0.0)) - displacedFoamSurface(p - vec2(ex, 0.0))) / (2.0 * ex);
-  vec3 dz = (displacedFoamSurface(p + vec2(0.0, ez)) - displacedFoamSurface(p - vec2(0.0, ez))) / (2.0 * ez);
+  vec4 q4 = displacedFoamSurface(p, true);
+  vec3 q = q4.xyz;
+  vWaterSurfY = q4.w;
+  vec3 dx = (displacedFoamSurface(p + vec2(ex, 0.0), false).xyz - q) / ex;
+  vec3 dz = (displacedFoamSurface(p + vec2(0.0, ez), false).xyz - q) / ez;
   vec4 wp = modelMatrix * vec4(q, 1.0);
   vWorld = wp.xyz;
   vNormal = normalize(mat3(modelMatrix) * normalize(cross(dz, dx)));
@@ -62606,11 +62899,11 @@ ${swashStateGLSL}
 ${pbrShadingGLSL}
 uniform sampler2D foamAtlas, splashFlipbook, detailMap, foamMap, impactFoamMap, rockShadowMap, sceneDepth, coastalContactMap;
 uniform mat4 rockShadowMatrix, inverseProjection, cameraWorld;
-uniform vec2 depthResolution;
+uniform vec2 depthResolution, captureResolution;
 uniform vec3 sunDirection, skyTop, skyHorizon;
 uniform float time, amplitude, beachMode, foamBoost, foamVisible, rockShadowEnabled, captureScale, depthEnabled, uOceanQuality;
 varying vec3 vWorld, vNormal;
-varying float vJacobian;
+varying float vJacobian, vWaterSurfY;
 varying vec2 vRest;
 
 vec2 foamHash22(vec2 p){
@@ -62720,17 +63013,26 @@ void main(){
   float rockProx = bathy.b;
   float rockWake = bathy.a;
 
+  bool inSwashBox = beachMode > 0.5 && p.y > -88.0 && p.y < 58.0 && abs(p.x) < 179.0;
+  bool inHydroBelt = inSwashBox && bed > -5.3;
+  bool inActiveCoast = inSwashBox && (inHydroBelt || rockProx > 0.01 || p.y > -28.0);
+
   // Multi-scale turbulent surge-tongue domain warping (0.5m, 1.4m, 3.2m) eliminates ALL ruler-straight wave & swash foam edges!
-  vec3 wN1 = texture2D(detailMap, p * 0.048 + vec2(time * 0.008, -time * 0.012)).rgb;
-  vec3 wN2 = texture2D(detailMap, p * 0.155 - vec2(time * 0.015, time * 0.018)).rgb;
-  vec3 wN3 = texture2D(detailMap, p * 0.420 + vec2(time * 0.024, -time * 0.019)).rgb;
+  vec3 wN1 = inActiveCoast ? texture2D(detailMap, p * 0.048 + vec2(time * 0.008, -time * 0.012)).rgb : vec3(0.5);
+  vec3 wN2 = inActiveCoast ? texture2D(detailMap, p * 0.155 - vec2(time * 0.015, time * 0.018)).rgb : vec3(0.5);
+  vec3 wN3 = inActiveCoast ? texture2D(detailMap, p * 0.420 + vec2(time * 0.024, -time * 0.019)).rgb : vec3(0.5);
   vec2 hydroTongue = vec2(
     (wN1.r - 0.5) * 3.35 + (wN2.g - 0.5) * 1.55 + (wN3.b - 0.5) * 0.62,
     (wN1.g - 0.5) * 2.95 + (wN2.b - 0.5) * 1.42 + (wN3.r - 0.5) * 0.56
   );
 
-  vec4 hydroRaw = beachMode > 0.5 ? evaluateCoastalHydro(p, time, amplitude) : vec4(0.0);
-  vec4 hydroWarp = beachMode > 0.5 ? evaluateCoastalHydro(p + hydroTongue, time, amplitude) : vec4(0.0);
+  float waterDepth = beachMode > 0.5 ? (vWaterSurfY - bed) : 16.0;
+  float onWater = beachMode > 0.5 ? smoothstep(-0.002, 0.022, waterDepth) : 1.0;
+  float warpSurfFade = beachMode > 0.5 ? smoothstep(-0.005, 0.38, waterDepth) : 1.0;
+  vec2 coastalWarp = hydroTongue * mix(0.055, 1.0, warpSurfFade);
+
+  vec4 hydroRaw = inHydroBelt ? evaluateCoastalHydro(p, time, amplitude) : vec4(0.0);
+  vec4 hydroWarp = inHydroBelt ? evaluateCoastalHydro(p + coastalWarp, time, amplitude) : vec4(0.0);
   vec4 hydro = vec4(
     hydroRaw.x,
     mix(hydroRaw.y, hydroWarp.y, 0.84),
@@ -62738,26 +63040,28 @@ void main(){
     hydroRaw.w
   );
 
-  vec4 swash = beachMode > 0.5 ? sampleSwashState(p + hydroTongue * 0.28) : vec4(0.0);
+  vec4 swash = inActiveCoast ? sampleSwashState(p + hydroTongue * (0.16 * warpSurfFade)) : vec4(0.0);
   vec2 bUvBase = clamp((p - vec2(-180.0, -90.0)) / vec2(360.0, 150.0), 0.0, 1.0);
-  vec2 impUv = clamp((p + hydroTongue * 0.22 - vec2(-180.0, -90.0)) / vec2(360.0, 150.0), 0.0, 1.0);
-  vec4 impactData = beachMode > 0.5 ? texture2D(impactFoamMap, impUv) : vec4(0.0);
+  vec2 impUv = clamp((p + hydroTongue * (0.20 * warpSurfFade) - vec2(-180.0, -90.0)) / vec2(360.0, 150.0), 0.0, 1.0);
+  vec4 impactData = inActiveCoast ? texture2D(impactFoamMap, impUv) : vec4(0.0);
   vec2 impactFoam = impactData.rg;
-  vec4 contactData = beachMode > 0.5 ? texture2D(coastalContactMap, bUvBase) : vec4(0.0, 0.5, 0.5, 0.0);
+  vec4 contactData = inActiveCoast ? texture2D(coastalContactMap, bUvBase) : vec4(0.0, 0.5, 0.5, 0.0);
   float tightRockProx = contactData.a;
   vec2 rawRockOutN = contactData.gb * 2.0 - 1.0;
   float rockOutLen = length(rawRockOutN);
   vec2 rockOutN = rockOutLen > 0.04 ? (rawRockOutN / rockOutLen) : vec2(0.0, -1.0);
 
   // Screen-Space 3D Rock Reconstruction & Sand-vs-Rock Discrimination:
-  // Preserves 100% of flat beach swash foam (isRockHit == 0) while computing continuous 3D submergence & ray gap against boulders!
+  // Snaps NearestFilter sceneDepth to exact texel center (eliminating scanline sawtooth!) and gates strictly on sculpted 3D boulders!
   float isRockHit = 0.0;
   float continuousGap = 1.5;
-  if (beachMode > 0.5 && depthEnabled > 0.5) {
+  if (inSwashBox && depthEnabled > 0.5 && (contactData.r * 0.85 + tightRockProx) > 0.01) {
     vec2 screenUV = (gl_FragCoord.xy / depthResolution - 0.5) / captureScale + 0.5;
-    float rawSceneD = textureLod(sceneDepth, screenUV, 0.0).r;
+    vec2 safeCapRes = max(captureResolution, vec2(1.0));
+    vec2 snappedDepthUV = (floor(clamp(screenUV, vec2(0.0), vec2(1.0) - 0.5 / safeCapRes) * safeCapRes) + 0.5) / safeCapRes;
+    float rawSceneD = textureLod(sceneDepth, snappedDepthUV, 0.0).r;
     if (rawSceneD < 0.999999) {
-      vec4 vHit = inverseProjection * vec4(screenUV * 2.0 - 1.0, rawSceneD * 2.0 - 1.0, 1.0);
+      vec4 vHit = inverseProjection * vec4(snappedDepthUV * 2.0 - 1.0, rawSceneD * 2.0 - 1.0, 1.0);
       vec3 hitWorld = (cameraWorld * vec4(vHit.xyz / vHit.w, 1.0)).xyz;
       float rawRayGap = length(hitWorld - cameraPosition) - dist;
       float validRockContact = smoothstep(-0.18, -0.04, rawRayGap);
@@ -62767,16 +63071,13 @@ void main(){
       if (validRockContact > 0.005) {
         float hitSandBed = sampleBathymetry(hitWorld.xz).r;
         float rockProtrusion = hitWorld.y - hitSandBed;
-        float nearSculptedRock = smoothstep(0.015, 0.20, contactData.r + tightRockProx + rockProx);
-        isRockHit = smoothstep(0.0045, 0.019, rockProtrusion) * nearSculptedRock * validRockContact;
+        float nearSculptedRock = smoothstep(0.05, 0.34, contactData.r * 0.85 + tightRockProx);
+        isRockHit = smoothstep(0.065, 0.165, rockProtrusion) * nearSculptedRock * validRockContact;
       }
     }
   }
   // Evaluate screen-space derivative in uniform control flow BEFORE any non-uniform early discard!
   float continuousGapGrad = fwidth(continuousGap);
-
-  float waterDepth = (beachMode > 0.5 ? hydroRaw.x : 0.0) - bed;
-  float onWater = beachMode > 0.5 ? smoothstep(-0.003, 0.024, vWorld.y - bed - 0.011) : 1.0;
 
   // True 3D Composite Sea-Surface Wave-Energy Extraction (Miche steepness + Lagrangian Jacobian orbital convergence):
   // Whitewater draws its energy directly from where the actual 3D wave surface steepens forward & compresses!
@@ -62793,9 +63094,16 @@ void main(){
 
   float offshoreHist = texture2D(foamMap, fract(vRest / 240.0)).r;
   float openWaveCap = smoothstep(0.28, 0.72, orbConverge + forwardSlope * 0.75) * smoothstep(0.85, 2.20, max(0.0, -bed));
-  float potential = offshoreHist + openWaveCap + hydro.y * 1.55 + hydro.z + swash.b + swash.a
+  float shallowLipPot = beachMode > 0.5
+    ? (smoothstep(-0.025, 0.006, waterDepth) * (1.0 - smoothstep(0.035, 0.14, waterDepth)) * (abs(hydroRaw.w) + swash.g))
+    : 0.0;
+  float potential = offshoreHist + openWaveCap + hydro.y * 1.55 + hydro.z + swash.b + swash.a + shallowLipPot
                   + impactFoam.r * 1.75 + impactFoam.g * 1.45 + liveRockActivity * 1.35;
   if (potential <= 0.005) discard;
+  if (!inActiveCoast && beachMode > 0.5) {
+    wN1 = texture2D(detailMap, p * 0.048 + vec2(time * 0.008, -time * 0.012)).rgb;
+    wN2 = texture2D(detailMap, p * 0.155 - vec2(time * 0.015, time * 0.018)).rgb;
+  }
 
   // --- Lindeberg (1994) Continuous Scale-Space Footprint Adaptation ---
   float jacArea = abs(dxP.x * dyP.y - dxP.y * dyP.x);
@@ -62983,28 +63291,57 @@ void main(){
     float wakeActive = rockWake * (swash.b * 0.85 + 0.35 * liveRockActivity) * onWater;
     float wakeStreaks = erodePercolation(wakeActive * 0.88, spumeS.b * 0.52 + fineFibers * 0.48, 0.20);
 
-    // --- 4. Feathered Scalloped Swash Surge Tongues (ZERO Solid 1-Meter Contour Stripe!) ---
+    // --- 4. Leading-Edge Swash Bubble Meniscus Lip + Feathered Scalloped Surge Sheet ---
     const vec2 swashStretchFreq = vec2(0.25, 0.105);
     vec2 stretchUv = (pWarped - advOsc * 0.82) * swashStretchFreq + vec2(0.21, 0.47);
     vec4 stretchS = sampleFoamAutoGrad(stretchUv, dxP * swashStretchFreq, dyP * swashStretchFreq, stochWeight);
     float braidedSheet = clamp(stretchS.r * 0.56 + stretchS.b * 0.44, 0.0, 1.0);
 
-    // Swash momentum only forms frothy beads at high-energy scalloped tongue tips; trailing wake is airy eroded lace!
-    float swashDrive = clamp(hydro.z * (0.34 + 0.88 * streamers) * (0.52 + 0.58 * surfWaveEnergy), 0.0, 1.05);
-    float boreTipFroth = erodePercolation(swashDrive * 0.64, braidedSheet * 0.52 + microBeads * 0.48, 0.18) * 0.54;
-    float boreLace     = erodePercolation(swashDrive * 0.94, fibrousWeb * 0.54 + fineFibers * 0.46, 0.22) * 0.80;
+    // Co-perturbed with Offshore.js grainEdge & surge-tongue noise so seafoam has organic scalloped fingers (ZERO straight contour lines!):
+    float grainEdge = texture2D(detailMap, p * 0.48 + vec2(1.3, 2.7)).r * 0.58
+                    + texture2D(detailMap, p * 2.15).r * 0.42;
+    float organicWaterD = waterDepth + (wN1.r - 0.5) * 0.032 + (wN2.g - 0.5) * 0.018 + (grainEdge - 0.5) * 0.014;
+    float meniscusSupport = smoothstep(-0.016, 0.024, organicWaterD);
+    float lipDepth = waterDepth + (grainEdge - 0.5) * 0.016 + (fineFibers - 0.5) * 0.011 + (wN2.r - 0.5) * 0.012;
+    float lipBand  = smoothstep(-0.012, 0.0035, lipDepth) * (1.0 - smoothstep(0.012, 0.044, lipDepth));
+    float shoreSlopeZone = smoothstep(-0.85, -0.24, bed) * (1.0 - smoothstep(0.42, 0.62, bed));
+    float swashKinetic = clamp(abs(hydroRaw.w) * 0.85 + hydro.z * 0.88 + swash.b * 0.65 + swash.g * 0.48, 0.0, 1.15);
+    float uprushLipGate = mix(0.24, 1.0, smoothstep(-0.20, 0.22, hydroRaw.w));
+    float lipScallop   = 0.46 + 0.54 * smoothstep(0.10, 0.82, streamers * 0.46 + braidedSheet * 0.54);
+    float lipEnergy    = mix(0.46, 1.0, smoothstep(0.03, 0.40, swashKinetic)) * uprushLipGate * smoothstep(0.06, 0.24, amplitude);
+    float lipDrive     = lipBand * lipEnergy * lipScallop * shoreSlopeZone * (1.0 - isRockHit);
+    float swashLipBeads = erodePercolation(lipDrive * 0.96, microBeads * 0.54 + fineFibers * 0.46, 0.19) * 0.86;
 
-    // --- 5. Advected Surfactant Wake Filaments & Upwelling Boil Windows ---
-    float boilTear = mix(0.25, 0.82, onWater) * upwellingHole * (1.0 - smoothstep(0.58, 0.96, swash.b));
-    float advDensity = clamp(swash.b * (0.30 + 0.92 * streamers) * (0.58 + 0.56 * braidedSheet) * (1.0 - boilTear), 0.0, 1.0);
+    float sheetBand  = smoothstep(-0.018, 0.036, organicWaterD) * (1.0 - smoothstep(0.052, 0.145, lipDepth));
+    float sheetDrive = sheetBand * clamp(0.26 + hydro.z * 0.72 + swash.b * 0.64 + abs(hydroRaw.w) * 0.42, 0.0, 1.0)
+                     * mix(0.38, 1.0, uprushLipGate) * (0.36 + 0.64 * streamers) * shoreSlopeZone * (1.0 - isRockHit);
+    float swashSheetLace = erodePercolation(sheetDrive * 0.88, braidedSheet * 0.50 + fibrousWeb * 0.50, 0.22) * 0.80;
+
+    // Swash surge foam stays strictly on the liquid water sheet & meniscus lip (never stranded up on bare brown sand!)
+    float swashDrive   = clamp(hydro.z * (0.34 + 0.88 * streamers) * (0.52 + 0.58 * surfWaveEnergy), 0.0, 1.05) * meniscusSupport;
+    float boreTipFroth = max(
+      erodePercolation(swashDrive * 0.62, braidedSheet * 0.52 + microBeads * 0.48, 0.18) * 0.52 * onWater,
+      swashLipBeads * 0.42 * smoothstep(0.04, 0.38, abs(hydroRaw.w))
+    );
+    float boreLace = max(
+      erodePercolation(swashDrive * 0.90, fibrousWeb * 0.54 + fineFibers * 0.46, 0.22) * 0.76 * meniscusSupport,
+      max(swashLipBeads, swashSheetLace)
+    );
+
+    // --- 5. Advected Surfactant Wake Filaments & Upwelling Boil Windows (lingers naturally on receding water film!) ---
+    float filmFoamSupport = smoothstep(0.14, 0.58, swash.g) * (0.62 + 0.38 * smoothstep(0.04, 0.34, swash.b + swash.a)) * (1.0 - isRockHit);
+    float foamRetention = max(meniscusSupport, filmFoamSupport * 0.92);
+    float boilTear = mix(0.22, 0.82, onWater) * upwellingHole * (1.0 - smoothstep(0.58, 0.96, swash.b));
+    float advDensity = clamp(swash.b * (0.34 + 0.90 * streamers) * (0.60 + 0.54 * braidedSheet) * (1.0 - boilTear), 0.0, 1.0);
     float webSignal = mix(fibrousWeb * 0.52 + braidedSheet * 0.48, fineFibers * 0.48 + flipLiquidWeb * 0.52, clamp(breakerEnergy + rockCollarDrive, 0.0, 1.0));
-    float surfaceRetention = mix(smoothstep(0.08, 0.58, swash.g), 1.0, onWater);
-    float surfWeb = erodePercolation(advDensity * 0.92, webSignal, 0.21) * surfaceRetention;
-    float surfCurdle = erodePercolation(max(0.0, advDensity - 0.32) * 1.10, braidedSheet * 0.58 + microBeads * 0.42, 0.18) * 0.72 * surfaceRetention;
+    float surfWeb = erodePercolation(advDensity * 0.94, webSignal, 0.21) * foamRetention;
+    float surfCurdle = erodePercolation(max(0.0, advDensity - 0.30) * 1.08, braidedSheet * 0.58 + microBeads * 0.42, 0.18) * 0.72 * max(onWater, filmFoamSupport * 0.58);
 
-    // --- 6. Delicate High-Water Strandline Froth Wisps ---
-    float strandDensity = clamp(swash.a * (0.34 + 0.86 * streamers), 0.0, 1.0) * (1.0 - 0.58 * onWater);
-    float strandWeb = erodePercolation(strandDensity * 0.88, microBeads * 0.46 + braidedSheet * 0.54, 0.18);
+    // --- 6. Delicate Receding-Film Bubble Lace (lingers across active wet water film, zero dry-sand contour line!) ---
+    float recedingFilmZone = smoothstep(0.16, 0.60, swash.g) * (1.0 - 0.50 * onWater);
+    float strandDensity = clamp((swash.a * 0.95 + swash.b * 0.58) * (0.44 + 0.78 * streamers) * (0.52 + 0.54 * braidedSheet), 0.0, 1.0)
+                        * recedingFilmZone * (1.0 - isRockHit);
+    float strandWeb = erodePercolation(strandDensity * 0.92, microBeads * 0.52 + fineFibers * 0.48, 0.21) * 0.78;
 
     // --- 7. Soft Volumetric Sea-Spray Mist Cushion + Submerged Hinze Bubble-Plume Veil ---
     float mistDrive = clamp(breakerEnergy * 0.62 + rockCollarDrive * 0.88 + splashLanding * 0.55, 0.0, 1.0);
@@ -63199,8 +63536,8 @@ void main(){
     depthTest: true,
     depthWrite: false,
     polygonOffset: true,
-    polygonOffsetFactor: -0.35,
-    polygonOffsetUnits: -0.6,
+    polygonOffsetFactor: -0.85,
+    polygonOffsetUnits: -1.2,
     side: THREE.FrontSide
   });
 
@@ -66333,7 +66670,9 @@ void main(){
       renderer.setScissorTest(false);
       renderer.setRenderTarget(target);
       renderer.clear();
+      if (U.uIsDepthCapture) U.uIsDepthCapture.value = 1.0;
       renderer.render(scene, captureCamera);
+      if (U.uIsDepthCapture) U.uIsDepthCapture.value = 0.0;
 
       for (let i = 0; i < copies.length; i++) {
         const mesh = copies[i];
@@ -66360,6 +66699,7 @@ void main(){
       lastError = String(e);
       return false;
     } finally {
+      if (U.uIsDepthCapture) U.uIsDepthCapture.value = 0.0;
       for (let i = 0; i < visCount; i++) {
         visObjs[i].visible = visStates[i];
         visObjs[i] = null;
@@ -66648,7 +66988,7 @@ function createPerfMonitor(THREE, renderer) {
   let sparkHead = 0;
   let sparkFilled = 0;
 
-  // Per-frame raw timestamps
+  // Per-frame raw timestamps & VSync refresh estimator
   let lastBeginNow = -1;
   let frameStartNow = 0;
   let markNow = 0;
@@ -66657,8 +66997,30 @@ function createPerfMonitor(THREE, renderer) {
   let curSwashMs = 0;
   let curRenderMs = 0;
   let renderedInFrame = false;
+  let gpuScopeDepth = 0;
   let lastDrawCalls = 0;
   let lastTriangles = 0;
+
+  const RAF_HIST_LEN = 16;
+  const rafIntervalHist = new Float32Array(RAF_HIST_LEN);
+  const rafSortScratch = new Float32Array(RAF_HIST_LEN);
+  let rafHistIdx = 0;
+  let rafHistCount = 0;
+  let nativeVSyncMs = 16.667;
+
+  function recordRafInterval(rawDtMs) {
+    if (!(rawDtMs > 0.25 && rawDtMs < 55.0)) return;
+    rafIntervalHist[rafHistIdx] = rawDtMs;
+    rafHistIdx = (rafHistIdx + 1) % RAF_HIST_LEN;
+    if (rafHistCount < RAF_HIST_LEN) rafHistCount++;
+    if (rafHistCount >= 4) {
+      for (let i = 0; i < rafHistCount; i++) rafSortScratch[i] = rafIntervalHist[i];
+      const sub = rafSortScratch.subarray(0, rafHistCount);
+      sub.sort();
+      const p50Idx = Math.min(rafHistCount - 1, Math.floor(rafHistCount * 0.50));
+      nativeVSyncMs = Math.max(0.5, Math.min(34.0, sub[p50Idx]));
+    }
+  }
 
   // Registered VRAM & Engine TypedArray registries (deduplicated)
   const trackedGeometries = new Set();
@@ -66677,6 +67039,7 @@ function createPerfMonitor(THREE, renderer) {
   const elFps = document.getElementById('perfFpsVal');
   const elFpsMax = document.getElementById('perfFpsMaxVal');
   const elFpsLow = document.getElementById('perfFpsLowVal');
+  const elCapLabel = document.getElementById('perfCapLabelEl');
   const elPotFps = document.getElementById('perfPotFpsVal');
   const elFpsCap = document.getElementById('perfFpsCap');
   const elFrameMs = document.getElementById('perfFrameMsVal');
@@ -66691,12 +67054,68 @@ function createPerfMonitor(THREE, renderer) {
   const ctx2d = elCanvas ? elCanvas.getContext('2d', { alpha: false }) : null;
 
   let collapsed = false;
+  let lang = 'zh';
+  function syncToggleLabel() {
+    if (!elToggle) return;
+    elToggle.textContent = lang === 'en'
+      ? (collapsed ? 'Show' : 'Hide')
+      : (collapsed ? '展開' : '收合');
+  }
+  function formatCpuSub() {
+    if (!elCpuSub) return;
+    if (histCount === 0) {
+      elCpuSub.textContent = lang === 'en'
+        ? 'Wave -- · Splash -- · Draw --'
+        : '波浪 -- · 浪花 -- · 渲染 --';
+      return;
+    }
+    elCpuSub.textContent = lang === 'en'
+      ? `Wave ${smoothCpuWavesMs.toFixed(2)} · Splash ${smoothCpuSplashMs.toFixed(2)} · Draw ${smoothCpuRenderMs.toFixed(2)}`
+      : `波浪 ${smoothCpuWavesMs.toFixed(2)} · 浪花 ${smoothCpuSplashMs.toFixed(2)} · 渲染 ${smoothCpuRenderMs.toFixed(2)}`;
+  }
+  function formatRamSub() {
+    if (!elRamSub) return;
+    const mem = performance.memory;
+    if (mem && mem.usedJSHeapSize > 0) {
+      elRamSub.textContent = lang === 'en'
+        ? `JS Heap · Buffers ${cachedEngineTypedMB.toFixed(1)} MB`
+        : `JS Heap · 引擎緩衝 ${cachedEngineTypedMB.toFixed(1)} MB`;
+    } else {
+      elRamSub.textContent = lang === 'en'
+        ? 'TypedArray Buffers'
+        : '引擎 TypedArray 緩衝區';
+    }
+  }
+  function syncCapLabel() {
+    if (!elCapLabel) return;
+    if (gpuTimerValid) {
+      elCapLabel.textContent = fpsCap > 0
+        ? (lang === 'en' ? 'Cap · HW Max' : '鎖幀 · 硬體極限')
+        : (lang === 'en' ? 'HW Max' : '硬體極限');
+    } else {
+      elCapLabel.textContent = fpsCap > 0
+        ? (lang === 'en' ? 'Cap · CPU Max' : '鎖幀 · CPU極限')
+        : (lang === 'en' ? 'CPU Max' : 'CPU極限');
+    }
+  }
+  function setCollapsed(nextCollapsed) {
+    collapsed = !!nextCollapsed;
+    if (elBody) elBody.hidden = collapsed;
+    syncToggleLabel();
+  }
+  function setLanguage(nextLang) {
+    lang = nextLang === 'en' ? 'en' : 'zh';
+    syncToggleLabel();
+    syncCapLabel();
+    formatCpuSub();
+    if (cachedEngineTypedMB > 0 || histCount > 0) formatRamSub();
+    else if (elRamSub) {
+      elRamSub.textContent = lang === 'en' ? 'JS Heap · Buffers -- MB' : 'JS Heap · 引擎緩衝 -- MB';
+    }
+    lastDomUpdateNow = 0;
+  }
   if (elToggle && elBody) {
-    elToggle.onclick = () => {
-      collapsed = !collapsed;
-      elBody.hidden = collapsed;
-      elToggle.textContent = collapsed ? '展開' : '收合';
-    };
+    elToggle.onclick = () => setCollapsed(!collapsed);
   }
   if (elFpsMax) {
     elFpsMax.onclick = () => {
@@ -66713,6 +67132,7 @@ function createPerfMonitor(THREE, renderer) {
       warmupFrames = 0;
       histIdx = 0;
       histCount = 0;
+      syncCapLabel();
       if (onCapChangeCb) onCapChangeCb(fpsCap);
     };
   }
@@ -66868,12 +67288,13 @@ function createPerfMonitor(THREE, renderer) {
   }
 
   function beginGpuRender() {
+    if (gpuScopeDepth++ > 0) return;
     const now = performance.now();
     markNow = now;
     if (renderer.info) {
       renderer.info.reset();
     }
-    if (!timerExt || activeQuery || now - lastQuerySampleNow < 75) return;
+    if (!timerExt || activeQuery || now - lastQuerySampleNow < 42) return;
     pollGpuQueries();
     const slot = queryRing[queryWriteIdx];
     if (!slot.pending) {
@@ -66885,6 +67306,8 @@ function createPerfMonitor(THREE, renderer) {
   }
 
   function endGpuRender() {
+    if (gpuScopeDepth <= 0) return;
+    if (--gpuScopeDepth > 0) return;
     if (timerExt && activeQuery) {
       gl.endQuery(timerExt.TIME_ELAPSED_EXT);
       activeQuery.pending = true;
@@ -66953,6 +67376,15 @@ function createPerfMonitor(THREE, renderer) {
     }
   }
 
+  function evaluateHardwareBottleneckMs() {
+    // When WebGL2 EXT_disjoint_timer_query_webgl2 is supported (Windows/Linux D3D11/Vulkan),
+    // bottleneckMs is true max(CPU, GPU) unlocked hardware frame time (never clamped by VSync!).
+    // When OS hides hardware GPU timer (macOS Safari / Metal), bottleneckMs reflects pure CPU ceiling (labeled "CPU極限").
+    return gpuTimerValid
+      ? Math.max(0.4, smoothCpuTotalMs, smoothGpuMs)
+      : Math.max(0.4, smoothCpuTotalMs);
+  }
+
   function endFrame(sideFrameStatusEl = null) {
     const now = performance.now();
     if (renderedInFrame) {
@@ -66983,7 +67415,7 @@ function createPerfMonitor(THREE, renderer) {
       const fps = Math.min(999, Math.round(1000 / Math.max(1.0, avgMs)));
       if (warmupFrames >= 75 && histCount >= 60 && fps > peakFps) peakFps = fps;
       const low1 = Math.min(fps, compute1PercentLowFps());
-      const bottleneckMs = Math.max(0.4, smoothCpuTotalMs, gpuTimerValid ? smoothGpuMs : smoothCpuRenderMs);
+      const bottleneckMs = evaluateHardwareBottleneckMs();
       const potentialFps = Math.min(999, Math.max(fps, Math.round(1000 / bottleneckMs)));
 
       if (sideFrameStatusEl && renderedInFrame && histCount > 0) {
@@ -66992,6 +67424,7 @@ function createPerfMonitor(THREE, renderer) {
       if (!elHud) return;
 
       if (renderedInFrame && histCount > 0) {
+        syncCapLabel();
         if (elFps) {
           elFps.textContent = String(fps);
           const okThresh = fpsCap > 0 ? Math.min(55, Math.round(fpsCap * 0.90)) : 55;
@@ -66999,19 +67432,27 @@ function createPerfMonitor(THREE, renderer) {
         }
         if (elFpsMax) elFpsMax.textContent = String(Math.max(peakFps, fps));
         if (elFpsLow) elFpsLow.textContent = String(low1);
-        if (elPotFps) elPotFps.textContent = potentialFps + ' fps';
+        if (elPotFps) {
+          elPotFps.textContent = potentialFps + ' fps';
+        }
         if (elFrameMs) elFrameMs.textContent = avgMs.toFixed(1) + ' ms';
 
         if (elGpuMs) {
-          elGpuMs.textContent = gpuTimerValid
-            ? smoothGpuMs.toFixed(2) + ' ms'
-            : smoothCpuRenderMs.toFixed(2) + ' ms*';
+          if (gpuTimerValid) {
+            elGpuMs.textContent = smoothGpuMs.toFixed(2) + ' ms';
+            elGpuMs.title = '';
+          } else {
+            elGpuMs.textContent = lang === 'en' ? 'OS Hidden' : '系統隱藏';
+            elGpuMs.title = lang === 'en'
+              ? 'Browser/OS disables WebGL2 hardware GPU timer queries (e.g. macOS Safari / Metal)'
+              : '目前系統或瀏覽器（如 macOS Safari / Metal）基於安全性關閉 WebGL2 硬體 GPU 計時器';
+          }
         }
         if (elCpuMs) {
           elCpuMs.textContent = smoothCpuTotalMs.toFixed(2) + ' ms';
         }
         if (elCpuSub) {
-          elCpuSub.textContent = `波浪 ${smoothCpuWavesMs.toFixed(2)} · 浪花 ${smoothCpuSplashMs.toFixed(2)} · 渲染 ${smoothCpuRenderMs.toFixed(2)}`;
+          formatCpuSub();
         }
       }
       if (elVram) {
@@ -67024,15 +67465,10 @@ function createPerfMonitor(THREE, renderer) {
           const usedMB = mem.usedJSHeapSize / (1024 * 1024);
           const totMB = mem.totalJSHeapSize / (1024 * 1024);
           elRam.textContent = `${usedMB.toFixed(1)} / ${totMB.toFixed(0)} MB`;
-          if (elRamSub) {
-            elRamSub.textContent = `JS Heap · 引擎緩衝 ${cachedEngineTypedMB.toFixed(1)} MB`;
-          }
         } else {
           elRam.textContent = `${cachedEngineTypedMB.toFixed(1)} MB`;
-          if (elRamSub) {
-            elRamSub.textContent = `引擎 TypedArray 緩衝區`;
-          }
         }
+        formatRamSub();
       }
 
       if (elPipe) {
@@ -67048,7 +67484,7 @@ function createPerfMonitor(THREE, renderer) {
     const mem = performance.memory;
     const avgMs = getAverageFrameMs();
     const fps = +(1000 / Math.max(0.5, avgMs)).toFixed(1);
-    const bottleneckMs = Math.max(0.4, smoothCpuTotalMs, gpuTimerValid ? smoothGpuMs : smoothCpuRenderMs);
+    const bottleneckMs = evaluateHardwareBottleneckMs();
     const fpsPotential = Math.min(999, Math.max(Math.round(fps), Math.round(1000 / bottleneckMs)));
     return {
       fps,
@@ -67093,7 +67529,11 @@ function createPerfMonitor(THREE, renderer) {
     beginGpuRender,
     endGpuRender,
     endFrame,
+    recordRafInterval,
+    getNativeVSyncMs: () => nativeVSyncMs,
     getSnapshot,
+    setCollapsed,
+    setLanguage,
     registerSceneResources(scene, extraTextures = [], renderTargetGetters = {}, typedByteCount = 0) {
       scene.traverse(obj => {
         if (obj.geometry) trackedGeometries.add(obj.geometry);
@@ -67148,6 +67588,7 @@ function createPerfMonitor(THREE, renderer) {
       warmupFrames = 0;
       histIdx = 0;
       histCount = 0;
+      syncCapLabel();
       if (onCapChangeCb) onCapChangeCb(fpsCap);
       return fpsCap;
     },
@@ -67169,8 +67610,211 @@ function shoreBed(x, z) {
   return shoreBedWithOffshoreSlope(x, z);
 }
 
+// --- Bilingual UI Localization (Traditional Chinese `zh` / English `en`) ---
+const I18N = {
+  zh: {
+    loadingSub: '物理導向神經網路與多頻譜海岸流體光學模擬系統',
+    loadingStageInit: '正在啟動 WebGL2 光學引擎…',
+    shaderStageInit: '多執行緒著色器佇列待命…',
+    loadingGpuDetect: '偵測硬體加速裝置中…',
+    immersiveBtn: '沉浸畫面',
+    immersiveTitle: '隱藏控制介面（快捷鍵 H｜全螢幕 F）',
+    btnCollapse: '收合',
+    btnExpand: '展開',
+    panelSub: '物理導向神經網路・頻譜水動力學・水深輻射傳輸',
+    presetCoast: '海岸全景',
+    presetRocks: '礁石激浪',
+    presetSwash: '沙灘拍岸',
+    presetOffshore: '外海深浪',
+    presetDive: '水下視角',
+    lblTimeOfDay: '日夜時段（晨・午・暮・星夜）',
+    todMorning: '晨光',
+    todNoon: '正午',
+    todAfternoon: '午後',
+    todDusk: '黃昏',
+    todNight: '星夜',
+    todNightTitle: 'NASA SVS 4851 銀河星圖與月光海面',
+    lblWaterPalette: '海域水色預設',
+    palEmerald: '經典翡翠海岸（預設）',
+    palMaldives: '珊瑚琉璃淺灣（蒂芬妮藍綠）',
+    palPacific: '太平洋深邃鈷藍（黑潮深藍）',
+    palJade: '花東碧玉礦物綠（海岸翠玉）',
+    palNordic: '北歐冷冽墨海（冷灰鋼藍）',
+    lblWaterTint: '海水色調微調（翠綠 ↔ 鈷藍）',
+    lblWaterDepth: '海水深淺表現',
+    lblWaterClarity: '海水清澈度',
+    lblTerrain: '海岸地形（自動重算水深與折射）',
+    terBaseline: '自然彎曲海灣（Baseline）',
+    terSandbar: '離岸淺灘沙洲（Sandbar）',
+    lblAmplitude: '海浪高度',
+    lblFoamBoost: '碎浪與殘泡濃度',
+    lblQuality: '渲染畫質等級',
+    qualMobile: '行動極速（手機高幀率最佳化）',
+    qualLow: '低品質（極速省顯存・核顯流暢）',
+    qualMedium: '中品質（均衡標準・推薦）',
+    qualHigh: '高品質（極致寫實・2x MSAA 超採樣）',
+    lblAudioVol: '海浪與礁石空間音效',
+    lblDiveElev: '潛水深度',
+    lblDiveTilt: '水下仰俯角',
+    btnPause: '暫停播放',
+    btnResume: '繼續播放（已暫停）',
+    statusPaused: '已暫停',
+    audioOn: '音效：開啟',
+    audioMuted: '音效：靜音',
+    hintDesktop: '滑鼠旋轉・滾輪縮放・H 隱藏介面・F 全螢幕',
+    hintMobile: '單指旋轉・雙指縮放視角',
+    gpuBooting: '正在啟動 WebGL2 海景…',
+    gpuLowSamplers: '警告：貼圖單元不足，部分光學效果可能受限',
+    shaderErrPrefix: 'Shader 編譯錯誤：',
+    perfAria: '即時效能計數器',
+    perfMax: '最大',
+    perfMaxTitle: '點擊重置最大峰值 FPS',
+    perfCapLabel: '硬體極限',
+    perfCapAria: 'FPS 鎖定上限',
+    fpsUncapped: '不鎖定',
+    perfGpuTime: 'GPU 渲染耗時',
+    perfVram: 'GPU 顯存 VRAM',
+    perfCpu: 'CPU 邏輯與提交',
+    perfRam: 'RAM 記憶體',
+    sponsorAria: 'C++ MMORPG 研發日誌與開源贊助',
+    sponsorDesc: '本系統為開發中 C++ MMORPG 之海洋物理前瞻原型（正移植原生 C++ 版），以 MIT 開源回饋社群。',
+    sponsorX: '追蹤 X 開發日誌 ↗',
+    sponsorCta: '贊助 · Sponsor ↗',
+    restoreGui: '顯示介面 (H)',
+    restoreGuiTitle: '顯示控制面板與效能計數器（快捷鍵 H 或 Esc）',
+    bootStage0: '正在啟動 WebGL2 光學管線…',
+    shaderQueueStart: '啟動多執行緒 Sobolev-PINN 訓練與場景佇列…',
+    bootStage1: '建構神經大氣散射與體積雲天穹…',
+    bootStage2: '合成三頻譜 FFT 海洋波場與流體紋理佇列…',
+    bootStage3: '雕刻風化海岸礁岩與淺水水深折射場…',
+    bootStage4: '建構 3D 礁岩飛沫碰撞系統與後處理管線…',
+    bootStage5: '多執行緒平行編譯 GPU 光學與流體著色器…',
+    shaderDispatch: '派發非阻塞著色器佇列至 GPU 硬體編譯池…',
+    progOffshore: '海洋頻譜與雙層水深折射核心 (Offshore)',
+    progRocks: '海岸花崗岩多相水膜 PBR (CoastalRocks)',
+    progSeabed: '濕沙水膜與動態色散焦散 (SeabedCaustics)',
+    progSky: 'NASA 銀河星圖與天穹投影 (SkyDome)',
+    progFoam: '碎浪白沫與捲浪飛沫層 (FoamShader)',
+    progSplash: '26 萬介電質水滴折射粒子 (RockSplash)',
+    bootStage6: '烘焙流體圖集並合成首幀海岸光學畫面…',
+    bootDone: '載入完成・即將進入海岸全景'
+  },
+  en: {
+    loadingSub: 'Physics-Informed Neural & Multi-Spectral Coastal Ocean Simulation',
+    loadingStageInit: 'Initializing WebGL2 optical engine…',
+    shaderStageInit: 'Multi-threaded shader queue standby…',
+    loadingGpuDetect: 'Detecting hardware GPU…',
+    immersiveBtn: 'Immersive',
+    immersiveTitle: 'Hide UI panels (Shortcut H | Fullscreen F)',
+    btnCollapse: 'Hide',
+    btnExpand: 'Show',
+    panelSub: 'PINN Hydrodynamics · Spectral Waves · Radiative Transfer',
+    presetCoast: 'Coast View',
+    presetRocks: 'Reef Surf',
+    presetSwash: 'Beach Swash',
+    presetOffshore: 'Offshore',
+    presetDive: 'Underwater',
+    lblTimeOfDay: 'Time of Day (Solar & Lunar)',
+    todMorning: 'Dawn',
+    todNoon: 'Noon',
+    todAfternoon: 'Sunny',
+    todDusk: 'Dusk',
+    todNight: 'Night',
+    todNightTitle: 'NASA SVS 4851 Milky Way Star Map & Moonlit Sea',
+    lblWaterPalette: 'Seawater Bio-Optical Preset',
+    palEmerald: 'Classic Emerald Coast (Default)',
+    palMaldives: 'Coral Lagoon (Turquoise)',
+    palPacific: 'Deep Pacific Cobalt (Kuroshio)',
+    palJade: 'Mineral Jade Coast',
+    palNordic: 'Nordic Slate Sea',
+    lblWaterTint: 'Color Tint (Emerald ↔ Cobalt)',
+    lblWaterDepth: 'Optical Depth Scale',
+    lblWaterClarity: 'Water Clarity',
+    lblTerrain: 'Coastal Bathymetry Preset',
+    terBaseline: 'Natural Curved Bay (Baseline)',
+    terSandbar: 'Offshore Sandbar',
+    lblAmplitude: 'Wave Amplitude',
+    lblFoamBoost: 'Surf & Foam Intensity',
+    lblQuality: 'Render Quality',
+    qualMobile: 'Mobile Fast (High-FPS Optimized)',
+    qualLow: 'Low (VRAM Saver · iGPU)',
+    qualMedium: 'Medium (Balanced · Recommended)',
+    qualHigh: 'High (Ultra · 2x MSAA)',
+    lblAudioVol: 'Spatial Ocean Audio',
+    lblDiveElev: 'Dive Depth',
+    lblDiveTilt: 'Look Pitch',
+    btnPause: 'Pause',
+    btnResume: 'Resume (Paused)',
+    statusPaused: 'Paused',
+    audioOn: 'Audio: On',
+    audioMuted: 'Audio: Muted',
+    hintDesktop: 'Orbit · Scroll Zoom · H Hide UI · F Full',
+    hintMobile: '1-Finger Orbit · Pinch to Zoom',
+    gpuBooting: 'Starting WebGL2 coastal engine…',
+    gpuLowSamplers: 'Warning: Limited texture units; some optical effects reduced',
+    shaderErrPrefix: 'Shader Compile Error: ',
+    perfAria: 'Real-Time Performance Telemetry',
+    perfMax: 'Max',
+    perfMaxTitle: 'Click to reset peak FPS',
+    perfCapLabel: 'HW Max',
+    perfCapAria: 'FPS Cap Limit',
+    fpsUncapped: 'Uncapped',
+    perfGpuTime: 'GPU Time',
+    perfVram: 'GPU VRAM',
+    perfCpu: 'CPU Frame',
+    perfRam: 'RAM Memory',
+    sponsorAria: 'C++ MMORPG R&D Log & Open-Source Sponsorship',
+    sponsorDesc: 'Ocean physics R&D prototype for an upcoming C++ MMORPG (porting to native C++), open-sourced under MIT.',
+    sponsorX: 'Follow R&D on X ↗',
+    sponsorCta: 'Sponsor R&D ↗',
+    restoreGui: 'Show UI (H)',
+    restoreGuiTitle: 'Show control panel & telemetry HUD (Shortcut H or Esc)',
+    bootStage0: 'Initializing WebGL2 optical pipeline…',
+    shaderQueueStart: 'Starting multi-threaded Sobolev-PINN training & scene queue…',
+    bootStage1: 'Building neural atmospheric scattering & volumetric sky…',
+    bootStage2: 'Synthesizing tri-band FFT wave spectra & fluid atlases…',
+    bootStage3: 'Sculpting weathered coastal boulders & bathymetry field…',
+    bootStage4: 'Building 3D wave-rock splash system & post-processing…',
+    bootStage5: 'Compiling GPU optical & hydrodynamic shaders in parallel…',
+    shaderDispatch: 'Dispatching non-blocking shader queue to GPU compiler pool…',
+    progOffshore: 'Spectral Ocean & Dual-Layer Refraction (Offshore)',
+    progRocks: 'Coastal Granite Wet-Film PBR (CoastalRocks)',
+    progSeabed: 'Wet Quartz Sand & Chromatic Caustics (Seabed)',
+    progSky: 'NASA Milky Way & Sky Dome Projection (SkyDome)',
+    progFoam: 'Breaking Surf & Foam Filigree Layer (FoamShader)',
+    progSplash: '260K Dielectric Spray Droplets (RockSplash)',
+    bootStage6: 'Baking fluid atlases & rendering initial coastal frame…',
+    bootDone: 'Ready · Entering Coastal Panorama'
+  }
+};
+
+function detectInitialLanguage() {
+  try {
+    const q = new URLSearchParams(location.search).get('lang');
+    if (q) {
+      const norm = q.toLowerCase();
+      if (norm.startsWith('en')) return 'en';
+      if (norm.startsWith('zh')) return 'zh';
+    }
+  } catch (_) {}
+  try {
+    const saved = localStorage.getItem('nso_lang');
+    if (saved === 'en' || saved === 'zh') return saved;
+  } catch (_) {}
+  const navLang = (typeof navigator !== 'undefined' && (navigator.language || navigator.languages?.[0])) || '';
+  if (/^zh\b/i.test(navLang)) return 'zh';
+  if (typeof navigator !== 'undefined' && navigator.webdriver) return 'zh';
+  return 'en';
+}
+
+let currentLang = detectInitialLanguage();
+function t(key) {
+  return I18N[currentLang]?.[key] ?? I18N.zh[key] ?? key;
+}
+
 // Left Control Panel collapse/expand toggle + One-Click Immersive Full-Canvas GUI Hide/Restore
 let guiHidden = false;
+let panelCollapsed = false;
 function setImmersiveMode(hidden) {
   guiHidden = !!hidden;
   document.body.classList.toggle('gui-hidden', guiHidden);
@@ -67189,12 +67833,15 @@ function toggleBrowserFullscreen() {
   const panelToggleBtn = document.getElementById('panelToggleBtn');
   const panelBody = document.getElementById('controlPanelBody');
   if (panelToggleBtn && panelBody) {
-    let panelCollapsed = false;
     panelToggleBtn.onclick = () => {
       panelCollapsed = !panelCollapsed;
       panelBody.hidden = panelCollapsed;
-      panelToggleBtn.textContent = panelCollapsed ? '展開' : '收合';
+      panelToggleBtn.textContent = panelCollapsed ? t('btnExpand') : t('btnCollapse');
     };
+  }
+  const langToggleBtn = document.getElementById('langToggleBtn');
+  if (langToggleBtn) {
+    langToggleBtn.onclick = () => applyLanguage(currentLang === 'zh' ? 'en' : 'zh', true);
   }
   const immersiveBtn = document.getElementById('immersiveToggleBtn');
   const restoreBtn = document.getElementById('restoreGuiBtn');
@@ -67349,20 +67996,31 @@ const gpuReport = {
 };
 
 const gpuStatus = $('gpuStatus');
-setLoadingProgress(8, '正在啟動 WebGL2 光學管線…', gpuReport.rendererName || 'WebGL2 Hardware GPU');
 
 if (renderer.debug) {
   renderer.debug.onShaderError = (glCtx, program, vs, fs) => {
     const message = [glCtx.getProgramInfoLog(program), glCtx.getShaderInfoLog(vs), glCtx.getShaderInfoLog(fs)].filter(Boolean).join(' | ');
     gpuReport.shaderErrors.push(message);
     gpuStatus.style.color = '#ff9aa2';
-    gpuStatus.textContent = 'Shader 編譯錯誤：' + message;
+    gpuStatus.textContent = t('shaderErrPrefix') + message;
   };
 }
 window.gpuDebug = { status: () => ({ ...gpuReport, shaderErrors: gpuReport.shaderErrors.slice() }) };
 
-// Camera & orbital/target controls + smooth preset glide state
+// Camera & orbital/target controls + smooth preset glide state + AWD orientation projection
+const isMobileDevice = /Android|iPhone|iPad|iPod|Mobile/i.test(navigator.userAgent || '')
+  || ((navigator.maxTouchPoints || 0) > 1 && Math.min(innerWidth, innerHeight) <= 920);
 const camera = new THREE.PerspectiveCamera(50, innerWidth / innerHeight, 0.1, 5000);
+function syncCameraProjection() {
+  const aspect = Math.max(0.25, innerWidth / Math.max(1, innerHeight));
+  camera.aspect = aspect;
+  // Hor+ portrait adaptation: preserves exact 50 deg FOV in landscape, widens vertically in portrait so bay + rocks + swash stay framed
+  camera.fov = aspect < 1.0
+    ? Math.min(72, 50 / Math.pow(Math.max(0.40, aspect), 0.44))
+    : 50;
+  camera.updateProjectionMatrix();
+}
+syncCameraProjection();
 const target = new THREE.Vector3(0, 0.05, 5.8);
 let yaw = 0.11, pitch = 0.265, distance = 43.0;
 let diveMode = false, diveY = -1.2, diveTilt = 0.06, diveNear = 0.05;
@@ -67371,9 +68029,9 @@ const camGlide = { active: false, tx: 0, ty: 0.05, tz: 5.8, yaw: 0.11, pitch: 0.
 
 // Core subsystems (top-level for clean cross-function & test harness access)
 let ocean, skyCloudEnv, oceanRing, offshoreGeometry, coastGeometry;
-let activeCoastSegs = 368;
-let activeQualityTier = 'medium';
-let long, short, chop, longPreviousData, longPrevious;
+let activeCoastSegs = isMobileDevice ? 232 : 336;
+let activeQualityTier = isMobileDevice ? 'mobile' : 'medium';
+let long, short, chop, longPrevious;
 let bathymetry, swashRig, rockSplash;
 let detail, foamTexture, splashFlipbook, coastalRocks, rockShadow;
 let foamField, foamLayer, oceanAudio;
@@ -67399,9 +68057,35 @@ let opticsSettled = true;
 const lastShadowSunDir = new THREE.Vector3(-0.44, 0.32, -0.839).normalize();
 
 const QUALITY_SPECS = {
+  mobile: {
+    label: '行動極速',
+    labelEn: 'Mobile Fast',
+    desc: '手機 TBDR 高幀率最佳化・512 陰影・智慧節流',
+    descEn: 'TBDR High-FPS · 512 Shadow · Smart Throttle',
+    maxDpr: 1.05,
+    coastSegs: 232,
+    oceanQuality: 0.5,
+    refractionMicro: 0.0,
+    envWidth: 512,
+    envHeight: 256,
+    cloudSteps: 12,
+    envBandInterval: 0.095,
+    shadowRes: 512,
+    depthPixelScale: 0.46,
+    splashScale: 0.52,
+    msaaSamples: 0,
+    halfResBloom: false,
+    godRaySteps: 0,
+    bloomStrength: 0.14,
+    causticsQuality: 0.0,
+    fastComposite: true,
+    swashInterval: 1 / 32
+  },
   low: {
     label: '低品質',
+    labelEn: 'Low',
     desc: '極速省顯存・關閉陰影與焦散',
+    descEn: 'VRAM Saver · Shadows & Caustics Off',
     maxDpr: 1.00,
     coastSegs: 224,
     oceanQuality: 0.0,
@@ -67409,6 +68093,7 @@ const QUALITY_SPECS = {
     envWidth: 480,
     envHeight: 240,
     cloudSteps: 10,
+    envBandInterval: 0.080,
     shadowRes: 0,
     depthPixelScale: 0.45,
     splashScale: 0.38,
@@ -67416,18 +68101,23 @@ const QUALITY_SPECS = {
     halfResBloom: false,
     godRaySteps: 0,
     bloomStrength: 0.135,
-    causticsQuality: 0.0
+    causticsQuality: 0.0,
+    fastComposite: true,
+    swashInterval: 1 / 32
   },
   medium: {
     label: '中品質',
+    labelEn: 'Medium',
     desc: '1024 陰影・16 階雲層・均衡推薦',
+    descEn: '1024 Shadow · 16-Step Clouds · Balanced',
     maxDpr: 1.20,
-    coastSegs: 368,
+    coastSegs: 336,
     oceanQuality: 1.0,
     refractionMicro: 0.06,
     envWidth: 640,
     envHeight: 320,
     cloudSteps: 16,
+    envBandInterval: 0.032,
     shadowRes: 1024,
     depthPixelScale: 0.60,
     splashScale: 0.76,
@@ -67435,30 +68125,38 @@ const QUALITY_SPECS = {
     halfResBloom: false,
     godRaySteps: 8,
     bloomStrength: 0.145,
-    causticsQuality: 1.0
+    causticsQuality: 1.0,
+    fastComposite: false,
+    swashInterval: 0
   },
   high: {
     label: '高品質',
+    labelEn: 'High',
     desc: '2048 陰影・26 階雲層・2x MSAA・半解析度星芒',
+    descEn: '2048 Shadow · 26-Step Clouds · 2x MSAA',
     maxDpr: 1.45,
-    coastSegs: 480,
+    coastSegs: 416,
     oceanQuality: 2.0,
     refractionMicro: 0.16,
     envWidth: 896,
     envHeight: 448,
     cloudSteps: 26,
+    envBandInterval: 0.028,
     shadowRes: 2048,
-    depthPixelScale: 0.80,
+    depthPixelScale: 0.74,
     splashScale: 1.05,
     msaaSamples: 2,
     halfResBloom: true,
     godRaySteps: 14,
     bloomStrength: 0.155,
-    causticsQuality: 2.0
+    causticsQuality: 2.0,
+    fastComposite: false,
+    swashInterval: 0
   }
 };
 
 function normalizeQualityKey(raw) {
+  if (raw === 'mobile') return 'mobile';
   if (raw === 'balanced' || raw === 'low') return 'low';
   if (raw === 'ultra' || raw === 'high') return 'high';
   return 'medium';
@@ -67501,15 +68199,18 @@ function buildCoastGeometry(segs) {
 }
 
 function uploadLongPrevious() {
-  longPreviousData.set(long.texture.image.data);
-  longPrevious.needsUpdate = true;
+  long.syncPrevious();
+  longPrevious = long.previousTexture;
+  ocean.uniforms.longPrevious.value = longPrevious;
+  ocean.uniforms.longWave.value = long.texture;
 }
 
 function sampleLong(x, z, channel = 0) {
   const mix = ocean.uniforms.longMix.value;
-  if (mix <= 0) return long.sampleHeight(x, z, channel, longPreviousData);
+  const prevBuf = long.previousPixels;
+  if (mix <= 0) return long.sampleHeight(x, z, channel, prevBuf);
   if (mix >= 1) return long.sampleHeight(x, z, channel);
-  return long.sampleHeight(x, z, channel, longPreviousData) * (1 - mix) + long.sampleHeight(x, z, channel) * mix;
+  return long.sampleHeight(x, z, channel, prevBuf) * (1 - mix) + long.sampleHeight(x, z, channel) * mix;
 }
 
 function syncBound() {
@@ -67619,10 +68320,14 @@ function cam(dt = 0) {
     camera.lookAt(target.x, camera.position.y + diveTilt * distance, target.z);
     return;
   }
-  const x = target.x + distance * Math.cos(pitch) * Math.sin(yaw);
-  const z = target.z + distance * Math.cos(pitch) * Math.cos(yaw);
+  const portraitDistMul = camera.aspect < 0.95
+    ? Math.min(1.26, Math.pow(0.95 / Math.max(0.42, camera.aspect), 0.25))
+    : 1.0;
+  const effDist = distance * portraitDistMul;
+  const x = target.x + effDist * Math.cos(pitch) * Math.sin(yaw);
+  const z = target.z + effDist * Math.cos(pitch) * Math.cos(yaw);
   const floor = surfaceHeightAtWorld(x, z) + 0.45;
-  const desired = target.y + distance * Math.sin(pitch);
+  const desired = target.y + effDist * Math.sin(pitch);
   const needed = Math.max(floor - desired, 0);
   if (dt <= 0) {
     cameraLift = Math.max(cameraLift, needed);
@@ -67818,6 +68523,19 @@ function formatTimeOfDayLabel(hours) {
   const totalMin = Math.round(h * 60) % 1440;
   const hh = String(Math.floor(totalMin / 60)).padStart(2, '0');
   const mm = String(totalMin % 60).padStart(2, '0');
+  if (currentLang === 'en') {
+    let tag = 'Afternoon';
+    if (h < 4.8 || h >= 19.3) tag = 'Night';
+    else if (h < 6.4) tag = 'Daybreak';
+    else if (h < 9.5) tag = 'Morning';
+    else if (h < 11.3) tag = 'Forenoon';
+    else if (h < 13.4) tag = 'Noon';
+    else if (h < 16.5) tag = 'Afternoon';
+    else if (h < 17.6) tag = 'Golden Hr';
+    else if (h < 18.45) tag = 'Dusk';
+    else tag = 'Twilight';
+    return `${hh}:${mm} ${tag}`;
+  }
   let tag = '午後';
   if (h < 4.8 || h >= 19.3) tag = '星夜';
   else if (h < 6.4) tag = '破曉';
@@ -68004,6 +68722,13 @@ function syncKdAttenuation() {
   ocean.uniforms.kdAttenuation.value.set(abs.x * 0.22 * ds, abs.y * 0.34 * ds, abs.z * 0.48 * ds);
 }
 
+function formatWaterDepthLabel(depthScale) {
+  const tag = currentLang === 'en'
+    ? (depthScale < 0.72 ? 'Shallow' : (depthScale > 1.38 ? 'Deep' : 'Std'))
+    : (depthScale < 0.72 ? '清淺' : (depthScale > 1.38 ? '深海' : '標準'));
+  return `${depthScale.toFixed(2)}x ${tag}`;
+}
+
 function applyWaterOptics(overrides = null, immediate = false) {
   if (overrides) {
     if (overrides.palette && WATER_PALETTES[overrides.palette]) $('waterPalette').value = overrides.palette;
@@ -68022,8 +68747,7 @@ function applyWaterOptics(overrides = null, immediate = false) {
   const clarity = Math.max(0.55, Math.min(1.75, Number.isFinite(rawClar) && rawClar > 0 ? rawClar : 1.0));
 
   $('waterTintValue').textContent = (tint >= 0 ? '+' : '') + tint.toFixed(2);
-  const depthTag = depthScale < 0.72 ? '清淺' : (depthScale > 1.38 ? '深海' : '標準');
-  $('waterDepthValue').textContent = `${depthScale.toFixed(2)}x ${depthTag}`;
+  $('waterDepthValue').textContent = formatWaterDepthLabel(depthScale);
   $('waterClarityValue').textContent = `${clarity.toFixed(2)}x`;
 
   const invClarity = 1.0 / clarity;
@@ -68075,12 +68799,99 @@ function applyWaterOptics(overrides = null, immediate = false) {
 function updateGpuStatusBanner() {
   if (gpuReport.shaderErrors.length > 0) return;
   if (gpuReport.fragmentLimit < 16) {
-    gpuStatus.textContent = '警告：貼圖單元不足，部分光學效果可能受限';
+    gpuStatus.textContent = t('gpuLowSamplers');
     return;
   }
   const spec = QUALITY_SPECS[activeQualityTier] || QUALITY_SPECS.medium;
-  gpuStatus.textContent = `WebGL2 純 GPU｜${spec.label}（${spec.desc}）`;
+  gpuStatus.textContent = currentLang === 'en'
+    ? `WebGL2 Pure GPU | ${spec.labelEn} (${spec.descEn})`
+    : `WebGL2 純 GPU｜${spec.label}（${spec.desc}）`;
 }
+
+function syncAudioUI() {
+  const btn = document.getElementById('soundToggle');
+  if (!btn) return;
+  const enabled = oceanAudio ? oceanAudio.status().enabled : true;
+  btn.textContent = enabled ? t('audioOn') : t('audioMuted');
+  btn.classList.toggle('active', enabled);
+}
+
+function applyLanguage(nextLang, persist = false) {
+  currentLang = nextLang === 'en' ? 'en' : 'zh';
+  document.documentElement.lang = currentLang === 'en' ? 'en' : 'zh-Hant';
+  if (persist) {
+    try { localStorage.setItem('nso_lang', currentLang); } catch (_) {}
+  }
+
+  for (const el of document.querySelectorAll('[data-i18n]')) {
+    const key = el.getAttribute('data-i18n');
+    if (key) el.textContent = t(key);
+  }
+
+  const langBtn = document.getElementById('langToggleBtn');
+  if (langBtn) {
+    langBtn.textContent = currentLang === 'en' ? '繁中' : 'EN';
+    const label = currentLang === 'en' ? '切換為繁體中文介面' : 'Switch UI to English';
+    langBtn.title = label;
+    langBtn.setAttribute('aria-label', label);
+  }
+
+  const immBtn = document.getElementById('immersiveToggleBtn');
+  if (immBtn) immBtn.title = t('immersiveTitle');
+  const nightBtn = document.getElementById('todNight');
+  if (nightBtn) nightBtn.title = t('todNightTitle');
+  const hudEl = document.getElementById('perfHud');
+  if (hudEl) hudEl.setAttribute('aria-label', t('perfAria'));
+  const maxEl = document.getElementById('perfFpsMaxVal');
+  if (maxEl) maxEl.title = t('perfMaxTitle');
+  const capSel = document.getElementById('perfFpsCap');
+  if (capSel) capSel.setAttribute('aria-label', t('perfCapAria'));
+  const spEl = document.getElementById('sponsorCard');
+  if (spEl) spEl.setAttribute('aria-label', t('sponsorAria'));
+  const resBtn = document.getElementById('restoreGuiBtn');
+  if (resBtn) resBtn.title = t('restoreGuiTitle');
+
+  const panelToggleBtn = document.getElementById('panelToggleBtn');
+  if (panelToggleBtn) {
+    panelToggleBtn.textContent = panelCollapsed ? t('btnExpand') : t('btnCollapse');
+  }
+  const hintEl = document.getElementById('interactionHint');
+  if (hintEl) {
+    hintEl.textContent = isMobileDevice ? t('hintMobile') : t('hintDesktop');
+  }
+  const todOut = document.getElementById('timeOfDayValue');
+  if (todOut) {
+    todOut.textContent = formatTimeOfDayLabel(currentTimeHours);
+  }
+  const depthInput = document.getElementById('waterDepthScale');
+  const depthOut = document.getElementById('waterDepthValue');
+  if (depthInput && depthOut) {
+    const rawD = Number(depthInput.value);
+    const ds = Math.max(0.35, Math.min(2.40, Number.isFinite(rawD) && rawD > 0 ? rawD : 1.0));
+    depthOut.textContent = formatWaterDepthLabel(ds);
+  }
+  const pauseBtn = document.getElementById('previewPause');
+  if (pauseBtn) {
+    pauseBtn.textContent = playing ? t('btnPause') : t('btnResume');
+  }
+  if (!playing) {
+    const fsEl = document.getElementById('frameStatus');
+    if (fsEl) fsEl.textContent = t('statusPaused');
+  }
+  syncAudioUI();
+  if (ocean) {
+    updateGpuStatusBanner();
+  } else if (gpuReport.shaderErrors.length === 0) {
+    gpuStatus.textContent = t('gpuBooting');
+  }
+  if (perfMonitor) {
+    perfMonitor.setLanguage(currentLang);
+  }
+  return currentLang;
+}
+
+applyLanguage(currentLang, false);
+setLoadingProgress(8, t('bootStage0'), gpuReport.rendererName || 'WebGL2 Hardware GPU');
 
 function applyQualityTier(rawMode, doRender = true, skipBake = false) {
   const tier = normalizeQualityKey(rawMode);
@@ -68114,7 +68925,13 @@ function applyQualityTier(rawMode, doRender = true, skipBake = false) {
     oldGeo.dispose();
   }
 
-  skyCloudEnv.setQuality({ width: spec.envWidth, height: spec.envHeight, steps: spec.cloudSteps, doBake: !skipBake });
+  skyCloudEnv.setQuality({
+    width: spec.envWidth,
+    height: spec.envHeight,
+    steps: spec.cloudSteps,
+    bandInterval: spec.envBandInterval || 0.032,
+    doBake: !skipBake
+  });
   rockShadow.setResolution(spec.shadowRes, !skipBake);
   if (!skipBake) lastShadowSunDir.copy(ocean.uniforms.sunDirection.value);
   depthCapture.setPixelScale(spec.depthPixelScale);
@@ -68123,7 +68940,8 @@ function applyQualityTier(rawMode, doRender = true, skipBake = false) {
     msaaSamples: spec.msaaSamples,
     halfResBloom: spec.halfResBloom,
     godRaySteps: spec.godRaySteps,
-    bloomStrength: spec.bloomStrength
+    bloomStrength: spec.bloomStrength,
+    fastComposite: !!spec.fastComposite
   });
 
   updateGpuStatusBanner();
@@ -68223,13 +69041,14 @@ function smoothParams(dt) {
 
 // Deterministic seek & debug API for automated visual verification
 let foamSliceIdx = 0, foamSliceAccumDt = 0;
-let lastShortWavePhase = -1e9;
+let lastShortWavePhase = -1e9, lastChopWavePhase = -1e9;
 const FOAM_STEP_PERIOD = 0.10;
 
 function seekTo(seconds) {
   phase = seconds;
   sampleTime = seconds;
   lastShortWavePhase = seconds;
+  lastChopWavePhase = seconds - (1 / 120);
   long.update(seconds);
   uploadLongPrevious();
   previousGradient = long.maxGradient;
@@ -68262,32 +69081,37 @@ function seekTo(seconds) {
 
 const clock = new THREE.Clock();
 let splashStepAccum = 0;
+let swashStepAccum = 0;
 let nextCapDeadlineMs = 0;
 let lastRafNow = 0;
-let rafIntervalEma = 8.0;
 
 function loop(rafNow = performance.now()) {
   requestAnimationFrame(loop);
 
   if (lastRafNow > 0) {
     const rawRafDt = rafNow - lastRafNow;
-    if (rawRafDt > 0.2 && rawRafDt < 60) {
-      rafIntervalEma = rafIntervalEma * 0.85 + rawRafDt * 0.15;
-    }
+    perfMonitor.recordRafInterval(rawRafDt);
   }
   lastRafNow = rafNow;
 
-  // VSync-aware zero-drift phase-locked FPS limiter
+  // VSync-aware Bresenham phase-locked FPS limiter:
+  // - Never skips ticks when native VSync already matches or is slower than fpsCap (e.g. 60Hz screen + 60 FPS cap!)
+  // - Uses exact half-VSync-tick centered phase accumulation on high-refresh displays (e.g. 144Hz -> 2,3,2,3,2 = exact 60.0 FPS!)
   const fpsCap = perfMonitor.getFpsCap();
   if (playing && fpsCap > 0) {
     const targetIntervalMs = 1000 / fpsCap;
-    if (nextCapDeadlineMs === 0 || rafNow - nextCapDeadlineMs > targetIntervalMs * 2.0) {
-      nextCapDeadlineMs = rafNow + targetIntervalMs;
+    const nativeVSyncMs = perfMonitor.getNativeVSyncMs();
+    if (nativeVSyncMs < targetIntervalMs * 0.93) {
+      if (nextCapDeadlineMs === 0 || Math.abs(rafNow - nextCapDeadlineMs) > Math.max(80, targetIntervalMs * 3.0)) {
+        nextCapDeadlineMs = rafNow + targetIntervalMs;
+      } else {
+        const remainingMs = nextCapDeadlineMs - rafNow;
+        const halfTickMs = Math.min(targetIntervalMs * 0.48, Math.max(1.8, nativeVSyncMs * 0.52));
+        if (remainingMs > halfTickMs) return;
+        nextCapDeadlineMs += targetIntervalMs;
+      }
     } else {
-      const remainingMs = nextCapDeadlineMs - rafNow;
-      const jitterTolMs = Math.min(targetIntervalMs * 0.42, Math.max(2.4, rafIntervalEma * 0.55));
-      if (remainingMs > jitterTolMs) return;
-      nextCapDeadlineMs += targetIntervalMs;
+      nextCapDeadlineMs = 0;
     }
   }
 
@@ -68310,23 +69134,29 @@ function loop(rafNow = performance.now()) {
   phase += dt;
   ocean.uniforms.time.value = phase;
 
-  // Bracketed long-wave FFT stepping (guarantees C^0 continuity even across multi-step tab catchups!)
+  // Zero-copy ping-pong long-wave FFT stepping (0 bytes CPU memcpy & 0 duplicate GPU uploads for longPrevious!)
   if (phase - sampleTime >= waveStep) {
     if (phase - sampleTime >= waveStep * 2) {
       sampleTime = phase - waveStep;
       long.update(sampleTime);
     }
-    uploadLongPrevious();
+    long.advanceBracket();
     previousGradient = long.maxGradient;
     sampleTime += waveStep;
     long.update(sampleTime);
+    longPrevious = long.previousTexture;
+    ocean.uniforms.longPrevious.value = longPrevious;
+    ocean.uniforms.longWave.value = long.texture;
   }
   ocean.uniforms.longMix.value = Math.max(0, Math.min(1, (phase - sampleTime) / waveStep));
 
-  // Update 64x64 Float32 short & chop bands in lockstep up to 125Hz
-  if (Math.abs(phase - lastShortWavePhase) >= 1 / 125) {
+  // Phase-staggered 60Hz updates for 64x64 Float32 short & chop bands (halves PCIe uploads & spreads CPU FFT across frames!)
+  if (Math.abs(phase - lastShortWavePhase) >= 1 / 60) {
     lastShortWavePhase = phase;
     short.update(phase);
+  }
+  if (Math.abs(phase - lastChopWavePhase) >= 1 / 60) {
+    lastChopWavePhase = phase;
     chop.update(phase);
   }
 
@@ -68350,18 +69180,33 @@ function loop(rafNow = performance.now()) {
   ocean.uniforms.foamTransportMix.value = Math.min(1, foamClock / FOAM_STEP_PERIOD);
   perfMonitor.markSection('waves');
 
+  const curSpec = QUALITY_SPECS[activeQualityTier] || QUALITY_SPECS.medium;
   if (ocean.uniforms.beachMode.value > 0.5) {
+    const splashStepInterval = curSpec.swashInterval > 0 ? (1 / 45) : (1 / 90);
     splashStepAccum += dt;
-    if (splashStepAccum >= 1 / 90) {
+    if (splashStepAccum >= splashStepInterval) {
       const stepDt = Math.min(0.1, splashStepAccum);
       splashStepAccum = 0;
       rockSplash.step(phase, stepDt, ocean.uniforms.amplitude.value, ocean.uniforms.foamBoost.value, true);
     }
     perfMonitor.markSection('splash');
-    swashRig.step(phase, dt, ocean.uniforms.amplitude.value, ocean.uniforms.foamBoost.value);
-    ocean.uniforms.swashStateMap.value = swashRig.texture;
   }
 
+  if (ocean.uniforms.beachMode.value > 0.5) {
+    if (curSpec.swashInterval > 0) {
+      swashStepAccum += dt;
+      if (swashStepAccum >= curSpec.swashInterval) {
+        const swDt = Math.min(0.08, swashStepAccum);
+        swashStepAccum = 0;
+        swashRig.step(phase, swDt, ocean.uniforms.amplitude.value, ocean.uniforms.foamBoost.value);
+        ocean.uniforms.swashStateMap.value = swashRig.texture;
+      }
+    } else {
+      swashStepAccum = 0;
+      swashRig.step(phase, dt, ocean.uniforms.amplitude.value, ocean.uniforms.foamBoost.value);
+      ocean.uniforms.swashStateMap.value = swashRig.texture;
+    }
+  }
   cam(dt);
   oceanAudio.update(phase, camera, {
     playing: true,
@@ -68371,34 +69216,68 @@ function loop(rafNow = performance.now()) {
     foamBoost: ocean.uniforms.foamBoost.value
   });
   perfMonitor.markSection('swash');
+
   renderFrame();
   perfMonitor.endFrame($('frameStatus'));
 }
 
 function bindUIControls() {
-  let dragging = false, lastX = 0, lastY = 0;
+  const activePointers = new Map();
+  let lastPinchDist = 0;
+
+  const measurePinchDist = () => {
+    const pts = Array.from(activePointers.values());
+    if (pts.length < 2) return 0;
+    return Math.hypot(pts[1].x - pts[0].x, pts[1].y - pts[0].y);
+  };
+
+  const releasePointer = e => {
+    activePointers.delete(e.pointerId);
+    lastPinchDist = activePointers.size >= 2 ? measurePinchDist() : 0;
+  };
+
   renderer.domElement.addEventListener('pointerdown', e => {
-    dragging = true;
+    activePointers.set(e.pointerId, { x: e.clientX, y: e.clientY });
     camGlide.active = false;
-    lastX = e.clientX;
-    lastY = e.clientY;
-    renderer.domElement.setPointerCapture(e.pointerId);
+    if (activePointers.size >= 2) {
+      lastPinchDist = measurePinchDist();
+    }
+    try { renderer.domElement.setPointerCapture(e.pointerId); } catch (_) {}
   });
-  renderer.domElement.addEventListener('pointerup', () => (dragging = false));
+  renderer.domElement.addEventListener('pointerup', releasePointer);
+  renderer.domElement.addEventListener('pointercancel', releasePointer);
+  renderer.domElement.addEventListener('lostpointercapture', releasePointer);
   renderer.domElement.addEventListener('pointermove', e => {
-    if (!dragging) return;
+    const prev = activePointers.get(e.pointerId);
+    if (!prev) return;
+    const dx = e.clientX - prev.x;
+    const dy = e.clientY - prev.y;
+    prev.x = e.clientX;
+    prev.y = e.clientY;
     camGlide.active = false;
     releaseLift = true;
-    yaw -= (e.clientX - lastX) * 0.0055;
-    if (diveMode) {
-      diveTilt = Math.max(-0.7, Math.min(1, diveTilt + (e.clientY - lastY) * 0.0055));
-      $('lookTilt').value = diveTilt;
-      $('tiltValue').textContent = (diveTilt >= 0 ? '+' : '') + diveTilt.toFixed(2);
-    } else {
-      pitch = Math.max(0.03, Math.min(1.22, pitch + (e.clientY - lastY) * 0.0055));
+
+    if (activePointers.size === 1) {
+      yaw -= dx * 0.0055;
+      if (diveMode) {
+        diveTilt = Math.max(-0.7, Math.min(1, diveTilt + dy * 0.0055));
+        $('lookTilt').value = diveTilt;
+        $('tiltValue').textContent = (diveTilt >= 0 ? '+' : '') + diveTilt.toFixed(2);
+      } else {
+        pitch = Math.max(0.03, Math.min(1.22, pitch + dy * 0.0055));
+      }
+    } else if (activePointers.size >= 2) {
+      const curDist = measurePinchDist();
+      if (lastPinchDist > 8 && curDist > 8) {
+        const zoomRatio = lastPinchDist / curDist;
+        distance = Math.max(8, Math.min(130, distance * Math.pow(zoomRatio, 1.05)));
+      }
+      lastPinchDist = curDist;
+      yaw -= dx * 0.0022;
+      if (!diveMode) {
+        pitch = Math.max(0.03, Math.min(1.22, pitch + dy * 0.0022));
+      }
     }
-    lastX = e.clientX;
-    lastY = e.clientY;
     cam(0);
     if (!playing) renderFrame();
   });
@@ -68410,13 +69289,23 @@ function bindUIControls() {
     cam(0);
     if (!playing) renderFrame();
   }, { passive: false });
-  window.addEventListener('resize', () => {
-    camera.aspect = innerWidth / innerHeight;
-    camera.updateProjectionMatrix();
+  const handleViewportChange = () => {
+    syncCameraProjection();
+    const spec = QUALITY_SPECS[activeQualityTier] || QUALITY_SPECS.medium;
+    renderer.setPixelRatio(Math.min(devicePixelRatio, spec.maxDpr));
     renderer.setSize(innerWidth, innerHeight);
+    cam(0);
     if (perfMonitor) perfMonitor.refreshMemory();
     if (!playing) renderFrame();
+  };
+  window.addEventListener('resize', handleViewportChange);
+  window.addEventListener('orientationchange', () => {
+    setTimeout(handleViewportChange, 60);
   });
+  const hintEl = document.getElementById('interactionHint');
+  if (hintEl) {
+    hintEl.textContent = isMobileDevice ? t('hintMobile') : t('hintDesktop');
+  }
 
   $('previewCoast').onclick = () => applyPreset('previewCoast', false);
   $('previewRocks').onclick = () => applyPreset('previewRocks', false);
@@ -68469,8 +69358,8 @@ function bindUIControls() {
 
   $('previewPause').onclick = () => {
     playing = !playing;
-    $('previewPause').textContent = playing ? '暫停播放' : '繼續播放（已暫停）';
-    if (!playing) $('frameStatus').textContent = '已暫停';
+    $('previewPause').textContent = playing ? t('btnPause') : t('btnResume');
+    if (!playing) $('frameStatus').textContent = t('statusPaused');
     oceanAudio.update(phase, camera, {
       playing,
       diveMode,
@@ -68479,13 +69368,6 @@ function bindUIControls() {
       foamBoost: ocean.uniforms.foamBoost.value
     });
   };
-
-  function syncAudioUI() {
-    const st = oceanAudio.status();
-    const btn = $('soundToggle');
-    btn.textContent = st.enabled ? '音效：開啟' : '音效：靜音';
-    btn.classList.toggle('active', st.enabled);
-  }
 
   $('soundToggle').onclick = () => {
     oceanAudio.toggle();
@@ -68533,7 +69415,7 @@ function bindUIControls() {
 async function bootNeuralSpecOcean() {
   const bootStartMs = performance.now();
   const threadBadgeText = `CPU ${Math.min(4, hardwareThreads)}-Thread Worker · ${khrParallelSupported ? 'KHR_parallel_shader_compile' : 'WebGL2 Async Queue'}`;
-  setShaderCompileProgress(0, 0, '啟動多執行緒 Sobolev-PINN 訓練與場景佇列…', threadBadgeText, false);
+  setShaderCompileProgress(0, 0, t('shaderQueueStart'), threadBadgeText, false);
 
   // Spawn true OS Web Worker threads immediately so 518 epochs of Sobolev-PINN training run in parallel with Stages 1-2!
   const rockPinnJob = runFnInWorkerThread(trainCoastalRockFoamPINN);
@@ -68541,9 +69423,9 @@ async function bootNeuralSpecOcean() {
   await nextBrowserPaint();
 
   // Stage 1: Ocean Surface, Neural Chapman-Ozone Atmosphere & Volumetric Sky
-  setLoadingProgress(18, '建構神經大氣散射與體積雲天穹…');
+  setLoadingProgress(18, t('bootStage1'));
   await nextBrowserPaint();
-  ocean = createOffshore(THREE, { size: 350, segments: 320 });
+  ocean = createOffshore(THREE, { size: 350, segments: isMobileDevice ? 240 : 320 });
   scene.add(ocean.mesh);
   ocean.uniforms.captureSamples.value = 0;
   ocean.uniforms.amplitude.value = goalAmplitude;
@@ -68563,12 +69445,14 @@ async function bootNeuralSpecOcean() {
   coastGeometry = buildCoastGeometry(activeCoastSegs);
 
   // Stage 2: Tri-Band Spectral FFT Ocean Waves & Deferred Foam/Splash Atlases
-  setLoadingProgress(36, '合成三頻譜 FFT 海洋波場與流體紋理佇列…');
+  setLoadingProgress(36, t('bootStage2'));
   await nextBrowserPaint();
-  long = createSpectralWaves(THREE, { size: 128, length: 240, wind: 16, seed: 84, band: 'long', geometrySpacing: 350 / 320, linearFilter: floatLinearSupported });
-  short = createSpectralWaves(THREE, { size: 64, length: 28, wind: 11, seed: 601, band: 'short', geometrySpacing: 350 / 320, linearFilter: floatLinearSupported });
-  chop = createSpectralWaves(THREE, { size: 64, length: 11.3, wind: 12.5, seed: 1907, band: 'chop', geometrySpacing: 0, linearFilter: floatLinearSupported });
-  ocean.uniforms.uWaveLinear.value = floatLinearSupported ? 1.0 : 0.0;
+  const waveLinear = floatLinearSupported;
+  long = createSpectralWaves(THREE, { size: 128, length: 240, wind: 16, seed: 84, band: 'long', geometrySpacing: 350 / 320, linearFilter: waveLinear, pingPong: true });
+  short = createSpectralWaves(THREE, { size: 64, length: 28, wind: 11, seed: 601, band: 'short', geometrySpacing: 350 / 320, linearFilter: waveLinear });
+  chop = createSpectralWaves(THREE, { size: 64, length: 11.3, wind: 12.5, seed: 1907, band: 'chop', geometrySpacing: 0, linearFilter: waveLinear });
+  ocean.uniforms.uWaveLinear.value = waveLinear ? 1.0 : 0.0;
+  ocean.uniforms.uIsDepthCapture = { value: 0.0 };
 
   let lastLongUpdateTime = NaN, lastShortUpdateTime = NaN, lastChopUpdateTime = NaN;
   const updateLongRaw = long.update;
@@ -68578,12 +69462,7 @@ async function bootNeuralSpecOcean() {
   const updateChopRaw = chop.update;
   chop.update = t => { if (t === lastChopUpdateTime) return; updateChopRaw(t); lastChopUpdateTime = t; };
 
-  longPreviousData = long.texture.image.data.slice();
-  longPrevious = new THREE.DataTexture(longPreviousData, 128, 128, THREE.RGBAFormat, THREE.FloatType);
-  longPrevious.wrapS = longPrevious.wrapT = THREE.RepeatWrapping;
-  longPrevious.minFilter = longPrevious.magFilter = floatLinearSupported ? THREE.LinearFilter : THREE.NearestFilter;
-  longPrevious.generateMipmaps = false;
-  longPrevious.needsUpdate = true;
+  longPrevious = long.previousTexture;
   previousGradient = long.maxGradient;
 
   detail = createDetailTexture(THREE);
@@ -68591,7 +69470,7 @@ async function bootNeuralSpecOcean() {
   splashFlipbook = createSplashFlipbook(THREE, renderer, { size: 512, deferBake: true });
 
   // Stage 3: Sculpted Coastal Rocks (using Worker #1 PINN), Sun Shadow Map, Bathymetry & GPU Swash Solver
-  setLoadingProgress(52, '雕刻風化海岸礁岩與淺水水深折射場…');
+  setLoadingProgress(52, t('bootStage3'));
   await nextBrowserPaint();
   const rockPinnRes = await rockPinnJob;
   coastalRocks = createCoastalRocks(THREE, shoreBed, detail, ocean.uniforms, foamTexture.texture, renderer, {
@@ -68620,7 +69499,7 @@ async function bootNeuralSpecOcean() {
   swashRig.setCoastalContactMap(coastalRocks.contactTexture);
   ocean.uniforms.coastalContactMap = { value: coastalRocks.contactTexture };
 
-  foamField = createFoamField(THREE);
+  foamField = createFoamField(THREE, { renderer });
   ocean.uniforms.bathymetryMap.value = bathymetry.texture;
   ocean.uniforms.swashStateMap.value = swashRig.texture;
   ocean.uniforms.foamMap.value = foamField.texture;
@@ -68649,7 +69528,7 @@ async function bootNeuralSpecOcean() {
   scene.add(foamLayer.mesh);
 
   // Stage 4: Sobolev-PINN 3D Wave-Rock Splash System (using Worker #2 PINN), Wet Quartz Beach & Post-Processing
-  setLoadingProgress(68, '建構 3D 礁岩飛沫碰撞系統與後處理管線…');
+  setLoadingProgress(68, t('bootStage4'));
   await nextBrowserPaint();
   const splashPinnRes = await splashPinnJob;
   parallelCompileStats.workerThreadsUsed = (rockPinnRes.threaded ? 1 : 0) + (splashPinnRes.threaded ? 1 : 0);
@@ -68750,7 +69629,8 @@ async function bootNeuralSpecOcean() {
     ocean.uniforms.amplitude,
     shoreDetail,
     shoreDebug,
-    ocean.uniforms.foamScaleDebug
+    ocean.uniforms.foamScaleDebug,
+    isMobileDevice ? 224 : 272
   );
   // Dispose unused beach.mesh.material immediately (coastPanel renders coastNaturalGeometry with seabedMaterial!)
   beach.mesh.material.dispose();
@@ -68796,7 +69676,8 @@ async function bootNeuralSpecOcean() {
       waterDepthScale: ocean.uniforms.waterDepthScale,
       bedStyle: { value: 1 },
       caustics: { value: 1.04 },
-      uCausticsQuality: { value: 1.0 }
+      uCausticsQuality: { value: 1.0 },
+      uIsDepthCapture: ocean.uniforms.uIsDepthCapture
     },
     vertexShader: `varying vec3 w;varying vec3 n;
 void main(){
@@ -68806,7 +69687,7 @@ void main(){
 }`,
     fragmentShader: `varying vec3 w;varying vec3 n;
 uniform sampler2D detailMap, longWave, longPrevious, shortWave;
-uniform float longMix, amplitude, midScale, bedStyle, caustics, uCausticsQuality, beachMode, naturalRevision, shoreDetail, shoreDebug, foamScaleDebug, uWaveLinear, waterDepthScale;
+uniform float longMix, amplitude, midScale, bedStyle, caustics, uCausticsQuality, beachMode, naturalRevision, shoreDetail, shoreDebug, foamScaleDebug, uWaveLinear, waterDepthScale, uIsDepthCapture;
 ${shoreVisualGLSL}
 ${coastalBackshoreGLSL}
 ${mediumWaveGLSL}
@@ -68857,6 +69738,19 @@ float wave(vec2 p){
 }
 
 void main(){
+  // During DepthCapture, dry backshore sand & cliffs (>0.90m above MSL) are never underwater-refracted; skip wet-film/shadow/hydro!
+  if (uIsDepthCapture > 0.5 && beachMode > 0.5 && w.y > 0.90) {
+    float broadFast = texture2D(detailMap, w.xz * 0.08).r;
+    vec3 fastSand = mix(vec3(0.45, 0.375, 0.265), vec3(0.65, 0.55, 0.395), broadFast);
+    vec3 skyIrrF = pbrHemisphereIrradiance(vec3(0.0, 1.0, 0.0), skyTop, skyHorizon);
+    vec3 tintF = clamp(pbrSunIrradiance(normalize(sunDirection)) * 0.24 + skyIrrF * 0.36, vec3(0.002), vec3(1.16));
+    float diffF = 0.42 + 0.68 * max(dot(normalize(n), normalize(sunDirection)), 0.0);
+    gl_FragColor = vec4(coastalBackshore(fastSand * diffF * tintF, w), 1.0);
+    #include <tonemapping_fragment>
+    #include <colorspace_fragment>
+    return;
+  }
+
   float broad = texture2D(detailMap, w.xz * 0.08).r;
   float sediment = texture2D(detailMap, w.xz * 0.31 + vec2(2.1, 1.3)).r;
   float domainA = texture2D(detailMap, w.xz * 0.16 + vec2(0.7, 1.2)).r;
@@ -68876,18 +69770,25 @@ void main(){
   float dPhi = cos(phi) * aa * coverage * (6.2831853 / 0.46);
   vec2 rippleGrad = vec2(0.94, 0.34) * dPhi * 0.0085 * (1.0 - smoothstep(12.0, 58.0, length(cameraPosition - w)));
   vec3 bedNormal = normalize(n + vec3(-rippleGrad.x, 0.0, -rippleGrad.y));
-  float bedSunShadow = pbrEvaluateSunShadow(rockShadowMap, rockShadowMatrix, rockShadowEnabled, w, vec3(0.0, 0.04, 0.0), gl_FragCoord.xy);
+  float bedSunShadow = pbrEvaluateSunShadow(rockShadowMap, rockShadowMatrix, rockShadowEnabled, w, vec3(0.0, 0.038, 0.0), gl_FragCoord.xy);
   vec3 bedSkyIrr = pbrHemisphereIrradiance(vec3(0.0, 1.0, 0.0), skyTop, skyHorizon);
   vec3 minBedTint = mix(vec3(0.018), vec3(0.0016), clamp(uNightMix, 0.0, 1.0));
   vec3 sunTintBed = clamp(pbrSunIrradiance(normalize(sunDirection)) * 0.24 + bedSkyIrr * 0.36, minBedTint, vec3(1.16));
   float sunDiffuse = 0.42 + 0.68 * max(dot(bedNormal, normalize(sunDirection)), 0.0) * bedSunShadow;
 
-  float underwaterWeight = beachMode > 0.5 ? smoothstep(0.04, 0.42, -w.y) : 1.0;
-  vec3 subSand = baseSand * sunDiffuse * sunTintBed;
+  bool nearShoreBelt = beachMode > 0.5 && w.y > -1.15 && w.y < 1.25;
+  float offshoreWaveH = nearShoreBelt ? wave(w.xz) * smoothstep(0.02, 0.88, max(0.0, -w.y)) : 0.0;
+  float hydroX = nearShoreBelt ? evaluateCoastalHydro(w.xz, time, amplitude).x : 0.0;
+  float liveColDepth = beachMode > 0.5 ? (offshoreWaveH + hydroX - w.y) : -w.y;
+  float underwaterWeight = beachMode > 0.5 ? smoothstep(0.06, 0.68, max(0.0, liveColDepth)) : 1.0;
+  vec3 subSandBase = beachMode > 0.5 ? pbrWetPorousAlbedo(baseSand, 0.72, 0.40) : baseSand;
+  vec3 subSand = subSandBase * sunDiffuse * sunTintBed;
   vec3 c = subSand;
 
-  if (beachMode > 0.5) {
-    vec3 beachShaded = evaluateBeachSand(baseSand, w, bedNormal, underwaterWeight, ridge);
+  // Skip evaluateBeachSand completely on deep submerged ocean floor (underwaterWeight >= 0.998) AND reuse bedSunShadow + liveColDepth!
+  if (beachMode > 0.5 && underwaterWeight < 0.998) {
+    float sandBed = (w.z > -88.0 && w.z < 58.0 && abs(w.x) < 178.0) ? sampleBathymetry(w.xz).r : w.y;
+    vec3 beachShaded = evaluateBeachSandDirect(baseSand, w, bedNormal, underwaterWeight, ridge, offshoreWaveH + hydroX - sandBed, bedSunShadow);
     c = mix(beachShaded, subSand, underwaterWeight);
   }
 
@@ -68948,13 +69849,17 @@ void main(){
   cinemaPost = createCinemaPostPass(THREE, renderer, scene, camera, ocean.uniforms);
 
   perfMonitor = createPerfMonitor(THREE, renderer);
+  perfMonitor.setLanguage(currentLang);
+  if ((innerHeight > innerWidth && innerWidth <= 760) || innerHeight <= 500) {
+    perfMonitor.setCollapsed(true);
+  }
   perfMonitor.addGeometry(offshoreGeometry);
   perfMonitor.addGeometry(coastGeometry);
   perfMonitor.registerSceneResources(
     scene,
     [
       long.texture,
-      longPrevious,
+      long.previousTexture,
       short.texture,
       chop.texture,
       detail,
@@ -68981,14 +69886,14 @@ void main(){
         texture: swashRig.texture
       })
     },
-    (long.texture.image.data.byteLength * 2.25)
-      + longPreviousData.byteLength
-      + (short.texture.image.data.byteLength * 2.25)
-      + (chop.texture.image.data.byteLength * 2.25)
+    (long.texture.image.data.byteLength * 1.75)
+      + long.previousPixels.byteLength
+      + (short.texture.image.data.byteLength * 1.75)
+      + (chop.texture.image.data.byteLength * 1.75)
       + (bathymetry.texture.image?.data?.byteLength || 0)
       + (detail.image?.data?.byteLength || 0)
       + foamPrevX.byteLength + foamPrevZ.byteLength
-      + (64 * 64 * 4 * 6)
+      + (64 * 64 * 4 * 5)
       + (2048 * 16 * 4)
   );
 
@@ -68998,10 +69903,14 @@ void main(){
   phase = 24.0;
   sampleTime = 24.0;
   lastShortWavePhase = 24.0;
+  lastChopWavePhase = 24.0 - (1 / 120);
   ocean.uniforms.longMix.value = 0;
   ocean.uniforms.time.value = 24.0;
 
-  applyQualityTier($('quality').value || 'medium', false, true);
+  if (isMobileDevice && $('quality')) {
+    $('quality').value = 'mobile';
+  }
+  applyQualityTier($('quality').value || (isMobileDevice ? 'mobile' : 'medium'), false, true);
   applyWaterOptics(null, true);
   setCoastMode(true);
   highlightPreset('previewCoast');
@@ -69031,8 +69940,8 @@ void main(){
     ...cinemaPost.getCompileSpecs()
   ];
 
-  setLoadingProgress(72, '多執行緒平行編譯 GPU 光學與流體著色器…');
-  setShaderCompileProgress(0, offscreenSpecs.length + 6, '派發非阻塞著色器佇列至 GPU 硬體編譯池…', threadBadgeText, true);
+  setLoadingProgress(72, t('bootStage5'));
+  setShaderCompileProgress(0, offscreenSpecs.length + 6, t('shaderDispatch'), threadBadgeText, true);
   await nextBrowserPaint();
 
   const submitStartMs = performance.now();
@@ -69064,12 +69973,12 @@ void main(){
     renderer.compile(scene, camera);
     rockSplash.mesh.visible = prevSplashVis;
 
-    registerCompiledMaterial(ocean.mesh.material, '海洋頻譜與雙層水深折射核心 (Offshore)');
-    registerCompiledMaterial(coastalRocks.material, '海岸花崗岩多相水膜 PBR (CoastalRocks)');
-    registerCompiledMaterial(seabedMaterial, '濕沙水膜與動態色散焦散 (SeabedCaustics)');
-    registerCompiledMaterial(skyCloudEnv.skyMesh.material, 'NASA 銀河星圖與天穹投影 (SkyDome)');
-    registerCompiledMaterial(foamLayer.mesh.material, '碎浪白沫與捲浪飛沫層 (FoamShader)');
-    registerCompiledMaterial(rockSplash.material, '26 萬介電質水滴折射粒子 (RockSplash)');
+    registerCompiledMaterial(ocean.mesh.material, t('progOffshore'));
+    registerCompiledMaterial(coastalRocks.material, t('progRocks'));
+    registerCompiledMaterial(seabedMaterial, t('progSeabed'));
+    registerCompiledMaterial(skyCloudEnv.skyMesh.material, t('progSky'));
+    registerCompiledMaterial(foamLayer.mesh.material, t('progFoam'));
+    registerCompiledMaterial(rockSplash.material, t('progSplash'));
 
     // 3) Submit canvas-output post-processing passes under exact canvas sRGB + tone-mapping states
     for (const spec of offscreenSpecs) {
@@ -69127,13 +70036,17 @@ void main(){
     const ratio = readyCount / totalProgs;
     setLoadingProgress(
       72 + Math.round(23 * ratio),
-      `多執行緒平行編譯 GPU 著色器 (${readyCount} / ${compileEntries.length})…`
+      currentLang === 'en'
+        ? `Parallel GPU shader compilation (${readyCount} / ${compileEntries.length})…`
+        : `多執行緒平行編譯 GPU 著色器 (${readyCount} / ${compileEntries.length})…`
     );
     if (readyCount >= compileEntries.length) {
       setShaderCompileProgress(
         compileEntries.length,
         compileEntries.length,
-        `全部 ${compileEntries.length} 組 GPU 著色器平行編譯完成`,
+        currentLang === 'en'
+          ? `All ${compileEntries.length} GPU shader programs compiled`
+          : `全部 ${compileEntries.length} 組 GPU 著色器平行編譯完成`,
         threadBadgeText,
         true
       );
@@ -69142,7 +70055,7 @@ void main(){
     setShaderCompileProgress(
       readyCount,
       compileEntries.length,
-      `平行編譯中：${activeLabel}`,
+      currentLang === 'en' ? `Compiling: ${activeLabel}` : `平行編譯中：${activeLabel}`,
       threadBadgeText,
       true
     );
@@ -69151,7 +70064,7 @@ void main(){
   parallelCompileStats.parallelCompileMs = +(performance.now() - pollStartMs).toFixed(1);
 
   // Stage 6: Instantaneous GPU Atlas Bakes, PDE Swash Warmup & First Optical Frame (0ms shader stall!)
-  setLoadingProgress(97, '烘焙流體圖集並合成首幀海岸光學畫面…');
+  setLoadingProgress(97, t('bootStage6'));
   await nextBrowserPaint();
 
   const bakeStartMs = performance.now();
@@ -69182,6 +70095,8 @@ void main(){
     setTimeOfDay: h => applyTimeOfDay(h, true),
     setWaterOptics: opts => applyWaterOptics(opts, true),
     setImmersiveMode,
+    getLanguage: () => currentLang,
+    setLanguage: (lang, persist = true) => applyLanguage(lang, persist),
     setFpsCap: cap => perfMonitor.setFpsCap(cap),
     setQuality(mode) {
       return applyQualityTier(mode, true);
@@ -69200,12 +70115,13 @@ void main(){
     },
     setPlaying(on) {
       playing = !!on;
-      $('previewPause').textContent = playing ? '暫停播放' : '繼續播放（已暫停）';
-      if (!playing) $('frameStatus').textContent = '已暫停';
+      $('previewPause').textContent = playing ? t('btnPause') : t('btnResume');
+      if (!playing) $('frameStatus').textContent = t('statusPaused');
     },
     oceanAudio,
     perf: () => perfMonitor.getSnapshot(),
     status: () => ({
+      language: currentLang,
       phase,
       playing,
       guiHidden,
@@ -69231,7 +70147,7 @@ void main(){
     camera
   };
 
-  setLoadingProgress(100, '載入完成・即將進入海岸全景');
+  setLoadingProgress(100, t('bootDone'));
   const loadingScreenEl = document.getElementById('loadingScreen');
   if (loadingScreenEl) {
     loadingScreenEl.classList.add('is-hidden');

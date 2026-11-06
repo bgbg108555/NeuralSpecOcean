@@ -188,7 +188,9 @@ void main(){
       renderer.setScissorTest(false);
       renderer.setRenderTarget(target);
       renderer.clear();
+      if (U.uIsDepthCapture) U.uIsDepthCapture.value = 1.0;
       renderer.render(scene, captureCamera);
+      if (U.uIsDepthCapture) U.uIsDepthCapture.value = 0.0;
 
       for (let i = 0; i < copies.length; i++) {
         const mesh = copies[i];
@@ -215,6 +217,7 @@ void main(){
       lastError = String(e);
       return false;
     } finally {
+      if (U.uIsDepthCapture) U.uIsDepthCapture.value = 0.0;
       for (let i = 0; i < visCount; i++) {
         visObjs[i].visible = visStates[i];
         visObjs[i] = null;

@@ -56,7 +56,7 @@ export function createPerfMonitor(THREE, renderer) {
   let sparkHead = 0;
   let sparkFilled = 0;
 
-  // Per-frame raw timestamps
+  // Per-frame raw timestamps & VSync refresh estimator
   let lastBeginNow = -1;
   let frameStartNow = 0;
   let markNow = 0;
@@ -65,8 +65,30 @@ export function createPerfMonitor(THREE, renderer) {
   let curSwashMs = 0;
   let curRenderMs = 0;
   let renderedInFrame = false;
+  let gpuScopeDepth = 0;
   let lastDrawCalls = 0;
   let lastTriangles = 0;
+
+  const RAF_HIST_LEN = 16;
+  const rafIntervalHist = new Float32Array(RAF_HIST_LEN);
+  const rafSortScratch = new Float32Array(RAF_HIST_LEN);
+  let rafHistIdx = 0;
+  let rafHistCount = 0;
+  let nativeVSyncMs = 16.667;
+
+  function recordRafInterval(rawDtMs) {
+    if (!(rawDtMs > 0.25 && rawDtMs < 55.0)) return;
+    rafIntervalHist[rafHistIdx] = rawDtMs;
+    rafHistIdx = (rafHistIdx + 1) % RAF_HIST_LEN;
+    if (rafHistCount < RAF_HIST_LEN) rafHistCount++;
+    if (rafHistCount >= 4) {
+      for (let i = 0; i < rafHistCount; i++) rafSortScratch[i] = rafIntervalHist[i];
+      const sub = rafSortScratch.subarray(0, rafHistCount);
+      sub.sort();
+      const p50Idx = Math.min(rafHistCount - 1, Math.floor(rafHistCount * 0.50));
+      nativeVSyncMs = Math.max(0.5, Math.min(34.0, sub[p50Idx]));
+    }
+  }
 
   // Registered VRAM & Engine TypedArray registries (deduplicated)
   const trackedGeometries = new Set();
@@ -85,6 +107,7 @@ export function createPerfMonitor(THREE, renderer) {
   const elFps = document.getElementById('perfFpsVal');
   const elFpsMax = document.getElementById('perfFpsMaxVal');
   const elFpsLow = document.getElementById('perfFpsLowVal');
+  const elCapLabel = document.getElementById('perfCapLabelEl');
   const elPotFps = document.getElementById('perfPotFpsVal');
   const elFpsCap = document.getElementById('perfFpsCap');
   const elFrameMs = document.getElementById('perfFrameMsVal');
@@ -99,12 +122,68 @@ export function createPerfMonitor(THREE, renderer) {
   const ctx2d = elCanvas ? elCanvas.getContext('2d', { alpha: false }) : null;
 
   let collapsed = false;
+  let lang = 'zh';
+  function syncToggleLabel() {
+    if (!elToggle) return;
+    elToggle.textContent = lang === 'en'
+      ? (collapsed ? 'Show' : 'Hide')
+      : (collapsed ? '展開' : '收合');
+  }
+  function formatCpuSub() {
+    if (!elCpuSub) return;
+    if (histCount === 0) {
+      elCpuSub.textContent = lang === 'en'
+        ? 'Wave -- · Splash -- · Draw --'
+        : '波浪 -- · 浪花 -- · 渲染 --';
+      return;
+    }
+    elCpuSub.textContent = lang === 'en'
+      ? `Wave ${smoothCpuWavesMs.toFixed(2)} · Splash ${smoothCpuSplashMs.toFixed(2)} · Draw ${smoothCpuRenderMs.toFixed(2)}`
+      : `波浪 ${smoothCpuWavesMs.toFixed(2)} · 浪花 ${smoothCpuSplashMs.toFixed(2)} · 渲染 ${smoothCpuRenderMs.toFixed(2)}`;
+  }
+  function formatRamSub() {
+    if (!elRamSub) return;
+    const mem = performance.memory;
+    if (mem && mem.usedJSHeapSize > 0) {
+      elRamSub.textContent = lang === 'en'
+        ? `JS Heap · Buffers ${cachedEngineTypedMB.toFixed(1)} MB`
+        : `JS Heap · 引擎緩衝 ${cachedEngineTypedMB.toFixed(1)} MB`;
+    } else {
+      elRamSub.textContent = lang === 'en'
+        ? 'TypedArray Buffers'
+        : '引擎 TypedArray 緩衝區';
+    }
+  }
+  function syncCapLabel() {
+    if (!elCapLabel) return;
+    if (gpuTimerValid) {
+      elCapLabel.textContent = fpsCap > 0
+        ? (lang === 'en' ? 'Cap · HW Max' : '鎖幀 · 硬體極限')
+        : (lang === 'en' ? 'HW Max' : '硬體極限');
+    } else {
+      elCapLabel.textContent = fpsCap > 0
+        ? (lang === 'en' ? 'Cap · CPU Max' : '鎖幀 · CPU極限')
+        : (lang === 'en' ? 'CPU Max' : 'CPU極限');
+    }
+  }
+  function setCollapsed(nextCollapsed) {
+    collapsed = !!nextCollapsed;
+    if (elBody) elBody.hidden = collapsed;
+    syncToggleLabel();
+  }
+  function setLanguage(nextLang) {
+    lang = nextLang === 'en' ? 'en' : 'zh';
+    syncToggleLabel();
+    syncCapLabel();
+    formatCpuSub();
+    if (cachedEngineTypedMB > 0 || histCount > 0) formatRamSub();
+    else if (elRamSub) {
+      elRamSub.textContent = lang === 'en' ? 'JS Heap · Buffers -- MB' : 'JS Heap · 引擎緩衝 -- MB';
+    }
+    lastDomUpdateNow = 0;
+  }
   if (elToggle && elBody) {
-    elToggle.onclick = () => {
-      collapsed = !collapsed;
-      elBody.hidden = collapsed;
-      elToggle.textContent = collapsed ? '展開' : '收合';
-    };
+    elToggle.onclick = () => setCollapsed(!collapsed);
   }
   if (elFpsMax) {
     elFpsMax.onclick = () => {
@@ -121,6 +200,7 @@ export function createPerfMonitor(THREE, renderer) {
       warmupFrames = 0;
       histIdx = 0;
       histCount = 0;
+      syncCapLabel();
       if (onCapChangeCb) onCapChangeCb(fpsCap);
     };
   }
@@ -276,12 +356,13 @@ export function createPerfMonitor(THREE, renderer) {
   }
 
   function beginGpuRender() {
+    if (gpuScopeDepth++ > 0) return;
     const now = performance.now();
     markNow = now;
     if (renderer.info) {
       renderer.info.reset();
     }
-    if (!timerExt || activeQuery || now - lastQuerySampleNow < 75) return;
+    if (!timerExt || activeQuery || now - lastQuerySampleNow < 42) return;
     pollGpuQueries();
     const slot = queryRing[queryWriteIdx];
     if (!slot.pending) {
@@ -293,6 +374,8 @@ export function createPerfMonitor(THREE, renderer) {
   }
 
   function endGpuRender() {
+    if (gpuScopeDepth <= 0) return;
+    if (--gpuScopeDepth > 0) return;
     if (timerExt && activeQuery) {
       gl.endQuery(timerExt.TIME_ELAPSED_EXT);
       activeQuery.pending = true;
@@ -361,6 +444,15 @@ export function createPerfMonitor(THREE, renderer) {
     }
   }
 
+  function evaluateHardwareBottleneckMs() {
+    // When WebGL2 EXT_disjoint_timer_query_webgl2 is supported (Windows/Linux D3D11/Vulkan),
+    // bottleneckMs is true max(CPU, GPU) unlocked hardware frame time (never clamped by VSync!).
+    // When OS hides hardware GPU timer (macOS Safari / Metal), bottleneckMs reflects pure CPU ceiling (labeled "CPU極限").
+    return gpuTimerValid
+      ? Math.max(0.4, smoothCpuTotalMs, smoothGpuMs)
+      : Math.max(0.4, smoothCpuTotalMs);
+  }
+
   function endFrame(sideFrameStatusEl = null) {
     const now = performance.now();
     if (renderedInFrame) {
@@ -391,7 +483,7 @@ export function createPerfMonitor(THREE, renderer) {
       const fps = Math.min(999, Math.round(1000 / Math.max(1.0, avgMs)));
       if (warmupFrames >= 75 && histCount >= 60 && fps > peakFps) peakFps = fps;
       const low1 = Math.min(fps, compute1PercentLowFps());
-      const bottleneckMs = Math.max(0.4, smoothCpuTotalMs, gpuTimerValid ? smoothGpuMs : smoothCpuRenderMs);
+      const bottleneckMs = evaluateHardwareBottleneckMs();
       const potentialFps = Math.min(999, Math.max(fps, Math.round(1000 / bottleneckMs)));
 
       if (sideFrameStatusEl && renderedInFrame && histCount > 0) {
@@ -400,6 +492,7 @@ export function createPerfMonitor(THREE, renderer) {
       if (!elHud) return;
 
       if (renderedInFrame && histCount > 0) {
+        syncCapLabel();
         if (elFps) {
           elFps.textContent = String(fps);
           const okThresh = fpsCap > 0 ? Math.min(55, Math.round(fpsCap * 0.90)) : 55;
@@ -407,19 +500,27 @@ export function createPerfMonitor(THREE, renderer) {
         }
         if (elFpsMax) elFpsMax.textContent = String(Math.max(peakFps, fps));
         if (elFpsLow) elFpsLow.textContent = String(low1);
-        if (elPotFps) elPotFps.textContent = potentialFps + ' fps';
+        if (elPotFps) {
+          elPotFps.textContent = potentialFps + ' fps';
+        }
         if (elFrameMs) elFrameMs.textContent = avgMs.toFixed(1) + ' ms';
 
         if (elGpuMs) {
-          elGpuMs.textContent = gpuTimerValid
-            ? smoothGpuMs.toFixed(2) + ' ms'
-            : smoothCpuRenderMs.toFixed(2) + ' ms*';
+          if (gpuTimerValid) {
+            elGpuMs.textContent = smoothGpuMs.toFixed(2) + ' ms';
+            elGpuMs.title = '';
+          } else {
+            elGpuMs.textContent = lang === 'en' ? 'OS Hidden' : '系統隱藏';
+            elGpuMs.title = lang === 'en'
+              ? 'Browser/OS disables WebGL2 hardware GPU timer queries (e.g. macOS Safari / Metal)'
+              : '目前系統或瀏覽器（如 macOS Safari / Metal）基於安全性關閉 WebGL2 硬體 GPU 計時器';
+          }
         }
         if (elCpuMs) {
           elCpuMs.textContent = smoothCpuTotalMs.toFixed(2) + ' ms';
         }
         if (elCpuSub) {
-          elCpuSub.textContent = `波浪 ${smoothCpuWavesMs.toFixed(2)} · 浪花 ${smoothCpuSplashMs.toFixed(2)} · 渲染 ${smoothCpuRenderMs.toFixed(2)}`;
+          formatCpuSub();
         }
       }
       if (elVram) {
@@ -432,15 +533,10 @@ export function createPerfMonitor(THREE, renderer) {
           const usedMB = mem.usedJSHeapSize / (1024 * 1024);
           const totMB = mem.totalJSHeapSize / (1024 * 1024);
           elRam.textContent = `${usedMB.toFixed(1)} / ${totMB.toFixed(0)} MB`;
-          if (elRamSub) {
-            elRamSub.textContent = `JS Heap · 引擎緩衝 ${cachedEngineTypedMB.toFixed(1)} MB`;
-          }
         } else {
           elRam.textContent = `${cachedEngineTypedMB.toFixed(1)} MB`;
-          if (elRamSub) {
-            elRamSub.textContent = `引擎 TypedArray 緩衝區`;
-          }
         }
+        formatRamSub();
       }
 
       if (elPipe) {
@@ -456,7 +552,7 @@ export function createPerfMonitor(THREE, renderer) {
     const mem = performance.memory;
     const avgMs = getAverageFrameMs();
     const fps = +(1000 / Math.max(0.5, avgMs)).toFixed(1);
-    const bottleneckMs = Math.max(0.4, smoothCpuTotalMs, gpuTimerValid ? smoothGpuMs : smoothCpuRenderMs);
+    const bottleneckMs = evaluateHardwareBottleneckMs();
     const fpsPotential = Math.min(999, Math.max(Math.round(fps), Math.round(1000 / bottleneckMs)));
     return {
       fps,
@@ -501,7 +597,11 @@ export function createPerfMonitor(THREE, renderer) {
     beginGpuRender,
     endGpuRender,
     endFrame,
+    recordRafInterval,
+    getNativeVSyncMs: () => nativeVSyncMs,
     getSnapshot,
+    setCollapsed,
+    setLanguage,
     registerSceneResources(scene, extraTextures = [], renderTargetGetters = {}, typedByteCount = 0) {
       scene.traverse(obj => {
         if (obj.geometry) trackedGeometries.add(obj.geometry);
@@ -556,6 +656,7 @@ export function createPerfMonitor(THREE, renderer) {
       warmupFrames = 0;
       histIdx = 0;
       histCount = 0;
+      syncCapLabel();
       if (onCapChangeCb) onCapChangeCb(fpsCap);
       return fpsCap;
     },

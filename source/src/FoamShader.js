@@ -40,6 +40,7 @@ export function createCoastalFoamLayer(
     inverseProjection: sharedUniforms.inverseProjection,
     cameraWorld: sharedUniforms.cameraWorld,
     depthResolution: sharedUniforms.depthResolution,
+    captureResolution: sharedUniforms.captureResolution || { value: new THREE.Vector2(1, 1) },
     captureScale: sharedUniforms.captureScale,
     depthEnabled: sharedUniforms.depthEnabled,
     longWave: sharedUniforms.longWave,
@@ -76,7 +77,7 @@ ${coastalWavesGLSL}
 uniform sampler2D longWave, longPrevious, shortWave, coastalContactMap;
 uniform float lengthLong, lengthShort, resolutionLong, resolutionShort, amplitude, chop, gridSpacing, longMix, crestShape, time, beachMode, midScale, uWaveLinear;
 varying vec3 vWorld, vNormal;
-varying float vJacobian;
+varying float vJacobian, vWaterSurfY;
 varying vec2 vRest;
 
 vec3 field(sampler2D tex, vec2 p, float len, float n){
@@ -96,7 +97,7 @@ vec3 field(sampler2D tex, vec2 p, float len, float n){
 ${mediumWaveGLSL}
 
 // Matches Offshore.js water surface over water, and conforms smoothly onto wet beach sand above waterline
-vec3 displacedFoamSurface(vec2 p){
+vec4 displacedFoamSurface(vec2 p, bool isCenter){
   vec3 f = mix(field(longPrevious, p, lengthLong, resolutionLong), field(longWave, p, lengthLong, resolutionLong), longMix)
          + field(shortWave, p, lengthShort, resolutionShort);
   float bed0 = beachMode > 0.5 ? sampleBathymetry(p).r : -16.0;
@@ -111,33 +112,39 @@ vec3 displacedFoamSurface(vec2 p){
 
   vec2 delta = (f.yz * amplitude * chop + mid.yz) * chopAtten;
   vec2 worldP = p + delta;
+  float hWater = h;
 
-  if (beachMode > 0.5) {
+  if (beachMode > 0.5 && bed0 > -5.3) {
     vec4 hydro = evaluateCoastalHydro(worldP, time, amplitude);
-    float pitchLean = 0.24 * hydro.y * smoothstep(0.08, 0.80, d0);
+    float pitchLean = 0.22 * hydro.y * smoothstep(0.08, 0.80, d0);
     worldP.y += pitchLean;
     float rockProxW = sampleBathymetry(worldP).b;
     float rockMeniscusLift = rockProxW * (0.026 + 0.036 * smoothstep(0.05, 0.85, abs(hydro.w) * 0.52 + hydro.y)) * smoothstep(0.01, 0.30, d0);
     h += hydro.x + rockMeniscusLift;
-    // Taper vertical pillow cushion cleanly right against sculpted 3D rock faces so foamLayer meets CoastalRocks at exact meniscus waterline!
-    vec2 cUvW = clamp((worldP - vec2(-180.0, -90.0)) / vec2(360.0, 150.0), 0.0, 1.0);
-    float tightWallProx = textureLod(coastalContactMap, cUvW, 0.0).a;
-    float wallCushionTaper = 1.0 - 0.84 * smoothstep(0.25, 0.92, tightWallProx);
-    // Non-orthogonal golden-sector organic billow modulation (eliminates sin(x)*cos(z) egg-carton diamond grid!)
-    float billowWave = 0.56
-      + 0.22 * sin(dot(worldP, vec2(0.82, 0.57)) * 1.08 - time * 2.05)
-      + 0.14 * cos(dot(worldP, vec2(-0.53, 0.85)) * 1.48 - time * 2.35)
-      + 0.08 * sin(dot(worldP, vec2(0.28, -0.96)) * 1.92 + time * 1.75);
-    float rollerCushion = hydro.y * (0.040 + 0.048 * billowWave) * smoothstep(0.06, 0.48, d0) * wallCushionTaper;
-    float collarCushion = rockProxW * smoothstep(0.08, 0.85, abs(hydro.w) * 0.52 + hydro.y) * (0.026 + 0.024 * billowWave) * wallCushionTaper;
-    h += rollerCushion + collarCushion;
+    hWater = h;
+    if (isCenter) {
+      // Taper vertical pillow cushion cleanly right against sculpted 3D rock faces so foamLayer meets CoastalRocks at exact meniscus waterline!
+      vec2 cUvW = clamp((worldP - vec2(-180.0, -90.0)) / vec2(360.0, 150.0), 0.0, 1.0);
+      float tightWallProx = textureLod(coastalContactMap, cUvW, 0.0).a;
+      float wallCushionTaper = 1.0 - 0.84 * smoothstep(0.25, 0.92, tightWallProx);
+      // Non-orthogonal golden-sector organic billow modulation (eliminates sin(x)*cos(z) egg-carton diamond grid!)
+      float billowWave = 0.56
+        + 0.22 * sin(dot(worldP, vec2(0.82, 0.57)) * 1.08 - time * 2.05)
+        + 0.14 * cos(dot(worldP, vec2(-0.53, 0.85)) * 1.48 - time * 2.35)
+        + 0.08 * sin(dot(worldP, vec2(0.28, -0.96)) * 1.92 + time * 1.75);
+      float rollerCushion = hydro.y * (0.040 + 0.048 * billowWave) * smoothstep(0.06, 0.48, d0) * wallCushionTaper;
+      float collarCushion = rockProxW * smoothstep(0.08, 0.85, abs(hydro.w) * 0.52 + hydro.y) * (0.026 + 0.024 * billowWave) * wallCushionTaper;
+      h += rollerCushion + collarCushion;
+    } else {
+      h += hydro.y * 0.066 * smoothstep(0.06, 0.48, d0);
+    }
   }
 
   float bedW = beachMode > 0.5 ? sampleBathymetry(worldP).r : -16.0;
-  float waterDepth = h - bedW;
-  float sandClearance = beachMode > 0.5 ? mix(0.006, 0.024, 1.0 - smoothstep(-0.01, 0.42, waterDepth)) : 0.003;
+  float waterDepth = hWater - bedW;
+  float sandClearance = beachMode > 0.5 ? mix(0.008, 0.026, 1.0 - smoothstep(-0.01, 0.42, waterDepth)) : 0.004;
   float surfaceY = max(h, bedW) + sandClearance;
-  return vec3(worldP.x, surfaceY, worldP.y);
+  return vec4(worldP.x, surfaceY, worldP.y, hWater);
 }
 
 void main(){
@@ -151,6 +158,7 @@ void main(){
       vWorld = wpDry.xyz;
       vNormal = vec3(0.0, 1.0, 0.0);
       vJacobian = 1.0;
+      vWaterSurfY = -0.5;
       gl_Position = projectionMatrix * viewMatrix * wpDry;
       return;
     }
@@ -159,9 +167,11 @@ void main(){
   float ez = beachMode > 0.5
     ? gridSpacing * max(0.32, 1.0 - 0.21 * 3.14159265 * cos(3.14159265 * clamp(p.y / 175.0, -1.0, 1.0)))
     : ex;
-  vec3 q = displacedFoamSurface(p);
-  vec3 dx = (displacedFoamSurface(p + vec2(ex, 0.0)) - displacedFoamSurface(p - vec2(ex, 0.0))) / (2.0 * ex);
-  vec3 dz = (displacedFoamSurface(p + vec2(0.0, ez)) - displacedFoamSurface(p - vec2(0.0, ez))) / (2.0 * ez);
+  vec4 q4 = displacedFoamSurface(p, true);
+  vec3 q = q4.xyz;
+  vWaterSurfY = q4.w;
+  vec3 dx = (displacedFoamSurface(p + vec2(ex, 0.0), false).xyz - q) / ex;
+  vec3 dz = (displacedFoamSurface(p + vec2(0.0, ez), false).xyz - q) / ez;
   vec4 wp = modelMatrix * vec4(q, 1.0);
   vWorld = wp.xyz;
   vNormal = normalize(mat3(modelMatrix) * normalize(cross(dz, dx)));
@@ -176,11 +186,11 @@ ${swashStateGLSL}
 ${pbrShadingGLSL}
 uniform sampler2D foamAtlas, splashFlipbook, detailMap, foamMap, impactFoamMap, rockShadowMap, sceneDepth, coastalContactMap;
 uniform mat4 rockShadowMatrix, inverseProjection, cameraWorld;
-uniform vec2 depthResolution;
+uniform vec2 depthResolution, captureResolution;
 uniform vec3 sunDirection, skyTop, skyHorizon;
 uniform float time, amplitude, beachMode, foamBoost, foamVisible, rockShadowEnabled, captureScale, depthEnabled, uOceanQuality;
 varying vec3 vWorld, vNormal;
-varying float vJacobian;
+varying float vJacobian, vWaterSurfY;
 varying vec2 vRest;
 
 vec2 foamHash22(vec2 p){
@@ -290,17 +300,26 @@ void main(){
   float rockProx = bathy.b;
   float rockWake = bathy.a;
 
+  bool inSwashBox = beachMode > 0.5 && p.y > -88.0 && p.y < 58.0 && abs(p.x) < 179.0;
+  bool inHydroBelt = inSwashBox && bed > -5.3;
+  bool inActiveCoast = inSwashBox && (inHydroBelt || rockProx > 0.01 || p.y > -28.0);
+
   // Multi-scale turbulent surge-tongue domain warping (0.5m, 1.4m, 3.2m) eliminates ALL ruler-straight wave & swash foam edges!
-  vec3 wN1 = texture2D(detailMap, p * 0.048 + vec2(time * 0.008, -time * 0.012)).rgb;
-  vec3 wN2 = texture2D(detailMap, p * 0.155 - vec2(time * 0.015, time * 0.018)).rgb;
-  vec3 wN3 = texture2D(detailMap, p * 0.420 + vec2(time * 0.024, -time * 0.019)).rgb;
+  vec3 wN1 = inActiveCoast ? texture2D(detailMap, p * 0.048 + vec2(time * 0.008, -time * 0.012)).rgb : vec3(0.5);
+  vec3 wN2 = inActiveCoast ? texture2D(detailMap, p * 0.155 - vec2(time * 0.015, time * 0.018)).rgb : vec3(0.5);
+  vec3 wN3 = inActiveCoast ? texture2D(detailMap, p * 0.420 + vec2(time * 0.024, -time * 0.019)).rgb : vec3(0.5);
   vec2 hydroTongue = vec2(
     (wN1.r - 0.5) * 3.35 + (wN2.g - 0.5) * 1.55 + (wN3.b - 0.5) * 0.62,
     (wN1.g - 0.5) * 2.95 + (wN2.b - 0.5) * 1.42 + (wN3.r - 0.5) * 0.56
   );
 
-  vec4 hydroRaw = beachMode > 0.5 ? evaluateCoastalHydro(p, time, amplitude) : vec4(0.0);
-  vec4 hydroWarp = beachMode > 0.5 ? evaluateCoastalHydro(p + hydroTongue, time, amplitude) : vec4(0.0);
+  float waterDepth = beachMode > 0.5 ? (vWaterSurfY - bed) : 16.0;
+  float onWater = beachMode > 0.5 ? smoothstep(-0.002, 0.022, waterDepth) : 1.0;
+  float warpSurfFade = beachMode > 0.5 ? smoothstep(-0.005, 0.38, waterDepth) : 1.0;
+  vec2 coastalWarp = hydroTongue * mix(0.055, 1.0, warpSurfFade);
+
+  vec4 hydroRaw = inHydroBelt ? evaluateCoastalHydro(p, time, amplitude) : vec4(0.0);
+  vec4 hydroWarp = inHydroBelt ? evaluateCoastalHydro(p + coastalWarp, time, amplitude) : vec4(0.0);
   vec4 hydro = vec4(
     hydroRaw.x,
     mix(hydroRaw.y, hydroWarp.y, 0.84),
@@ -308,26 +327,28 @@ void main(){
     hydroRaw.w
   );
 
-  vec4 swash = beachMode > 0.5 ? sampleSwashState(p + hydroTongue * 0.28) : vec4(0.0);
+  vec4 swash = inActiveCoast ? sampleSwashState(p + hydroTongue * (0.16 * warpSurfFade)) : vec4(0.0);
   vec2 bUvBase = clamp((p - vec2(-180.0, -90.0)) / vec2(360.0, 150.0), 0.0, 1.0);
-  vec2 impUv = clamp((p + hydroTongue * 0.22 - vec2(-180.0, -90.0)) / vec2(360.0, 150.0), 0.0, 1.0);
-  vec4 impactData = beachMode > 0.5 ? texture2D(impactFoamMap, impUv) : vec4(0.0);
+  vec2 impUv = clamp((p + hydroTongue * (0.20 * warpSurfFade) - vec2(-180.0, -90.0)) / vec2(360.0, 150.0), 0.0, 1.0);
+  vec4 impactData = inActiveCoast ? texture2D(impactFoamMap, impUv) : vec4(0.0);
   vec2 impactFoam = impactData.rg;
-  vec4 contactData = beachMode > 0.5 ? texture2D(coastalContactMap, bUvBase) : vec4(0.0, 0.5, 0.5, 0.0);
+  vec4 contactData = inActiveCoast ? texture2D(coastalContactMap, bUvBase) : vec4(0.0, 0.5, 0.5, 0.0);
   float tightRockProx = contactData.a;
   vec2 rawRockOutN = contactData.gb * 2.0 - 1.0;
   float rockOutLen = length(rawRockOutN);
   vec2 rockOutN = rockOutLen > 0.04 ? (rawRockOutN / rockOutLen) : vec2(0.0, -1.0);
 
   // Screen-Space 3D Rock Reconstruction & Sand-vs-Rock Discrimination:
-  // Preserves 100% of flat beach swash foam (isRockHit == 0) while computing continuous 3D submergence & ray gap against boulders!
+  // Snaps NearestFilter sceneDepth to exact texel center (eliminating scanline sawtooth!) and gates strictly on sculpted 3D boulders!
   float isRockHit = 0.0;
   float continuousGap = 1.5;
-  if (beachMode > 0.5 && depthEnabled > 0.5) {
+  if (inSwashBox && depthEnabled > 0.5 && (contactData.r * 0.85 + tightRockProx) > 0.01) {
     vec2 screenUV = (gl_FragCoord.xy / depthResolution - 0.5) / captureScale + 0.5;
-    float rawSceneD = textureLod(sceneDepth, screenUV, 0.0).r;
+    vec2 safeCapRes = max(captureResolution, vec2(1.0));
+    vec2 snappedDepthUV = (floor(clamp(screenUV, vec2(0.0), vec2(1.0) - 0.5 / safeCapRes) * safeCapRes) + 0.5) / safeCapRes;
+    float rawSceneD = textureLod(sceneDepth, snappedDepthUV, 0.0).r;
     if (rawSceneD < 0.999999) {
-      vec4 vHit = inverseProjection * vec4(screenUV * 2.0 - 1.0, rawSceneD * 2.0 - 1.0, 1.0);
+      vec4 vHit = inverseProjection * vec4(snappedDepthUV * 2.0 - 1.0, rawSceneD * 2.0 - 1.0, 1.0);
       vec3 hitWorld = (cameraWorld * vec4(vHit.xyz / vHit.w, 1.0)).xyz;
       float rawRayGap = length(hitWorld - cameraPosition) - dist;
       float validRockContact = smoothstep(-0.18, -0.04, rawRayGap);
@@ -337,16 +358,13 @@ void main(){
       if (validRockContact > 0.005) {
         float hitSandBed = sampleBathymetry(hitWorld.xz).r;
         float rockProtrusion = hitWorld.y - hitSandBed;
-        float nearSculptedRock = smoothstep(0.015, 0.20, contactData.r + tightRockProx + rockProx);
-        isRockHit = smoothstep(0.0045, 0.019, rockProtrusion) * nearSculptedRock * validRockContact;
+        float nearSculptedRock = smoothstep(0.05, 0.34, contactData.r * 0.85 + tightRockProx);
+        isRockHit = smoothstep(0.065, 0.165, rockProtrusion) * nearSculptedRock * validRockContact;
       }
     }
   }
   // Evaluate screen-space derivative in uniform control flow BEFORE any non-uniform early discard!
   float continuousGapGrad = fwidth(continuousGap);
-
-  float waterDepth = (beachMode > 0.5 ? hydroRaw.x : 0.0) - bed;
-  float onWater = beachMode > 0.5 ? smoothstep(-0.003, 0.024, vWorld.y - bed - 0.011) : 1.0;
 
   // True 3D Composite Sea-Surface Wave-Energy Extraction (Miche steepness + Lagrangian Jacobian orbital convergence):
   // Whitewater draws its energy directly from where the actual 3D wave surface steepens forward & compresses!
@@ -363,9 +381,16 @@ void main(){
 
   float offshoreHist = texture2D(foamMap, fract(vRest / 240.0)).r;
   float openWaveCap = smoothstep(0.28, 0.72, orbConverge + forwardSlope * 0.75) * smoothstep(0.85, 2.20, max(0.0, -bed));
-  float potential = offshoreHist + openWaveCap + hydro.y * 1.55 + hydro.z + swash.b + swash.a
+  float shallowLipPot = beachMode > 0.5
+    ? (smoothstep(-0.025, 0.006, waterDepth) * (1.0 - smoothstep(0.035, 0.14, waterDepth)) * (abs(hydroRaw.w) + swash.g))
+    : 0.0;
+  float potential = offshoreHist + openWaveCap + hydro.y * 1.55 + hydro.z + swash.b + swash.a + shallowLipPot
                   + impactFoam.r * 1.75 + impactFoam.g * 1.45 + liveRockActivity * 1.35;
   if (potential <= 0.005) discard;
+  if (!inActiveCoast && beachMode > 0.5) {
+    wN1 = texture2D(detailMap, p * 0.048 + vec2(time * 0.008, -time * 0.012)).rgb;
+    wN2 = texture2D(detailMap, p * 0.155 - vec2(time * 0.015, time * 0.018)).rgb;
+  }
 
   // --- Lindeberg (1994) Continuous Scale-Space Footprint Adaptation ---
   float jacArea = abs(dxP.x * dyP.y - dxP.y * dyP.x);
@@ -553,28 +578,57 @@ void main(){
     float wakeActive = rockWake * (swash.b * 0.85 + 0.35 * liveRockActivity) * onWater;
     float wakeStreaks = erodePercolation(wakeActive * 0.88, spumeS.b * 0.52 + fineFibers * 0.48, 0.20);
 
-    // --- 4. Feathered Scalloped Swash Surge Tongues (ZERO Solid 1-Meter Contour Stripe!) ---
+    // --- 4. Leading-Edge Swash Bubble Meniscus Lip + Feathered Scalloped Surge Sheet ---
     const vec2 swashStretchFreq = vec2(0.25, 0.105);
     vec2 stretchUv = (pWarped - advOsc * 0.82) * swashStretchFreq + vec2(0.21, 0.47);
     vec4 stretchS = sampleFoamAutoGrad(stretchUv, dxP * swashStretchFreq, dyP * swashStretchFreq, stochWeight);
     float braidedSheet = clamp(stretchS.r * 0.56 + stretchS.b * 0.44, 0.0, 1.0);
 
-    // Swash momentum only forms frothy beads at high-energy scalloped tongue tips; trailing wake is airy eroded lace!
-    float swashDrive = clamp(hydro.z * (0.34 + 0.88 * streamers) * (0.52 + 0.58 * surfWaveEnergy), 0.0, 1.05);
-    float boreTipFroth = erodePercolation(swashDrive * 0.64, braidedSheet * 0.52 + microBeads * 0.48, 0.18) * 0.54;
-    float boreLace     = erodePercolation(swashDrive * 0.94, fibrousWeb * 0.54 + fineFibers * 0.46, 0.22) * 0.80;
+    // Co-perturbed with Offshore.js grainEdge & surge-tongue noise so seafoam has organic scalloped fingers (ZERO straight contour lines!):
+    float grainEdge = texture2D(detailMap, p * 0.48 + vec2(1.3, 2.7)).r * 0.58
+                    + texture2D(detailMap, p * 2.15).r * 0.42;
+    float organicWaterD = waterDepth + (wN1.r - 0.5) * 0.032 + (wN2.g - 0.5) * 0.018 + (grainEdge - 0.5) * 0.014;
+    float meniscusSupport = smoothstep(-0.016, 0.024, organicWaterD);
+    float lipDepth = waterDepth + (grainEdge - 0.5) * 0.016 + (fineFibers - 0.5) * 0.011 + (wN2.r - 0.5) * 0.012;
+    float lipBand  = smoothstep(-0.012, 0.0035, lipDepth) * (1.0 - smoothstep(0.012, 0.044, lipDepth));
+    float shoreSlopeZone = smoothstep(-0.85, -0.24, bed) * (1.0 - smoothstep(0.42, 0.62, bed));
+    float swashKinetic = clamp(abs(hydroRaw.w) * 0.85 + hydro.z * 0.88 + swash.b * 0.65 + swash.g * 0.48, 0.0, 1.15);
+    float uprushLipGate = mix(0.24, 1.0, smoothstep(-0.20, 0.22, hydroRaw.w));
+    float lipScallop   = 0.46 + 0.54 * smoothstep(0.10, 0.82, streamers * 0.46 + braidedSheet * 0.54);
+    float lipEnergy    = mix(0.46, 1.0, smoothstep(0.03, 0.40, swashKinetic)) * uprushLipGate * smoothstep(0.06, 0.24, amplitude);
+    float lipDrive     = lipBand * lipEnergy * lipScallop * shoreSlopeZone * (1.0 - isRockHit);
+    float swashLipBeads = erodePercolation(lipDrive * 0.96, microBeads * 0.54 + fineFibers * 0.46, 0.19) * 0.86;
 
-    // --- 5. Advected Surfactant Wake Filaments & Upwelling Boil Windows ---
-    float boilTear = mix(0.25, 0.82, onWater) * upwellingHole * (1.0 - smoothstep(0.58, 0.96, swash.b));
-    float advDensity = clamp(swash.b * (0.30 + 0.92 * streamers) * (0.58 + 0.56 * braidedSheet) * (1.0 - boilTear), 0.0, 1.0);
+    float sheetBand  = smoothstep(-0.018, 0.036, organicWaterD) * (1.0 - smoothstep(0.052, 0.145, lipDepth));
+    float sheetDrive = sheetBand * clamp(0.26 + hydro.z * 0.72 + swash.b * 0.64 + abs(hydroRaw.w) * 0.42, 0.0, 1.0)
+                     * mix(0.38, 1.0, uprushLipGate) * (0.36 + 0.64 * streamers) * shoreSlopeZone * (1.0 - isRockHit);
+    float swashSheetLace = erodePercolation(sheetDrive * 0.88, braidedSheet * 0.50 + fibrousWeb * 0.50, 0.22) * 0.80;
+
+    // Swash surge foam stays strictly on the liquid water sheet & meniscus lip (never stranded up on bare brown sand!)
+    float swashDrive   = clamp(hydro.z * (0.34 + 0.88 * streamers) * (0.52 + 0.58 * surfWaveEnergy), 0.0, 1.05) * meniscusSupport;
+    float boreTipFroth = max(
+      erodePercolation(swashDrive * 0.62, braidedSheet * 0.52 + microBeads * 0.48, 0.18) * 0.52 * onWater,
+      swashLipBeads * 0.42 * smoothstep(0.04, 0.38, abs(hydroRaw.w))
+    );
+    float boreLace = max(
+      erodePercolation(swashDrive * 0.90, fibrousWeb * 0.54 + fineFibers * 0.46, 0.22) * 0.76 * meniscusSupport,
+      max(swashLipBeads, swashSheetLace)
+    );
+
+    // --- 5. Advected Surfactant Wake Filaments & Upwelling Boil Windows (lingers naturally on receding water film!) ---
+    float filmFoamSupport = smoothstep(0.14, 0.58, swash.g) * (0.62 + 0.38 * smoothstep(0.04, 0.34, swash.b + swash.a)) * (1.0 - isRockHit);
+    float foamRetention = max(meniscusSupport, filmFoamSupport * 0.92);
+    float boilTear = mix(0.22, 0.82, onWater) * upwellingHole * (1.0 - smoothstep(0.58, 0.96, swash.b));
+    float advDensity = clamp(swash.b * (0.34 + 0.90 * streamers) * (0.60 + 0.54 * braidedSheet) * (1.0 - boilTear), 0.0, 1.0);
     float webSignal = mix(fibrousWeb * 0.52 + braidedSheet * 0.48, fineFibers * 0.48 + flipLiquidWeb * 0.52, clamp(breakerEnergy + rockCollarDrive, 0.0, 1.0));
-    float surfaceRetention = mix(smoothstep(0.08, 0.58, swash.g), 1.0, onWater);
-    float surfWeb = erodePercolation(advDensity * 0.92, webSignal, 0.21) * surfaceRetention;
-    float surfCurdle = erodePercolation(max(0.0, advDensity - 0.32) * 1.10, braidedSheet * 0.58 + microBeads * 0.42, 0.18) * 0.72 * surfaceRetention;
+    float surfWeb = erodePercolation(advDensity * 0.94, webSignal, 0.21) * foamRetention;
+    float surfCurdle = erodePercolation(max(0.0, advDensity - 0.30) * 1.08, braidedSheet * 0.58 + microBeads * 0.42, 0.18) * 0.72 * max(onWater, filmFoamSupport * 0.58);
 
-    // --- 6. Delicate High-Water Strandline Froth Wisps ---
-    float strandDensity = clamp(swash.a * (0.34 + 0.86 * streamers), 0.0, 1.0) * (1.0 - 0.58 * onWater);
-    float strandWeb = erodePercolation(strandDensity * 0.88, microBeads * 0.46 + braidedSheet * 0.54, 0.18);
+    // --- 6. Delicate Receding-Film Bubble Lace (lingers across active wet water film, zero dry-sand contour line!) ---
+    float recedingFilmZone = smoothstep(0.16, 0.60, swash.g) * (1.0 - 0.50 * onWater);
+    float strandDensity = clamp((swash.a * 0.95 + swash.b * 0.58) * (0.44 + 0.78 * streamers) * (0.52 + 0.54 * braidedSheet), 0.0, 1.0)
+                        * recedingFilmZone * (1.0 - isRockHit);
+    float strandWeb = erodePercolation(strandDensity * 0.92, microBeads * 0.52 + fineFibers * 0.48, 0.21) * 0.78;
 
     // --- 7. Soft Volumetric Sea-Spray Mist Cushion + Submerged Hinze Bubble-Plume Veil ---
     float mistDrive = clamp(breakerEnergy * 0.62 + rockCollarDrive * 0.88 + splashLanding * 0.55, 0.0, 1.0);
@@ -769,8 +823,8 @@ void main(){
     depthTest: true,
     depthWrite: false,
     polygonOffset: true,
-    polygonOffsetFactor: -0.35,
-    polygonOffsetUnits: -0.6,
+    polygonOffsetFactor: -0.85,
+    polygonOffsetUnits: -1.2,
     side: THREE.FrontSide
   });
 

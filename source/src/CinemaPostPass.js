@@ -182,13 +182,14 @@ void main(){
       exposure: { value: 1.04 },
       bloomStrength: { value: 0.145 },
       uNightMix: { value: 0.0 },
-      uGodRaySteps: { value: 8 }
+      uGodRaySteps: { value: 8 },
+      uFastComposite: { value: 0.0 }
     },
     vertexShader: `varying vec2 vUv; void main(){ vUv = uv; gl_Position = vec4(position.xy, 0.0, 1.0); }`,
     fragmentShader: `
 uniform sampler2D tScene, tBloom;
 uniform vec2 texelSize, sunScreenPos;
-uniform float sunVisibleWeight, exposure, bloomStrength, uNightMix;
+uniform float sunVisibleWeight, exposure, bloomStrength, uNightMix, uFastComposite;
 uniform int uGodRaySteps;
 varying vec2 vUv;
 
@@ -274,22 +275,25 @@ vec3 linearToSRGB(vec3 c){
 }
 
 void main(){
-  // Subtle Contrast-Adaptive Micro-Sharpening (CAS) in linear space (preserves highlights without halos!)
-  vec3 c  = texture2D(tScene, vUv).rgb;
-  vec3 nN = texture2D(tScene, vUv + vec2(0.0,  texelSize.y)).rgb;
-  vec3 nS = texture2D(tScene, vUv + vec2(0.0, -texelSize.y)).rgb;
-  vec3 nE = texture2D(tScene, vUv + vec2( texelSize.x, 0.0)).rgb;
-  vec3 nW = texture2D(tScene, vUv + vec2(-texelSize.x, 0.0)).rgb;
+  // Subtle Contrast-Adaptive Micro-Sharpening (CAS) in linear space (single-tap fast path on mobile/low tier!)
+  vec3 c = texture2D(tScene, vUv).rgb;
+  vec3 hdr = c;
+  if (uFastComposite < 0.5) {
+    vec3 nN = texture2D(tScene, vUv + vec2(0.0,  texelSize.y)).rgb;
+    vec3 nS = texture2D(tScene, vUv + vec2(0.0, -texelSize.y)).rgb;
+    vec3 nE = texture2D(tScene, vUv + vec2( texelSize.x, 0.0)).rgb;
+    vec3 nW = texture2D(tScene, vUv + vec2(-texelSize.x, 0.0)).rgb;
 
-  vec3 mn = min(c, min(min(nN, nS), min(nE, nW)));
-  vec3 mx = max(c, max(max(nN, nS), max(nE, nW)));
-  float lumaMx = dot(mx, vec3(0.2126, 0.7152, 0.0722));
-  float lumaMn = dot(mn, vec3(0.2126, 0.7152, 0.0722));
-  // Attenuate sharpening on bright specular glints & high-contrast edges so water/foam/wet-rock highlights never shimmer!
-  float hdrPeak = max(mx.r, max(mx.g, mx.b));
-  float glintSuppress = 1.0 / (1.0 + lumaMx * 1.45 + max(0.0, hdrPeak - 0.85) * 3.5);
-  float casAmt = clamp((1.0 - (lumaMx - lumaMn) / max(lumaMx + 0.12, 0.14)) * 0.105 * glintSuppress, 0.0, 0.105);
-  vec3 hdr = max(vec3(0.0), c + (c * 4.0 - (nN + nS + nE + nW)) * casAmt);
+    vec3 mn = min(c, min(min(nN, nS), min(nE, nW)));
+    vec3 mx = max(c, max(max(nN, nS), max(nE, nW)));
+    float lumaMx = dot(mx, vec3(0.2126, 0.7152, 0.0722));
+    float lumaMn = dot(mn, vec3(0.2126, 0.7152, 0.0722));
+    // Attenuate sharpening on bright specular glints & high-contrast edges so water/foam/wet-rock highlights never shimmer!
+    float hdrPeak = max(mx.r, max(mx.g, mx.b));
+    float glintSuppress = 1.0 / (1.0 + lumaMx * 1.45 + max(0.0, hdrPeak - 0.85) * 3.5);
+    float casAmt = clamp((1.0 - (lumaMx - lumaMn) / max(lumaMx + 0.12, 0.14)) * 0.105 * glintSuppress, 0.0, 0.105);
+    hdr = max(vec3(0.0), c + (c * 4.0 - (nN + nS + nE + nW)) * casAmt);
+  }
 
   // Energy-conserving multi-scale HDR Bloom (liquid-diamond water glints + backlit wave crests + cloud rims)
   vec3 bloom = texture2D(tBloom, vUv).rgb;
@@ -435,11 +439,12 @@ void main(){
 
   return {
     render,
-    setQuality({ msaaSamples = 0, halfResBloom = false, godRaySteps = 8, bloomStrength = 0.145 } = {}) {
+    setQuality({ msaaSamples = 0, halfResBloom = false, godRaySteps = 8, bloomStrength = 0.145, fastComposite = false } = {}) {
       desiredMsaa = msaaSamples | 0;
       desiredHalfResBloom = !!halfResBloom;
       compositeMat.uniforms.uGodRaySteps.value = Math.max(0, Math.min(16, godRaySteps | 0));
       compositeMat.uniforms.bloomStrength.value = bloomStrength;
+      compositeMat.uniforms.uFastComposite.value = fastComposite ? 1.0 : 0.0;
     },
     getTargets: () => (sceneTarget ? [sceneTarget, ...downTargets, ...upTargets] : []),
     ensureCompileTarget() {

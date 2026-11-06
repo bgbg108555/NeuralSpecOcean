@@ -30,7 +30,7 @@ vec2 skewedBreakerWave(float phase, float skew){
 vec2 swashEnvelopeFromPhase(float ph){
   float u = fract((ph - 0.16) / 6.2831853);
   float rise = smoothstep(0.0, 0.19, u);
-  float drain = pow(1.0 - smoothstep(0.17, 0.99, u), 1.78);
+  float drain = pow(1.0 - smoothstep(0.17, 0.99, u), 1.58);
   float level = rise * drain;
   float upPulse = smoothstep(0.0, 0.055, u) * (1.0 - smoothstep(0.065, 0.215, u));
   float backPulse = smoothstep(0.20, 0.52, u) * (1.0 - smoothstep(0.76, 1.0, u));
@@ -114,17 +114,17 @@ vec4 evaluateCoastalHydro(vec2 p, float t, float ampScale){
   vec2 sw1b = swashEnvelopeFromPhase(ph1b - cusp1 * 0.7);
   vec2 sw2  = swashEnvelopeFromPhase(ph2 + cusp2);
   float swLevel = 0.235 * sw1a.x * pktEnv1a + 0.165 * sw1b.x * pktEnv1b + 0.135 * sw2.x * pktEnv2;
-  float runupLevel = (-0.022 + swLevel * lobeReach * rockShadow) * amp;
+  float runupLevel = (-0.028 + swLevel * 0.96 * lobeReach * rockShadow) * amp;
 
   float rawSwashDepth = runupLevel - bed;
   float uSwash = 0.48 * sw1a.y + 0.32 * sw1b.y + 0.20 * sw2.y;
   float uprushPos = clamp(uSwash, 0.0, 2.4);
-  float uprushRatio = smoothstep(-0.22, 0.36, uSwash);
+  float uprushRatio = smoothstep(-0.38, 0.36, uSwash);
   float beachFade = smoothstep(-0.24, 0.02, bed);
-  float slopeSheetFactor = mix(1.0, mix(0.42, 1.0, uprushRatio), beachFade);
+  float slopeSheetFactor = mix(1.0, mix(0.54, 1.0, uprushRatio), beachFade);
   float posBlend = smoothstep(-0.055, 0.075, rawSwashDepth);
   float shapedSwashDepth = rawSwashDepth * mix(1.0, slopeSheetFactor, posBlend);
-  float boreNose = 0.028 * amp * uprushPos * smoothstep(-0.025, 0.085, rawSwashDepth) * (1.0 - smoothstep(0.09, 0.42, rawSwashDepth));
+  float boreNose = 0.026 * amp * uprushPos * smoothstep(-0.025, 0.085, rawSwashDepth) * (1.0 - smoothstep(0.09, 0.42, rawSwashDepth));
   float swashEta = bed + shapedSwashDepth + boreNose;
 
   float landBlend = smoothstep(-0.68, 0.04, bed);
@@ -219,7 +219,7 @@ export function evaluateCoastalSurfaceJS(bathySample, x, z, t, amplitude = 0.68)
   const swashEnv = ph => {
     const u = fract((ph - 0.16) / (2 * Math.PI));
     const rise = smoothstep(0.0, 0.19, u);
-    const drain = Math.pow(1 - smoothstep(0.17, 0.99, u), 1.78);
+    const drain = Math.pow(1 - smoothstep(0.17, 0.99, u), 1.58);
     const upPulse = smoothstep(0.0, 0.055, u) * (1 - smoothstep(0.065, 0.215, u));
     const backPulse = smoothstep(0.20, 0.52, u) * (1 - smoothstep(0.76, 1.0, u));
     const vel = 2.65 * upPulse - 1.28 * backPulse;
@@ -267,17 +267,17 @@ export function evaluateCoastalSurfaceJS(bathySample, x, z, t, amplitude = 0.68)
   const [sw1bL, sw1bV] = swashEnv(ph1b - cusp1 * 0.7);
   const [sw2L, sw2V] = swashEnv(ph2 + cusp2);
   const swLevel = 0.235 * sw1aL * pktEnv1a + 0.165 * sw1bL * pktEnv1b + 0.135 * sw2L * pktEnv2;
-  const runupLevel = (-0.022 + swLevel * lobeReach * rockShadow) * amp;
+  const runupLevel = (-0.028 + swLevel * 0.96 * lobeReach * rockShadow) * amp;
 
   const rawSwashDepth = runupLevel - bed;
   const uSwash = 0.48 * sw1aV + 0.32 * sw1bV + 0.20 * sw2V;
   const uprushPos = clamp(uSwash, 0, 2.4);
-  const uprushRatio = smoothstep(-0.22, 0.36, uSwash);
+  const uprushRatio = smoothstep(-0.38, 0.36, uSwash);
   const beachFade = smoothstep(-0.24, 0.02, bed);
-  const slopeSheetFactor = 1.0 - beachFade * (1.0 - (0.42 + 0.58 * uprushRatio));
+  const slopeSheetFactor = 1.0 - beachFade * (1.0 - (0.54 + 0.46 * uprushRatio));
   const posBlend = smoothstep(-0.055, 0.075, rawSwashDepth);
   const shapedSwashDepth = rawSwashDepth * (1.0 + (slopeSheetFactor - 1.0) * posBlend);
-  const boreNose = 0.028 * amp * uprushPos * smoothstep(-0.025, 0.085, rawSwashDepth) * (1 - smoothstep(0.09, 0.42, rawSwashDepth));
+  const boreNose = 0.026 * amp * uprushPos * smoothstep(-0.025, 0.085, rawSwashDepth) * (1 - smoothstep(0.09, 0.42, rawSwashDepth));
   const swashEta = bed + shapedSwashDepth + boreNose;
 
   const landBlend = smoothstep(-0.68, 0.04, bed);
@@ -399,27 +399,27 @@ export function evaluateCoastalKinematicsJS(bed, tau, rockProx, rockWake, rayX, 
   const surfEta = surfElev > -0.44 * d0 ? surfElev : -0.44 * d0;
 
   const uSw1a = kwFract((ph1a + cusp1 - 0.16) * KW_INV_TAU);
-  const sw1aL = kwSmooth(0.0, 0.19, uSw1a) * Math.pow(1.0 - kwSmooth(0.17, 0.99, uSw1a), 1.78);
+  const sw1aL = kwSmooth(0.0, 0.19, uSw1a) * Math.pow(1.0 - kwSmooth(0.17, 0.99, uSw1a), 1.58);
   const sw1aV = 2.65 * kwSmooth(0.0, 0.055, uSw1a) * (1.0 - kwSmooth(0.065, 0.215, uSw1a))
               - 1.28 * kwSmooth(0.20, 0.52, uSw1a) * (1.0 - kwSmooth(0.76, 1.0, uSw1a));
 
   const uSw1b = kwFract((ph1b - cusp1 * 0.7 - 0.16) * KW_INV_TAU);
-  const sw1bL = kwSmooth(0.0, 0.19, uSw1b) * Math.pow(1.0 - kwSmooth(0.17, 0.99, uSw1b), 1.78);
+  const sw1bL = kwSmooth(0.0, 0.19, uSw1b) * Math.pow(1.0 - kwSmooth(0.17, 0.99, uSw1b), 1.58);
   const sw1bV = 2.65 * kwSmooth(0.0, 0.055, uSw1b) * (1.0 - kwSmooth(0.065, 0.215, uSw1b))
               - 1.28 * kwSmooth(0.20, 0.52, uSw1b) * (1.0 - kwSmooth(0.76, 1.0, uSw1b));
 
   const uSw2 = kwFract((ph2 + cusp2 - 0.16) * KW_INV_TAU);
-  const sw2L = kwSmooth(0.0, 0.19, uSw2) * Math.pow(1.0 - kwSmooth(0.17, 0.99, uSw2), 1.78);
+  const sw2L = kwSmooth(0.0, 0.19, uSw2) * Math.pow(1.0 - kwSmooth(0.17, 0.99, uSw2), 1.58);
   const sw2V = 2.65 * kwSmooth(0.0, 0.055, uSw2) * (1.0 - kwSmooth(0.065, 0.215, uSw2))
              - 1.28 * kwSmooth(0.20, 0.52, uSw2) * (1.0 - kwSmooth(0.76, 1.0, uSw2));
 
   const swLevel = 0.235 * sw1aL * pktEnv1a + 0.165 * sw1bL * pktEnv1b + 0.135 * sw2L * pktEnv2;
-  const rawSwashDepth = (-0.022 + swLevel * lobeReach * rockShadow) * amp - bed;
+  const rawSwashDepth = (-0.028 + swLevel * 0.96 * lobeReach * rockShadow) * amp - bed;
   const uSwash = 0.48 * sw1aV + 0.32 * sw1bV + 0.20 * sw2V;
   const uprushPos = kwClamp(uSwash, 0.0, 2.4);
-  const slopeSheet = 1.0 - beachFade * (1.0 - (0.42 + 0.58 * kwSmooth(-0.22, 0.36, uSwash)));
+  const slopeSheet = 1.0 - beachFade * (1.0 - (0.54 + 0.46 * kwSmooth(-0.38, 0.36, uSwash)));
   const shapedSwashDepth = rawSwashDepth * (1.0 + (slopeSheet - 1.0) * kwSmooth(-0.055, 0.075, rawSwashDepth));
-  const boreNose = 0.028 * amp * uprushPos * kwSmooth(-0.025, 0.085, rawSwashDepth) * (1.0 - kwSmooth(0.09, 0.42, rawSwashDepth));
+  const boreNose = 0.026 * amp * uprushPos * kwSmooth(-0.025, 0.085, rawSwashDepth) * (1.0 - kwSmooth(0.09, 0.42, rawSwashDepth));
   const swashEta = bed + shapedSwashDepth + boreNose;
 
   let eta = surfEta * (1.0 - landBlend) + swashEta * landBlend;
@@ -492,15 +492,15 @@ export function evaluateCoastalKinematicsJS(bed, tau, rockProx, rockWake, rayX, 
   const sEt2 = sEl2 > -0.44 * d0 ? sEl2 : -0.44 * d0;
 
   const uS1aN = kwFract((p1aN + cusp1 - 0.16) * KW_INV_TAU);
-  const sw1aLN = kwSmooth(0.0, 0.19, uS1aN) * Math.pow(1.0 - kwSmooth(0.17, 0.99, uS1aN), 1.78);
+  const sw1aLN = kwSmooth(0.0, 0.19, uS1aN) * Math.pow(1.0 - kwSmooth(0.17, 0.99, uS1aN), 1.58);
   const uS1bN = kwFract((p1bN - cusp1 * 0.7 - 0.16) * KW_INV_TAU);
-  const sw1bLN = kwSmooth(0.0, 0.19, uS1bN) * Math.pow(1.0 - kwSmooth(0.17, 0.99, uS1bN), 1.78);
+  const sw1bLN = kwSmooth(0.0, 0.19, uS1bN) * Math.pow(1.0 - kwSmooth(0.17, 0.99, uS1bN), 1.58);
   const uS2N = kwFract((p2N + cusp2 - 0.16) * KW_INV_TAU);
-  const sw2LN = kwSmooth(0.0, 0.19, uS2N) * Math.pow(1.0 - kwSmooth(0.17, 0.99, uS2N), 1.78);
+  const sw2LN = kwSmooth(0.0, 0.19, uS2N) * Math.pow(1.0 - kwSmooth(0.17, 0.99, uS2N), 1.58);
 
-  const rawSwD2 = (-0.022 + (0.235 * sw1aLN * pktEnv1a + 0.165 * sw1bLN * pktEnv1b + 0.135 * sw2LN * pktEnv2) * lobeReach * rockShadow) * amp - bed;
+  const rawSwD2 = (-0.028 + (0.235 * sw1aLN * pktEnv1a + 0.165 * sw1bLN * pktEnv1b + 0.135 * sw2LN * pktEnv2) * 0.96 * lobeReach * rockShadow) * amp - bed;
   const shSwD2 = rawSwD2 * (1.0 + (slopeSheet - 1.0) * kwSmooth(-0.055, 0.075, rawSwD2));
-  const bNose2 = 0.028 * amp * uprushPos * kwSmooth(-0.025, 0.085, rawSwD2) * (1.0 - kwSmooth(0.09, 0.42, rawSwD2));
+  const bNose2 = 0.026 * amp * uprushPos * kwSmooth(-0.025, 0.085, rawSwD2) * (1.0 - kwSmooth(0.09, 0.42, rawSwD2));
   let eta2 = sEt2 * (1.0 - landBlend) + (bed + shSwD2 + bNose2) * landBlend;
   if (eta2 < minSubBed) eta2 = minSubBed;
   const wCr2 = Math.max(0.0, 0.58 * bN1aX * pktEnv1a + 0.44 * bN1bX * pktEnv1b + 0.36 * bN2X * pktEnv2);

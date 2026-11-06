@@ -863,6 +863,7 @@ void main(){
   let lastEnvTime = -1e9;
   let lastSunX = NaN, lastSunY = NaN, lastSunZ = NaN, lastNightMix = NaN;
   let envBandIdx = 0;
+  let bandStepInterval = 0.032;
 
   function latchBuildUniforms(currentTime) {
     const sDir = sharedUniforms.sunDirection.value;
@@ -885,7 +886,7 @@ void main(){
       Math.abs(curNight - lastNightMix);
     const sunMoved = !Number.isFinite(sunDelta) || sunDelta > 2e-4;
     const needFull = force || skyDomeUniforms.skyEnvReady.value < 0.5;
-    if (!needFull && !sunMoved && Math.abs(currentTime - lastEnvTime) < 0.024) return;
+    if (!needFull && !sunMoved && Math.abs(currentTime - lastEnvTime) < bandStepInterval) return;
     lastEnvTime = currentTime;
     lastSunX = sDir.x;
     lastSunY = sDir.y;
@@ -963,9 +964,10 @@ void main(){
     }
   }
 
-  function setQuality({ width = 640, height = 320, steps = 16, doBake = true } = {}) {
+  function setQuality({ width = 640, height = 320, steps = 16, bandInterval = 0.032, doBake = true } = {}) {
     const nw = Math.max(128, width | 0);
     const nh = Math.max(64, height | 0);
+    bandStepInterval = Math.max(0.016, bandInterval);
     buildUniforms.uCloudSteps.value = Math.max(6, Math.min(30, steps | 0));
     if (nw !== envW || nh !== envH) {
       envW = nw;
