@@ -8,7 +8,7 @@
 [![版本發佈](https://img.shields.io/github/v/release/bgbg108555/NeuralSpecOcean?style=flat-square&label=Release&color=1f6f78)](https://github.com/bgbg108555/NeuralSpecOcean/releases)
 [![授權條款: MIT](https://img.shields.io/badge/License-MIT-2d6a4f?style=flat-square)](./LICENSE)
 [![圖學管線: WebGL2](https://img.shields.io/badge/Graphics-WebGL2-1d3557?style=flat-square)](https://bgbg108555.github.io/NeuralSpecOcean/)
-[![專案贊助](https://img.shields.io/badge/Sponsor-Portaly-8c2f39?style=flat-square)](https://portaly.cc/AlphaCore)
+[![專案贊助](https://img.shields.io/badge/Sponsor-Portaly-8c2f39?style=flat-square)](https://portaly.cc/AlphaCore/support)
 
 [**English (`README.md`)**](./README.md) | [**繁體中文**](./README.zh-TW.md) | [**技術白皮書 (`TECHNICAL_WHITEPAPER.md`)**](./TECHNICAL_WHITEPAPER.md) | [**線上展示**](https://bgbg108555.github.io/NeuralSpecOcean/) | [**專案贊助**](#專案贊助與研發支持)
 
@@ -142,7 +142,7 @@ node tools/verify_gpu_render.mjs
 
 若本專案對您的研究、教學或工程開發有所助益，歡迎透過以下管道支持後續研發工作（包含 WebGPU Compute Shader 色散波浪求解器、真實全球海岸地形高程串流與技術文件維護）：
 
-- **專案贊助頁面（支援國內外信用卡）**：https://portaly.cc/AlphaCore（亦可透過儲存庫頂端由 [`.github/FUNDING.yml`](./.github/FUNDING.yml) 啟用之 **Sponsor** 按鈕前往）
+- **專案贊助頁面（支援國內外信用卡）**：https://portaly.cc/AlphaCore/support（亦可透過儲存庫頂端由 [`.github/FUNDING.yml`](./.github/FUNDING.yml) 啟用之 **Sponsor** 按鈕前往）
 
 ---
 
