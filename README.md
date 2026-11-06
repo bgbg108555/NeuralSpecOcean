@@ -8,7 +8,7 @@
 [![Release](https://img.shields.io/github/v/release/bgbg108555/NeuralSpecOcean?style=flat-square&label=Release&color=1f6f78)](https://github.com/bgbg108555/NeuralSpecOcean/releases)
 [![License: MIT](https://img.shields.io/badge/License-MIT-2d6a4f?style=flat-square)](./LICENSE)
 [![WebGL2](https://img.shields.io/badge/Graphics-WebGL2-1d3557?style=flat-square)](https://bgbg108555.github.io/NeuralSpecOcean/)
-[![Sponsor](https://img.shields.io/badge/Sponsor-GitHub_Sponsors-8c2f39?style=flat-square)](https://github.com/sponsors/bgbg108555)
+[![Sponsor](https://img.shields.io/badge/Sponsor-Portaly-8c2f39?style=flat-square)](https://portaly.cc/AlphaCore)
 
 [**English**](./README.md) | [**繁體中文 (Traditional Chinese)**](./README.zh-TW.md) | [**Technical Whitepaper**](./TECHNICAL_WHITEPAPER.md) | [**Live Demo**](https://bgbg108555.github.io/NeuralSpecOcean/) | [**Sponsorship**](#sponsorship-and-research-support)
 
@@ -155,7 +155,7 @@ node tools/verify_gpu_render.mjs
 
 Financial contributions help sustain ongoing development, including a WebGPU compute-shader Boussinesq wave solver, real-world bathymetric tile integration, and open technical documentation:
 
-- **GitHub Sponsors**: https://github.com/sponsors/bgbg108555 (also accessible via the repository **Sponsor** button configured in [`.github/FUNDING.yml`](./.github/FUNDING.yml))
+- **Sponsorship Portal (International Credit Cards Supported)**: https://portaly.cc/AlphaCore (also accessible via the repository **Sponsor** button configured in [`.github/FUNDING.yml`](./.github/FUNDING.yml))
 
 ---
 

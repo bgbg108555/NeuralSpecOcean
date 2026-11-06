@@ -1,11 +1,4 @@
-# GitHub Sponsors and Open-Source Funding Configuration for NeuralSpecOcean
+# Sponsorship and Open-Source Funding Configuration for NeuralSpecOcean
 # Reference: https://docs.github.com/en/repositories/managing-your-repositorys-settings-and-features/customizing-your-repository/displaying-a-sponsor-button-in-your-repository
 
-github: [bgbg108555]
-
-# Optional external funding platforms:
-# ko_fi: bgbg108555
-# buy_me_a_coffee: bgbg108555
-# patreon: bgbg108555
-# open_collective: neuralspecocean
-# custom: ["https://portaly.cc/your_handle", "https://paypal.me/your_handle"]
+custom: ["https://portaly.cc/AlphaCore"]
