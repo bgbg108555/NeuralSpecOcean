@@ -38,6 +38,8 @@ The nomenclature **NeuralSpecOcean** reflects the two mathematical foundations o
 - **Standalone Offline Artifact**: Available under [GitHub Releases](https://github.com/bgbg108555/NeuralSpecOcean/releases) (`NeuralSpecOcean-v1.0.0-Standalone.html`)
 - **Mathematical Formulations and Bibliography**: Detailed in [`TECHNICAL_WHITEPAPER.md`](./TECHNICAL_WHITEPAPER.md)
 
+![neuralspecocean — surf breaking over the reef, then the same coast from noon to starlight](https://raw.githubusercontent.com/yasirwhite/opendemo-media/main/bgbg108555-NeuralSpecOcean/neuralspecocean-demo.gif)
+
 ---
 
 ## Visual Results
